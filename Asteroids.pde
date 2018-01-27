@@ -8,12 +8,14 @@ float middleHeight = 800 / 2;
 
 Starfield starfield;
 Ship ship;
+int maxAsteroids = 20;
 
 void pre() {
 }
 
 void setup() {
     size(1000, 800, P2D);
+
     //fullScreen();
     // frameRate(5);
 
@@ -25,7 +27,7 @@ void setup() {
     starfield = new Starfield();
     asteroids = new ArrayList<Asteroid>();
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < maxAsteroids; i++) {
         asteroids.add(new Asteroid());
     }
 
@@ -35,8 +37,8 @@ void setup() {
 void draw() {
     background(0);
 
-    // helpers.translateSketch(1.5);
-    // helpers.drawPattern();
+    helpers.translateSketch(1.5);
+    helpers.drawPattern();
 
     starfield.draw();
 

@@ -11,6 +11,20 @@ public class Asteroid extends Sprite {
 
     Asteroid() {
         super(random(width), random(height), floor(random(15, 50)));
+
+        // As the position is randomly chosen, make sure that the asteroid is not
+        // placed to close from the center of the screen, where the ship will be.
+        PVector middle = new PVector(width / 2, height / 2);
+        PVector position = PVector.sub(this.position, middle);
+
+        if (position.mag() < 250) {
+            position.setMag(250);
+        }
+
+        position.add(middle);
+
+        this.position = position;
+
         this.init();
     }
 
@@ -70,7 +84,6 @@ public class Asteroid extends Sprite {
 
     private void init() {
         this.velocity = PVector.random2D();
-        // this.rotation = PVector.random2D();
 
         for (int i = 0; i < this.sides; i++) {
             this.offsets[i] = random(-this.radius / 4, this.radius / 4);
