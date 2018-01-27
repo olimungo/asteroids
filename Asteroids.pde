@@ -47,13 +47,13 @@ void draw() {
         asteroid.draw();
     }
 
-    if (gameManager.state == State.PLAYING || gameManager.state == State.GAME_OVER) {
+    if (gameManager.state != State.HOMESCREEN) {
         ship.update();
         ship.draw();
 
         if (gameManager.state == State.PLAYING) {
             if (ship.hitsAsteroid()) {
-                gameManager.endGame();
+                gameManager.lifeLost();
             }
         }
     }
@@ -69,6 +69,11 @@ void generateAsteroids() {
     for (int i = 0; i < maxAsteroids; i++) {
         asteroids.add(new Asteroid());
     }
+}
+
+void startNewLife() {
+    generateAsteroids();
+    ship = new Ship(gameManager, asteroids);
 }
 
 void mousePressed() {
@@ -88,22 +93,31 @@ void mouseReleased() {
 }
 
 void keyPressed() {
-    if (gameManager.state == State.HOMESCREEN || gameManager.state == State.GAME_OVER) {
-        if (keyCode == 32) {
-            generateAsteroids();
-            ship = new Ship(gameManager, asteroids);
-            gameManager.startGame();
-        }
-    } else if (gameManager.state == State.PLAYING) {
-        if (keyCode == LEFT) {
-            ship.setRotation(-0.1);
-        } else if (keyCode == RIGHT) {
-            ship.setRotation(0.1);
-        } else if (keyCode == UP) {
-            ship.setBoost(true);
-        } else if (keyCode == 32) { // SPACE 
-            ship.shoot();
-        }
+    switch(gameManager.state) {
+        case HOMESCREEN:
+        case GAME_OVER:
+            if (keyCode == 32) {
+                startNewLife();
+                gameManager.startGame();
+            }
+            break;
+        case PLAYING:
+            if (keyCode == LEFT) {
+                ship.setRotation(-0.1);
+            } else if (keyCode == RIGHT) {
+                ship.setRotation(0.1);
+            } else if (keyCode == UP) {
+                ship.setBoost(true);
+            } else if (keyCode == 32) { // SPACE 
+                ship.shoot();
+            }
+            break;
+        case NEXT_LIFE:
+            if (keyCode == 32) {
+                startNewLife();
+                gameManager.startNewLife();
+                break;
+            }
     }
 }
 

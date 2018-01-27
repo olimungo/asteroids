@@ -3,6 +3,20 @@ public class Helpers {
     float middleHeight = height / 2;
     String frameRateMessage = "";
 
+    private ShipShell[] shipShells;
+
+    Helpers() {
+        shipShells = new ShipShell[3];
+        int x = 20;
+
+        for (int i = 0; i < 3; i++) {
+            x += 50;
+            ShipShell shipShell = new ShipShell(x, 80);
+            shipShell.heading = -PI / 2;
+            this.shipShells[i] = shipShell;
+        }
+    }
+
     void translateSketch(float ratio) {
         scale(1/ratio);
         translate((width * ratio - width) / 2, (height * ratio - height) / 2);
@@ -47,6 +61,32 @@ public class Helpers {
             textSize(50);
             textAlign(RIGHT);
             text(score, width - 80, 80);
+        popStyle();
+    }
+
+    void showRemainingLifes(int lifes) {
+        pushStyle();
+            for (int i = 0; i < lifes; i++) {
+                this.shipShells[i].draw();
+            }
+        popStyle();
+    }
+
+    void showNextLife(int lifes) {
+        pushStyle();
+            textAlign(CENTER);
+            textSize(60);
+            String msg = "BIG BADABOOM, " + lifes + " LIFE";
+
+            if (lifes > 1) {
+                msg += "S LEFT";
+            } else {
+                msg += " LEFT";
+            }
+
+            text(msg, width / 2, height / 2);
+            textSize(40);
+            text("PRESS SPACE TO RE-TRY", width / 2, height / 2 + 50);
         popStyle();
     }
 
