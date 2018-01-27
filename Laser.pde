@@ -27,7 +27,7 @@ public class Laser extends Sprite {
         return this.isOffScreen;
     }
 
-    Boolean hitsAsteroids() {
+    Boolean hitsAsteroid() {
         Asteroid asteroid = super.hits(this.asteroids);
 
         if (asteroid != null) {

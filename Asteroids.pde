@@ -6,9 +6,10 @@ Boolean slowFrameRate = false;
 float middleWidth = 1000 / 2;
 float middleHeight = 800 / 2;
 
+GameManager gameManager;
 Starfield starfield;
 Ship ship;
-int maxAsteroids = 20;
+int maxAsteroids = 15;
 
 void pre() {
 }
@@ -16,22 +17,21 @@ void pre() {
 void setup() {
     size(1000, 800, P2D);
 
-    //fullScreen();
+    // fullScreen();
     // frameRate(5);
 
     helpers = new Helpers();
 
-    font = loadFont("HelveticaNeue-48.vlw");
-    textFont(font, 48);
+    font = createFont("Megrim.ttf", 48);
+    textFont(font);
 
     starfield = new Starfield();
     asteroids = new ArrayList<Asteroid>();
 
-    for (int i = 0; i < maxAsteroids; i++) {
-        asteroids.add(new Asteroid());
-    }
+    generateAsteroids();
 
-    ship = new Ship(asteroids);
+    gameManager = new GameManager();
+    ship = new Ship(gameManager, asteroids);
 }
 
 void draw() {
@@ -47,15 +47,28 @@ void draw() {
         asteroid.draw();
     }
 
-    ship.update();
-    ship.draw();
+    if (gameManager.state == State.PLAYING || gameManager.state == State.GAME_OVER) {
+        ship.update();
+        ship.draw();
 
-    if (ship.hitsAsteroid()) {
-        //noLoop();
-        println("hit");
+        if (gameManager.state == State.PLAYING) {
+            if (ship.hitsAsteroid()) {
+                gameManager.endGame();
+            }
+        }
     }
 
+    gameManager.draw();
+
     // helpers.showFrameRate();
+}
+
+void generateAsteroids() {
+    asteroids.clear();
+
+    for (int i = 0; i < maxAsteroids; i++) {
+        asteroids.add(new Asteroid());
+    }
 }
 
 void mousePressed() {
@@ -75,21 +88,31 @@ void mouseReleased() {
 }
 
 void keyPressed() {
-    if (keyCode == LEFT) {
-        ship.setRotation(-0.1);
-    } else if (keyCode == RIGHT) {
-        ship.setRotation(0.1);
-    } else if (keyCode == UP) { // SPACE 
-        ship.setBoost(true);
-    } else if (keyCode == 32) {
-        ship.shoot();
+    if (gameManager.state == State.HOMESCREEN || gameManager.state == State.GAME_OVER) {
+        if (keyCode == 32) {
+            generateAsteroids();
+            ship = new Ship(gameManager, asteroids);
+            gameManager.startGame();
+        }
+    } else if (gameManager.state == State.PLAYING) {
+        if (keyCode == LEFT) {
+            ship.setRotation(-0.1);
+        } else if (keyCode == RIGHT) {
+            ship.setRotation(0.1);
+        } else if (keyCode == UP) {
+            ship.setBoost(true);
+        } else if (keyCode == 32) { // SPACE 
+            ship.shoot();
+        }
     }
 }
 
 void keyReleased() {
-    if (keyCode == UP) {
-        ship.setBoost(false);
-    } else {
-        ship.setRotation(0);
+    if (gameManager.state == State.PLAYING) {
+        if (keyCode == UP) {
+            ship.setBoost(false);
+        } else if (keyCode == LEFT || keyCode == RIGHT) {
+            ship.setRotation(0);
+        }
     }
 }

@@ -1,14 +1,16 @@
 public class Ship extends Sprite {
-    private float heading = 0;
+    private float heading = -PI / 2;
     private float rotation = 0;
     private Boolean isBoosting = false;
     private ArrayList<Laser> lasers = new ArrayList<Laser>();
     private ArrayList<Asteroid> asteroids;
     private ArrayList<Fragment> fragments = new ArrayList<Fragment>();
+    private GameManager gameManager;
 
-    Ship(ArrayList<Asteroid> asteroids) {
+    Ship(GameManager gameManager, ArrayList<Asteroid> asteroids) {
         super(width / 2, height / 2, 18);
 
+        this.gameManager = gameManager;
         this.asteroids = asteroids;
     }
   
@@ -21,7 +23,7 @@ public class Ship extends Sprite {
         }
 
         super.update();
-        this.velocity.mult(0.99);
+        this.velocity.mult(0.995);
     }
 
     @Override
@@ -32,8 +34,14 @@ public class Ship extends Sprite {
                 laser.update();
                 laser.draw();
 
-                if (laser.hitsAsteroids() || laser.isOffScreen) {
+                Boolean asteroidHit = laser.hitsAsteroid();
+
+                if (asteroidHit || laser.isOffScreen) {
                     this.lasers.remove(laser);
+
+                    if (asteroidHit) {
+                        this.gameManager.asteroidHit();
+                    }
                 }
             }
 
