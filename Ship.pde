@@ -6,7 +6,7 @@ public class Ship extends Sprite {
     private ArrayList<Asteroid> asteroids;
 
     Ship(ArrayList<Asteroid> asteroids) {
-        super(width / 2, height / 2, 20);
+        super(width / 2, height / 2, 18);
 
         this.asteroids = asteroids;
     }

@@ -1,17 +1,23 @@
 public class Asteroid extends Sprite {
     private int sides = floor(random(5, 15));
     private float[] offsets = new float[sides];
+    private float rotation = 0;
+    private float rotationStep = map(random(1), 0, 1, -0.01, 0.01);
 
     Asteroid(PVector position, float radius) {
         super(position.x, position.y, radius * 0.5);
-        this.velocity = PVector.random2D();
-        this.calcOffsets();
+        this.init();
     }
 
     Asteroid() {
         super(random(width), random(height), floor(random(15, 50)));
-        this.velocity = PVector.random2D();
-        this.calcOffsets();
+        this.init();
+    }
+
+    @Override
+    void update() {
+        super.update();
+        this.rotation += this.rotationStep;
     }
 
     @Override
@@ -21,6 +27,8 @@ public class Asteroid extends Sprite {
             noFill();
             
             translate(this.position.x, this.position.y); 
+
+            rotate(this.rotation);
 
             beginShape();
                 for (int i = 0; i < this.sides; i++) {
@@ -60,7 +68,10 @@ public class Asteroid extends Sprite {
         return asteroids;
     }
 
-    private void calcOffsets() {
+    private void init() {
+        this.velocity = PVector.random2D();
+        // this.rotation = PVector.random2D();
+
         for (int i = 0; i < this.sides; i++) {
             this.offsets[i] = random(-this.radius / 4, this.radius / 4);
         }
