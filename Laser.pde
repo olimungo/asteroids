@@ -4,7 +4,7 @@ public class Laser extends Sprite {
     private ArrayList<Asteroid> asteroids;
 
     Laser(PVector position, float angle, ArrayList<Asteroid> asteroids) {
-        super(position.x, position.y, 0);
+        super(position.x, position.y, 1);
         this.velocity = PVector.fromAngle(angle).mult(10);
         this.asteroids = asteroids;
     }
@@ -21,18 +21,10 @@ public class Laser extends Sprite {
     }
 
     @Override
-    void checkEdges() {
-        if (this.position.x > width + this.radius) {
-            this.isOffScreen = true; 
-        } else if (this.position.x < -this.radius) {
-            this.isOffScreen = true; 
-        }
-
-        if (this.position.y > height + this.radius) {
-            this.isOffScreen = true; 
-        } else if (this.position.y < -this.radius) {
-            this.isOffScreen = true; 
-        }
+    Boolean checkEdges() {
+        this.isOffScreen = super.checkEdges();
+        
+        return this.isOffScreen;
     }
 
     Boolean hitsAsteroids() {

@@ -31,9 +31,9 @@ public class Star {
 
         this.pz = z;
 
-        fill(255);
+        fill(219, 233, 255);
         noStroke();
-        stroke(255);
+        stroke(219, 233, 255);
         line(px, py, sx, sy);
     }
 }

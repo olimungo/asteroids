@@ -20,18 +20,24 @@ public class Sprite {
         ellipse(this.position.x, this.position.y, this.radius, this.radius);
     }
 
-    void checkEdges() {
+    Boolean checkEdges() {
         if (this.position.x > width + this.radius) {
             this.position.x = -this.radius; 
+            return true;
         } else if (this.position.x < -this.radius) {
             this.position.x = width + this.radius;
+            return true;
         }
 
         if (this.position.y > height + this.radius) {
             this.position.y = -this.radius; 
+            return true;
         } else if (this.position.y < -this.radius) {
             this.position.y = height + this.radius;
+            return true;
         }
+
+        return false;
     }
 
     Asteroid hits(ArrayList<Asteroid> sprites) {
