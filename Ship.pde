@@ -37,6 +37,7 @@ public class Ship extends Sprite {
 
         pushStyle();
         pushMatrix();
+            noFill();
             strokeWeight(1.4);
 
             translate(this.position.x, this.position.y);
@@ -47,18 +48,20 @@ public class Ship extends Sprite {
             float color2 = random(150, 255);
             float color3 = random(150, 255);
 
+            float smallerRadius = this.radius / 5 * 3.5;
+
             stroke(color1);
-            line(-this.radius / 5 * 4, this.radius, this.radius / 5 * 4, this.radius);
+            bezier(-smallerRadius, this.radius, 0, smallerRadius, 0, smallerRadius, smallerRadius, this.radius);
             stroke(255, 50);
-            ellipse(this.radius / 5 * 4, this.radius, 2, 2);
+            ellipse(smallerRadius, this.radius, 2, 2);
             stroke(color2);
-            line(this.radius / 5 * 4, this.radius, 0, -this.radius);
+            line(smallerRadius, this.radius, 0, -this.radius);
             stroke(255, 50);
             ellipse(0, -this.radius, 2, 2);
             stroke(color3);
-            line(0, -this.radius, -this.radius / 5 * 4, this.radius);
+            line(0, -this.radius, -smallerRadius, this.radius);
             stroke(255, 50);
-            ellipse(-this.radius / 5 * 4, this.radius, 2, 2);
+            ellipse(-smallerRadius, this.radius, 2, 2);
 
         popMatrix();
         popStyle();

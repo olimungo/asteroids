@@ -35,8 +35,8 @@ void setup() {
 void draw() {
     background(0);
 
-    helpers.translateSketch(1.5);
-    helpers.drawPattern();
+    // helpers.translateSketch(1.5);
+    // helpers.drawPattern();
 
     starfield.draw();
 
@@ -50,9 +50,10 @@ void draw() {
 
     if (ship.hitsAsteroid()) {
         noLoop();
+        println("hit");
     }
 
-    helpers.showFrameRate();
+    // helpers.showFrameRate();
 }
 
 void mousePressed() {
