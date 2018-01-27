@@ -48,6 +48,10 @@ void draw() {
     ship.update();
     ship.draw();
 
+    if (ship.hitsAsteroid()) {
+        noLoop();
+    }
+
     helpers.showFrameRate();
 }
 

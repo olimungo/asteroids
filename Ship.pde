@@ -30,7 +30,7 @@ public class Ship extends Sprite {
             laser.update();
             laser.draw();
 
-            if (laser.hits(this.asteroids) || laser.isOffScreen) {
+            if (laser.hitsAsteroids() || laser.isOffScreen) {
                 this.lasers.remove(laser);
             }
         }
@@ -73,7 +73,13 @@ public class Ship extends Sprite {
     }
 
     void shoot() {
-        this.lasers.add(new Laser(this.position, this.heading));
+        this.lasers.add(new Laser(this.position, this.heading, this.asteroids));
+    }
+
+    Boolean hitsAsteroid() {
+        Asteroid asteroid = super.hits(this.asteroids);
+
+        return asteroid != null;
     }
 
     private void boost() {
