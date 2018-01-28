@@ -2,6 +2,7 @@ public class Ufo extends Sprite {
     Ufo(float x, float y) {
         super(x, y, 50);
         this.velocity = PVector.random2D();
+        this.velocity.setMag(2);
     }
 
     @Override

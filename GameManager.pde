@@ -14,11 +14,12 @@ public class GameManager {
     private Helpers helpers;
     private Ufo ufo;
     private Ship ship;
+    private int timerUfo = 0;
 
     GameManager() {
         this.helpers = new Helpers();
         this.starfield = new Starfield();
-        this.ufo = new Ufo(500, 500);
+        this.ufo = new Ufo(random(width), random(height));
         this.asteroids = new ArrayList<Asteroid>();
         this.ship = new Ship(gameManager, asteroids);
 
@@ -31,7 +32,11 @@ public class GameManager {
             if (this.ship.hitsAsteroid()) {
                 this.lifeLost();
             }
-        }     
+        }
+
+        if (this.timerUfo != 0) {
+            this.checkTimerUfo();
+        }    
     }
 
     void draw() {
@@ -52,8 +57,6 @@ public class GameManager {
 
             if (this.state == State.HOMESCREEN) {
                 this.helpers.showHomescreen();
-                this.ufo.update();
-                this.ufo.draw();
             } else if (this.state == State.PLAYING) {
                 this.helpers.showScore(this.getScore());
                 this.helpers.showRemainingLifes(this.lifes - 1);
@@ -65,13 +68,27 @@ public class GameManager {
                 this.helpers.showScore(this.getScore());
                 this.helpers.showGameOver();
             }
+
+            if (this.ufo != null) {
+                this.ufo.update();
+                this.ufo.draw();
+            }
         popStyle();
     }
 
     void startGame() {
         this.asteroidsHit = 0;
         this.lifes = 3;
+        this.startNewLife();
+    }
+
+    void startNewLife() {
         this.state = State.PLAYING;
+
+        this.generateAsteroids();
+        this.ship = new Ship(this, asteroids);
+        this.ufo = null;
+        this.timerUfo = millis() + floor(random(1000, 2000));
     }
 
     void lifeLost() {
@@ -82,12 +99,6 @@ public class GameManager {
         } else {
             this.state = State.NEXT_LIFE;
         }
-    }
-
-    void startNewLife() {
-        this.state = State.PLAYING;
-        this.generateAsteroids();
-        this.ship = new Ship(this, asteroids);
     }
 
     void endGame() {
@@ -103,7 +114,6 @@ public class GameManager {
             case HOMESCREEN:
             case GAME_OVER:
                 if (keyCode == 80) { // p
-                    this.startNewLife();
                     this.startGame();
                 }
                 break;
@@ -145,6 +155,33 @@ public class GameManager {
 
         for (int i = 0; i < this.maxAsteroids; i++) {
             this.asteroids.add(new Asteroid());
+        }
+    }
+
+    void checkTimerUfo() {
+        if (millis() > this.timerUfo) {
+            this.timerUfo = 0;
+
+            int randomSide = floor(random(4));
+            PVector vector = PVector.random2D();
+
+            switch(randomSide) {
+                case 1:
+                    vector.x += width;
+                    break;
+                case 2:
+                    vector.x -= width;
+                    break;
+                case 3:
+                    vector.y += height;
+                    break;
+                case 4:
+                    vector.y -= height;
+                    break;
+
+            }
+
+            this.ufo = new Ufo(vector.x, vector.y);
         }
     }
 }

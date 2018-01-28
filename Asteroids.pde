@@ -29,8 +29,8 @@ void setup() {
 void draw() {
     background(0);
 
-    // helpers.translateSketch(1.5);
-    // helpers.drawPattern();
+    helpers.translateSketch(1.5);
+    helpers.drawPattern();
 
     gameManager.update();
     gameManager.draw();
