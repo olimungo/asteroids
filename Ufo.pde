@@ -6,7 +6,7 @@ public class Ufo extends Sprite {
     private PShape ufo;
 
     Ufo(float x, float y) {
-        super(x, y, 50);
+        super(x, y, 20);
         this.velocity = PVector.random2D();
         this.velocity.setMag(2.5);
 
@@ -30,7 +30,6 @@ public class Ufo extends Sprite {
     }
 
     Boolean hit(float x, float y, float radius) {
-        println(radius);
         if ((x + radius > this.position.x && x + radius < this.position.x + this.ufoWidth) &&
             (y + radius > this.position.y && y + radius < this.position.y + this.ufoHeight)) {
                 return true;
@@ -70,6 +69,7 @@ public class Ufo extends Sprite {
 
         shape.beginShape();
         shape.noFill();
+        shape.strokeWeight(1.2);
 
         for (int i = 0 ; i < vectors.length; i++) {
             float alpha = random(170, 255);

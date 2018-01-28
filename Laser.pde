@@ -32,7 +32,7 @@ public class Laser extends Sprite {
     Boolean hitsAsteroid() {
         for (Asteroid asteroid : this.asteroids) {
             if (asteroid.hit(this.position.x, this.position.y, this.radius)) {
-                if (asteroid.radius > 15) {
+                if (asteroid.radius > 20) {
                     asteroids.addAll(asteroid.breakup());
                 }
 

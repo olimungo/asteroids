@@ -20,14 +20,18 @@ public class Ship extends Sprite {
   
     @Override
     void update() {
-        this.turn();
+        if (this.fragments.size() == 0) {
+            this.turn();
 
-        if (this.isBoosting) {
-            this.boost();
+            if (this.isBoosting) {
+                this.boost();
+            }
+
+            this.velocity.limit(10);
+
+            super.update();
+            this.velocity.mult(0.995);
         }
-
-        super.update();
-        this.velocity.mult(0.995);
     }
 
     @Override

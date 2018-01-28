@@ -5,7 +5,7 @@ public class Asteroid extends Fragment {
     }
 
     Asteroid() {
-        super(random(width), random(height), floor(random(15, 50)), floor(random(5, 15)), map(random(1), 0, 1, -0.01, 0.01));
+        super(random(width), random(height), floor(random(20, 60)), floor(random(10, 15)), map(random(1), 0, 1, -0.01, 0.01));
         this.velocity = PVector.random2D();
 
         // As the position is randomly chosen, make sure that the asteroid is not

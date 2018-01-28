@@ -12,7 +12,7 @@ public class Fragment extends Sprite {
         this.offsets = new float[this.sides];
 
         for (int i = 0; i < this.sides; i++) {
-            this.offsets[i] = random(-this.radius / 4, this.radius / 4);
+            this.offsets[i] = random(-this.radius / 3, this.radius / 3);
         }
     }
 

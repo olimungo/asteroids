@@ -3,8 +3,8 @@ PFont fontLight;
 Helpers helpers;
 Boolean slowFrameRate = false;
 
-float middleWidth = 1000 / 2;
-float middleHeight = 800 / 2;
+float middleWidth = 1080 / 2;
+float middleHeight = 768 / 2;
 
 GameManager gameManager;
 
@@ -12,7 +12,7 @@ void pre() {
 }
 
 void setup() {
-    size(1000, 800, P2D);
+    size(1080, 768, P2D);
 
     // fullScreen();
     // frameRate(10);

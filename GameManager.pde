@@ -11,7 +11,7 @@ public class GameManager {
     State state = State.HOMESCREEN;
 
     private Starfield starfield;
-    private int maxAsteroids = 1;
+    private int maxAsteroids = 15;
     private ArrayList<Asteroid> asteroids;
     private ArrayList<Ufo> ufos;
     private Helpers helpers;
@@ -96,6 +96,8 @@ public class GameManager {
         this.ufosHit = 0;
         this.lifes = 3;
         this.level = 1;
+        this.maxAsteroids = 10;
+        this.ufos.clear();
         this.startNewLife();
     }
 
@@ -108,12 +110,9 @@ public class GameManager {
     }
 
     void startNewLevel() {
-        this.state = State.PLAYING;
         this.level++;
-
-        this.generateAsteroids();
-        this.ship = new Ship(this, this.asteroids, this.ufos);
-        this.timerUfo = millis() + floor(random(2000, 5000));
+        this.maxAsteroids += 5;
+        this.startNewLife();
     }
 
     void lifeLost() {
@@ -123,7 +122,6 @@ public class GameManager {
             this.endGame();
         } else {
             this.ufos.clear();
-            this.timerUfo = 0;
             this.timerUfo = 0;
             this.state = State.NEXT_LIFE;
         }
@@ -139,7 +137,10 @@ public class GameManager {
 
     void ufoHit() {
         this.ufosHit++;
-        this.timerUfo = millis() + floor(random(2000, 5000));
+
+        if (this.ufos.size() == 0) {
+            this.timerUfo = millis() + floor(random(2000, 5000));
+        }
     }
 
     void keyPressed(int keyCode) {
@@ -230,7 +231,9 @@ public class GameManager {
 
             }
 
-            this.ufos.add(new Ufo(vector.x, vector.y));
+            for (int i = 0; i < this.level; i++) {
+                this.ufos.add(new Ufo(vector.x, vector.y));
+            }
         }
     }
 }
