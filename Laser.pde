@@ -2,11 +2,13 @@ public class Laser extends Sprite {
     Boolean isOffScreen = false;
 
     private ArrayList<Asteroid> asteroids;
+    private ArrayList<Ufo> ufos;
 
-    Laser(PVector position, float angle, ArrayList<Asteroid> asteroids) {
+    Laser(PVector position, float angle, ArrayList<Asteroid> asteroids, ArrayList<Ufo> ufos) {
         super(position.x, position.y, 1);
         this.velocity = PVector.fromAngle(angle).mult(10);
         this.asteroids = asteroids;
+        this.ufos = ufos;
     }
 
     @Override
@@ -28,16 +30,30 @@ public class Laser extends Sprite {
     }
 
     Boolean hitsAsteroid() {
-        Asteroid asteroid = super.hits(this.asteroids);
+        for (Asteroid asteroid : this.asteroids) {
+            if (asteroid.hit(this.position.x, this.position.y, this.radius)) {
+                if (asteroid.radius > 15) {
+                    asteroids.addAll(asteroid.breakup());
+                }
 
-        if (asteroid != null) {
-            if (asteroid.radius > 15) {
-                asteroids.addAll(asteroid.breakup());
+                asteroids.remove(asteroid);
+
+                return true;
             }
-
-            asteroids.remove(asteroid);
         }
 
-        return asteroid != null;
+        return false;
+    }
+
+    Boolean hitsUfo() {
+        for (Ufo ufo : this.ufos) {
+            if (ufo.hit(this.position.x, this.position.y, this.radius)) {
+                ufos.remove(ufo);
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }

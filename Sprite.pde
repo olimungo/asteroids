@@ -39,17 +39,4 @@ public class Sprite {
 
         return false;
     }
-
-    Asteroid hits(ArrayList<Asteroid> sprites) {
-        for (int i = sprites.size() - 1; i >= 0; i--) {
-            Asteroid sprite = sprites.get(i);
-            float distance = dist(this.position.x, this.position.y, sprite.position.x, sprite.position.y);
-
-            if (distance < this.radius + sprite.radius) {
-                return sprite;
-            }
-        }
-
-        return null;
-    }
 }

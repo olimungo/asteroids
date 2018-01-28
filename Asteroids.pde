@@ -15,7 +15,7 @@ void setup() {
     size(1000, 800, P2D);
 
     // fullScreen();
-    // frameRate(5);
+    // frameRate(10);
 
     helpers = new Helpers();
 
@@ -29,8 +29,8 @@ void setup() {
 void draw() {
     background(0);
 
-    helpers.translateSketch(1.5);
-    helpers.drawPattern();
+    // helpers.translateSketch(1.5);
+    // helpers.drawPattern();
 
     gameManager.update();
     gameManager.draw();

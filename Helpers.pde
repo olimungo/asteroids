@@ -67,6 +67,14 @@ public class Helpers {
         popStyle();
     }
 
+    void showLevel(int level) {
+        pushStyle();
+            textSize(50);
+            textAlign(CENTER);
+            text("LEVEL: " + level, width /2, 80);
+        popStyle();
+    }
+
     void showRemainingLifes(int lifes) {
         pushStyle();
             for (int i = 0; i < lifes; i++) {
@@ -91,6 +99,17 @@ public class Helpers {
             textFont(fontLight);
             textSize(25);
             text("PRESS \"P\" TO RE-TRY", width / 2, height / 2 + 50);
+        popStyle();
+    }
+
+    void showNextLevel(int level) {
+        pushStyle();
+            textAlign(CENTER);
+            textSize(60);
+            text("LEVEL " + level + " COMPLETED", width / 2, height / 2);
+            textFont(fontLight);
+            textSize(25);
+            text("PRESS \"P\" TO GO TO NEXT LEVEL", width / 2, height / 2 + 50);
         popStyle();
     }
 

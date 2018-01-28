@@ -30,4 +30,14 @@ public class Asteroid extends Fragment {
 
         return asteroids;
     }
+
+    Boolean hit(float x, float y, float radius) {
+        float distance = dist(this.position.x, this.position.y, x, y);
+
+        if (distance < this.radius + radius) {
+            return true;
+        }
+
+        return false;
+    }
 }
