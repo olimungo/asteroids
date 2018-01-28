@@ -11,7 +11,7 @@ public class Helpers {
 
         for (int i = 0; i < 3; i++) {
             x += 50;
-            ShipShell shipShell = new ShipShell(x, 80);
+            ShipShell shipShell = new ShipShell(x, 60);
             shipShell.heading = -PI / 2;
             this.shipShells[i] = shipShell;
         }
@@ -49,10 +49,13 @@ public class Helpers {
     void showHomescreen() {
         pushStyle();
             textAlign(CENTER);
-            textSize(80);
-            text("ASTEROIDS", width / 2, height / 2);
-            textSize(40);
-            text("PRESS SPACE TO PLAY", width / 2, height / 2 + 50);
+            textSize(100);
+            text("ASTEROIDS", width / 2, height / 2 - 100);
+            textSize(50);
+            text("INSERT 1 COIN", width / 2, height / 2 + 50);
+            textFont(fontLight);
+            textSize(25);
+            text("OR PRESS \"P\" TO PLAY", width / 2, height / 2 + 90);
         popStyle();
     }
 
@@ -76,7 +79,7 @@ public class Helpers {
         pushStyle();
             textAlign(CENTER);
             textSize(60);
-            String msg = "BIG BADABOOM, " + lifes + " LIFE";
+            String msg = lifes + " LIFE";
 
             if (lifes > 1) {
                 msg += "S LEFT";
@@ -85,8 +88,9 @@ public class Helpers {
             }
 
             text(msg, width / 2, height / 2);
-            textSize(40);
-            text("PRESS SPACE TO RE-TRY", width / 2, height / 2 + 50);
+            textFont(fontLight);
+            textSize(25);
+            text("PRESS \"P\" TO RE-TRY", width / 2, height / 2 + 50);
         popStyle();
     }
 
@@ -95,8 +99,9 @@ public class Helpers {
             textAlign(CENTER);
             textSize(80);
             text("GAME OVER", width / 2, height / 2);
-            textSize(40);
-            text("PRESS SPACE TO PLAY AGAIN", width / 2, height / 2 + 50);
+            textFont(fontLight);
+            textSize(25);
+            text("PRESS \"P\" TO PLAY AGAIN", width / 2, height / 2 + 50);
         popStyle();
     }
 }
