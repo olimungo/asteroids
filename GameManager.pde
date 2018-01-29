@@ -25,7 +25,7 @@ public class GameManager {
         this.asteroids = new ArrayList<Asteroid>();
         this.ufos = new ArrayList<Ufo>();
         this.ship = new Ship(this, this.asteroids, this.ufos);
-        this.ufos.add(new Ufo(random(width), random(height)));
+        this.ufos.add(new Ufo(random(width), random(height), null));
 
         generateAsteroids();
     }
@@ -34,6 +34,14 @@ public class GameManager {
         if (this.state == State.PLAYING) {
             if (this.ship.hitsAsteroid() || ship.hitsUfo()) {
                 this.lifeLost();
+            }
+
+            for (Ufo ufo : this.ufos) {
+                if (ufo.hitsShip()) {
+                    this.ship.explode();
+                    this.lifeLost();
+                    break;
+                }
             }
 
             this.checkLevelFinished();
@@ -129,6 +137,7 @@ public class GameManager {
 
     void endGame() {
         this.state = State.GAME_OVER;
+        this.ufos.clear();
     }
 
     void asteroidHit() {
@@ -232,7 +241,7 @@ public class GameManager {
             }
 
             for (int i = 0; i < this.level; i++) {
-                this.ufos.add(new Ufo(vector.x, vector.y));
+                this.ufos.add(new Ufo(vector.x, vector.y, this.ship));
             }
         }
     }

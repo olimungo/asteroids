@@ -3,12 +3,19 @@ public class Laser extends Sprite {
 
     private ArrayList<Asteroid> asteroids;
     private ArrayList<Ufo> ufos;
+    private Ship ship;
 
     Laser(PVector position, float angle, ArrayList<Asteroid> asteroids, ArrayList<Ufo> ufos) {
         super(position.x, position.y, 1);
         this.velocity = PVector.fromAngle(angle).mult(10);
         this.asteroids = asteroids;
         this.ufos = ufos;
+    }
+
+    Laser(PVector position, float angle, Ship ship) {
+        super(position.x, position.y, 1);
+        this.velocity = PVector.fromAngle(angle).mult(10);
+        this.ship = ship;
     }
 
     @Override
@@ -52,6 +59,18 @@ public class Laser extends Sprite {
 
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    Boolean hitsShip() {
+        if (this.ship.hit(this.position.x, this.position.y, this.radius)) {
+            //ufos.remove(ufo);
+
+            println("ship hit");
+
+            return true;
         }
 
         return false;

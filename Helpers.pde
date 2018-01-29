@@ -71,7 +71,7 @@ public class Helpers {
         pushStyle();
             textSize(50);
             textAlign(CENTER);
-            text("LEVEL: " + level, width /2, 80);
+            text("LEVEL " + level, width /2, 80);
         popStyle();
     }
 

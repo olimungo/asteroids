@@ -80,20 +80,25 @@ public class Ship extends Sprite {
         this.lasers.add(new Laser(this.position, this.heading, this.asteroids, this.ufos));
     }
 
+    void explode() {
+        if (this.fragments.size() == 0) {
+            Fragment fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.8, 5, 0.1);
+            fragment.velocity = PVector.random2D();
+            this.fragments.add(fragment);
+            fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.8, 3, -0.1);
+            fragment.velocity = PVector.random2D();
+            this.fragments.add(fragment);
+            fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.5, 3, 0.2);
+            fragment.velocity = PVector.random2D();
+            this.fragments.add(fragment);
+        }
+    }
+
     Boolean hitsAsteroid() {
         if (this.fragments.size() == 0) {
             for (Asteroid asteroid : this.asteroids) {
                 if (asteroid.hit(this.position.x, this.position.y, this.radius)) {
-                    Fragment fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.8, 5, 0.1);
-                    fragment.velocity = PVector.random2D();
-                    this.fragments.add(fragment);
-                    fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.8, 3, -0.1);
-                    fragment.velocity = PVector.random2D();
-                    this.fragments.add(fragment);
-                    fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.5, 3, 0.2);
-                    fragment.velocity = PVector.random2D();
-                    this.fragments.add(fragment);
-
+                    this.explode();
                     return true;
                 }
             }
@@ -119,6 +124,16 @@ public class Ship extends Sprite {
                     return true;
                 }
             }
+        }
+
+        return false;
+    }
+
+    Boolean hit(float x, float y, float radius) {
+        float distance = dist(this.position.x, this.position.y, x, y);
+
+        if (distance < this.radius + radius) {
+            return true;
         }
 
         return false;
