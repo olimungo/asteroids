@@ -18,6 +18,10 @@ public class GameManager {
     private Ship ship;
     private int timerUfo = 0;
     private Boolean showStarfield = false;
+    private int addLifeWhenScored = 2000;
+    private int lifeAddedSoFar = 0;
+    private Boolean showNewLife = false;
+    private int newLifeTimer = 0;
 
     GameManager() {
         this.helpers = new Helpers();
@@ -45,6 +49,7 @@ public class GameManager {
             }
 
             this.checkLevelFinished();
+            this.checkScore();
         }
 
         if (this.timerUfo != 0) {
@@ -76,6 +81,11 @@ public class GameManager {
                 this.helpers.showScore(this.getScore());
                 this.helpers.showRemainingLifes(this.lifes - 1);
                 this.helpers.showLevel(this.level);
+
+                if (this.showNewLife) {
+                    this.helpers.showNewLife();
+                    this.checkTimerNewLife();
+                }
             } else if (this.state == State.NEXT_LEVEL) {
                 this.helpers.showScore(this.getScore());
                 this.helpers.showRemainingLifes(this.lifes - 1);
@@ -132,6 +142,15 @@ public class GameManager {
             this.ufos.clear();
             this.timerUfo = 0;
             this.state = State.NEXT_LIFE;
+        }
+    }
+
+    void checkScore() {
+        if (this.getScore() - this.lifeAddedSoFar * this.addLifeWhenScored > this.addLifeWhenScored) {
+            this.lifes++;
+            this.lifeAddedSoFar++;
+            this.showNewLife = true;
+            this.newLifeTimer = millis() + 2000;
         }
     }
 
@@ -243,6 +262,13 @@ public class GameManager {
             for (int i = 0; i < this.level; i++) {
                 this.ufos.add(new Ufo(vector.x, vector.y, this.ship));
             }
+        }
+    }
+
+    private void checkTimerNewLife() {
+        if (millis() > this.newLifeTimer) {
+            this.newLifeTimer = 0;
+            this.showNewLife = false;
         }
     }
 }

@@ -6,10 +6,10 @@ public class Helpers {
     private ShipShell[] shipShells;
 
     Helpers() {
-        shipShells = new ShipShell[3];
+        shipShells = new ShipShell[10];
         int x = 20;
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < shipShells.length; i++) {
             x += 50;
             ShipShell shipShell = new ShipShell(x, 60);
             shipShell.heading = -PI / 2;
@@ -72,6 +72,14 @@ public class Helpers {
             textSize(50);
             textAlign(CENTER);
             text("LEVEL " + level, width /2, 80);
+        popStyle();
+    }
+
+    void showNewLife() {
+        pushStyle();
+            textSize(50);
+            textAlign(CENTER);
+            text("NEW LIFE!", width /2, 150);
         popStyle();
     }
 

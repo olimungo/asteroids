@@ -6,7 +6,7 @@ public class Laser extends Sprite {
     private Ship ship;
 
     Laser(PVector position, float angle, ArrayList<Asteroid> asteroids, ArrayList<Ufo> ufos) {
-        super(position.x, position.y, 1);
+        super(position.x, position.y, 4);
         this.velocity = PVector.fromAngle(angle).mult(10);
         this.asteroids = asteroids;
         this.ufos = ufos;

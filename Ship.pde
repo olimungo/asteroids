@@ -27,20 +27,9 @@ public class Ship extends Sprite {
                 this.boost();
             }
 
-            this.velocity.limit(10);
-
-            super.update();
-            this.velocity.mult(0.995);
-        }
-    }
-
-    @Override
-    void draw() {
-        if (this.fragments.size() == 0) {
             for (int i = this.lasers.size() - 1; i >= 0; i--) {
                 Laser laser = this.lasers.get(i);
                 laser.update();
-                laser.draw();
 
                 if (laser.isOffScreen) {
                     this.lasers.remove(laser);
@@ -59,6 +48,21 @@ public class Ship extends Sprite {
 
             this.shipShell.heading = this.heading;
             this.shipShell.position = this.position;
+
+            this.velocity.limit(10);
+
+            super.update();
+            this.velocity.mult(0.995);
+        }
+    }
+
+    @Override
+    void draw() {
+        if (this.fragments.size() == 0) {
+            for (Laser laser : this.lasers) {
+                laser.draw();
+            }
+
             this.shipShell.draw();
         } else {
             for (Fragment fragment : this.fragments) {

@@ -3,7 +3,6 @@ public class Ufo extends Sprite {
     int ufoHeight = 25;
     Boolean shipHit = false;
 
-    private GameManager gameManager;
     private PVector[] shapeVectors;
     private PShape ufo;
     private Ship ship;
@@ -16,7 +15,6 @@ public class Ufo extends Sprite {
         this.ship = ship;
         this.velocity = PVector.random2D();
         this.velocity.setMag(2.5);
-        this.gameManager = gameManager;
 
         this.shapeVectors = this.generateShapeVectors();
     }
@@ -36,6 +34,8 @@ public class Ufo extends Sprite {
 
         for (int i = this.lasers.size() - 1; i >= 0; i--) {
             Laser laser = this.lasers.get(i);
+
+            laser.update();
 
             if (laser.hitsShip()) {
                 this.lasers.remove(laser);
@@ -59,7 +59,6 @@ public class Ufo extends Sprite {
 
         for (int i = this.lasers.size() - 1; i >= 0; i--) {
             Laser laser = this.lasers.get(i);
-            laser.update();
             laser.draw();
         }
     }
