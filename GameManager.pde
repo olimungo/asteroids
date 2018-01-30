@@ -22,6 +22,7 @@ public class GameManager {
     private int lifeAddedSoFar = 0;
     private Boolean showNewLife = false;
     private int newLifeTimer = 0;
+    private int topScore = 0;
 
     GameManager() {
         this.helpers = new Helpers();
@@ -85,7 +86,7 @@ public class GameManager {
                 this.ship.draw();
             }
 
-            this.helpers.showTitles(this.state, this.lifes, this.level, this.getScore());
+            this.helpers.showTitles(this.state, this.lifes, this.level, this.getScore(), this.topScore);
 
             if (this.state == State.PLAYING) {
                 if (this.showNewLife) {
@@ -105,7 +106,7 @@ public class GameManager {
         this.ufosHit = 0;
         this.lifes = 3;
         this.level = 1;
-        this.maxAsteroids = 70;
+        this.maxAsteroids = 1;
         this.ufos.clear();
         this.startNewLife();
     }
@@ -148,6 +149,12 @@ public class GameManager {
     void endGame() {
         this.state = State.GAME_OVER;
         this.ufos.clear();
+
+        int score = this.getScore();
+
+        if (score > this.topScore) {
+            this.topScore = score;
+        }
     }
 
     void asteroidHit() {
@@ -213,6 +220,12 @@ public class GameManager {
             this.ufos.clear();
             this.timerUfo = 0;
             this.state = State.NEXT_LEVEL;
+
+            int score = this.getScore();
+
+            if (score > this.topScore) {
+                this.topScore = score;
+            }
         }
     }
 
