@@ -18,7 +18,7 @@ public class GameManager {
     private Ship ship;
     private int timerUfo = 0;
     private Boolean showStarfield = false;
-    private int addLifeWhenScored = 50;
+    private int addLifeWhenScored = 2000;
     private int lifeAddedSoFar = 0;
     private Boolean showNewLife = false;
     private int newLifeTimer = 0;
@@ -54,7 +54,19 @@ public class GameManager {
 
         if (this.timerUfo != 0) {
             this.checkTimerUfo();
-        }    
+        }
+
+        if (this.state != State.HOMESCREEN) {
+            this.ship.update();
+        }
+
+        for (Ufo ufo : this.ufos) {
+            ufo.update();
+        }
+
+        for (Asteroid asteroid : this.asteroids) {
+            asteroid.update();
+        } 
     }
 
     void draw() {
@@ -66,12 +78,10 @@ public class GameManager {
             fill(219, 233, 255, random(200, 255));
 
             for (Asteroid asteroid : this.asteroids) {
-                asteroid.update();
                 asteroid.draw();
             }
 
             if (this.state != State.HOMESCREEN) {
-                this.ship.update();
                 this.ship.draw();
             }
 
@@ -84,11 +94,8 @@ public class GameManager {
                 }
             }
 
-            if (this.ufos.size() > 0) {
-                for (Ufo ufo : this.ufos) {
-                    ufo.update();
-                    ufo.draw();
-                }
+            for (Ufo ufo : this.ufos) {
+                ufo.draw();
             }
         popStyle();
     }
@@ -98,7 +105,7 @@ public class GameManager {
         this.ufosHit = 0;
         this.lifes = 3;
         this.level = 1;
-        this.maxAsteroids = 10;
+        this.maxAsteroids = 70;
         this.ufos.clear();
         this.startNewLife();
     }
