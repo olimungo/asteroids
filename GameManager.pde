@@ -115,6 +115,7 @@ public class GameManager {
         this.lifes = 3;
         this.level = 1;
         this.maxAsteroids = 10;
+        this.homescreenTimer = 0;
         this.ufos.clear();
         this.startNewLife();
     }
@@ -157,6 +158,7 @@ public class GameManager {
     void endGame() {
         this.state = State.GAME_OVER;
         this.ufos.clear();
+        this.timerUfo = 0;
         this.homescreenTimer = millis() + 5000;
 
         int score = this.getScore();

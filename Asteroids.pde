@@ -5,7 +5,7 @@ Boolean slowFrameRate = false;
 Boolean fineTuning = false;
 
 float middleWidth = 1024 / 2;
-float middleHeight = 768 / 2;
+float middleHeight = 700 / 2;
 
 GameManager gameManager;
 
@@ -13,7 +13,7 @@ void pre() {
 }
 
 void setup() {
-    size(1024, 768, P2D);
+    size(1024, 700, P2D);
 
     // fullScreen();
     // frameRate(10);
