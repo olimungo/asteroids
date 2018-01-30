@@ -53,6 +53,10 @@ public class Ship extends Sprite {
 
             super.update();
             this.velocity.mult(0.995);
+        } else {
+            for (Fragment fragment : this.fragments) {
+                fragment.update();
+            }
         }
     }
 
@@ -66,7 +70,6 @@ public class Ship extends Sprite {
             this.shipShell.draw();
         } else {
             for (Fragment fragment : this.fragments) {
-                fragment.update();
                 fragment.draw();
             }
         }

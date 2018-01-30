@@ -31,9 +31,11 @@ public class Star {
 
         this.pz = z;
 
-        fill(219, 233, 255);
-        noStroke();
-        stroke(219, 233, 255);
-        line(px, py, sx, sy);
+        pushMatrix();
+            fill(219, 233, 255);
+            noStroke();
+            stroke(219, 233, 255);
+            line(px, py, sx, sy);
+        popMatrix();
     }
 }

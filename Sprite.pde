@@ -15,9 +15,11 @@ public class Sprite {
     }
 
     void draw() {
-        fill(255);
-        noStroke();
-        ellipse(this.position.x, this.position.y, this.radius, this.radius);
+        pushStyle();
+            fill(255);
+            noStroke();
+            ellipse(this.position.x, this.position.y, this.radius, this.radius);
+        popStyle();
     }
 
     Boolean checkEdges() {

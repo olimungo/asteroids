@@ -46,7 +46,7 @@ public class Helpers {
         popStyle();
     }
 
-    void showTitles(State state,int lifes, int level, int score, int topScore) {
+    void showTitles(State state,int lifes, int level, int score, int topScore, Boolean isPaused) {
         if (state == State.HOMESCREEN) {
             this.showHomescreen();
             this.showTopScore(topScore);
@@ -54,6 +54,10 @@ public class Helpers {
             this.showScore(score);
             this.showRemainingLifes(lifes - 1);
             this.showLevel(level);
+
+            if (isPaused) {
+                this.showPause();
+            }
         } else if (state == State.NEXT_LEVEL) {
             this.showScore(score);
             this.showRemainingLifes(lifes - 1);
@@ -80,7 +84,7 @@ public class Helpers {
             text("INSERT 1 COIN", width / 2, height / 2 + 50);
             textFont(fontLight);
             textSize(25);
-            text("OR PRESS \"P\" TO PLAY", width / 2, height / 2 + 90);
+            text("OR PRESS \"S\" TO START", width / 2, height / 2 + 90);
         popStyle();
     }
 
@@ -141,7 +145,7 @@ public class Helpers {
             text(msg, width / 2, height / 2);
             textFont(fontLight);
             textSize(25);
-            text("PRESS \"P\" TO RE-TRY", width / 2, height / 2 + 50);
+            text("PRESS \"S\" TO RE-TRY", width / 2, height / 2 + 50);
         popStyle();
     }
 
@@ -152,7 +156,7 @@ public class Helpers {
             text("LEVEL " + level + " COMPLETED", width / 2, height / 2);
             textFont(fontLight);
             textSize(25);
-            text("PRESS \"P\" TO GO TO NEXT LEVEL", width / 2, height / 2 + 50);
+            text("PRESS \"S\" TO GO TO NEXT LEVEL", width / 2, height / 2 + 50);
         popStyle();
     }
 
@@ -163,7 +167,15 @@ public class Helpers {
             text("GAME OVER", width / 2, height / 2);
             textFont(fontLight);
             textSize(25);
-            text("PRESS \"P\" TO PLAY AGAIN", width / 2, height / 2 + 50);
+            text("PRESS \"S\" TO PLAY AGAIN", width / 2, height / 2 + 50);
+        popStyle();
+    }
+
+    void showPause() {
+        pushStyle();
+            textAlign(CENTER);
+            textSize(80);
+            text("PAUSE", width / 2, height / 2);
         popStyle();
     }
 }
