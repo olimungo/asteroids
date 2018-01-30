@@ -17,7 +17,7 @@ public class Helpers {
         }
     }
 
-    void translateSketch(float ratio) {
+    void scaleStage(float ratio) {
         scale(1/ratio);
         translate((width * ratio - width) / 2, (height * ratio - height) / 2);
     }
@@ -39,7 +39,7 @@ public class Helpers {
         }
 
         pushStyle();
-            fill(255, 255, 255, 100);
+            fill(255, 255, 255, 150);
             textSize(30);
             textAlign(LEFT);
             text(this.frameRateMessage, 30, height - 40);

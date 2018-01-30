@@ -220,12 +220,13 @@ public class GameManager {
     private void checkLevelFinished() {
         if (this.asteroids.size() == 0) {
             this.ufos.clear();
+            this.timerUfo = 0;
             this.state = State.NEXT_LEVEL;
         }
     }
 
     private int getScore() {
-        return this.asteroidsHit * 10 + this.ufosHit * 30;
+        return this.asteroidsHit * 10 + this.ufosHit * 50;
     }
 
     private void generateAsteroids() {

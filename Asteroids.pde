@@ -2,6 +2,7 @@ PFont fontThin;
 PFont fontLight;
 Helpers helpers;
 Boolean slowFrameRate = false;
+Boolean fineTuning = false;
 
 float middleWidth = 1080 / 2;
 float middleHeight = 768 / 2;
@@ -29,13 +30,17 @@ void setup() {
 void draw() {
     background(0);
 
-    // helpers.translateSketch(1.5);
-    // helpers.drawPattern();
+    if (fineTuning) {
+        helpers.scaleStage(1.5);
+        helpers.drawPattern();
+    }
 
     gameManager.update();
     gameManager.draw();
 
-    // helpers.showFrameRate();
+    if (fineTuning) {
+        helpers.showFrameRate();
+    }
 }
 
 void mousePressed() {
@@ -50,11 +55,13 @@ void mousePressed() {
 }
 
 void mouseReleased() {
-    // frameRate(60);
     loop();
 }
 
 void keyPressed() {
+    if (keyCode == 68) { // D
+        this.fineTuning = !this.fineTuning;
+    }
     gameManager.keyPressed(keyCode);
 }
 
