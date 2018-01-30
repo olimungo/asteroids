@@ -18,7 +18,7 @@ public class GameManager {
     private Ship ship;
     private int timerUfo = 0;
     private Boolean showStarfield = false;
-    private int addLifeWhenScored = 2000;
+    private int addLifeWhenScored = 50;
     private int lifeAddedSoFar = 0;
     private Boolean showNewLife = false;
     private int newLifeTimer = 0;
@@ -75,29 +75,13 @@ public class GameManager {
                 this.ship.draw();
             }
 
-            if (this.state == State.HOMESCREEN) {
-                this.helpers.showHomescreen();
-            } else if (this.state == State.PLAYING) {
-                this.helpers.showScore(this.getScore());
-                this.helpers.showRemainingLifes(this.lifes - 1);
-                this.helpers.showLevel(this.level);
+            this.helpers.showTitles(this.state, this.lifes, this.level, this.getScore());
 
+            if (this.state == State.PLAYING) {
                 if (this.showNewLife) {
                     this.helpers.showNewLife();
                     this.checkTimerNewLife();
                 }
-            } else if (this.state == State.NEXT_LEVEL) {
-                this.helpers.showScore(this.getScore());
-                this.helpers.showRemainingLifes(this.lifes - 1);
-                this.helpers.showNextLevel(this.level);
-            } else if (this.state == State.NEXT_LIFE) {
-                this.helpers.showScore(this.getScore());
-                this.helpers.showRemainingLifes(this.lifes);
-                this.helpers.showLevel(this.level);
-                this.helpers.showNextLife(this.lifes);
-            } else if (this.state == State.GAME_OVER) {
-                this.helpers.showScore(this.getScore());
-                this.helpers.showGameOver();
             }
 
             if (this.ufos.size() > 0) {
@@ -146,7 +130,7 @@ public class GameManager {
     }
 
     void checkScore() {
-        if (this.getScore() - this.lifeAddedSoFar * this.addLifeWhenScored > this.addLifeWhenScored) {
+        if (this.getScore() - this.lifeAddedSoFar * this.addLifeWhenScored >= this.addLifeWhenScored) {
             this.lifes++;
             this.lifeAddedSoFar++;
             this.showNewLife = true;

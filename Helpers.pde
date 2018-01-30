@@ -46,6 +46,28 @@ public class Helpers {
         popStyle();
     }
 
+    void showTitles(State state,int lifes, int level, int score) {
+        if (state == State.HOMESCREEN) {
+            this.showHomescreen();
+        } else if (state == State.PLAYING) {
+            this.showScore(score);
+            this.showRemainingLifes(lifes - 1);
+            this.showLevel(level);
+        } else if (state == State.NEXT_LEVEL) {
+            this.showScore(score);
+            this.showRemainingLifes(lifes - 1);
+            this.showNextLevel(level);
+        } else if (state == State.NEXT_LIFE) {
+            this.showScore(score);
+            this.showRemainingLifes(lifes);
+            this.showLevel(level);
+            this.showNextLife(lifes);
+        } else if (state == State.GAME_OVER) {
+            this.showScore(score);
+            this.showGameOver();
+        }
+    }
+
     void showHomescreen() {
         pushStyle();
             textAlign(CENTER);
