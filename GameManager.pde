@@ -181,7 +181,6 @@ public class GameManager {
     }
 
     void keyPressed(int keyCode) {
-        println(keyCode);
         switch(this.state) {
             case HOMESCREEN:
             case GAME_OVER:
