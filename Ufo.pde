@@ -15,14 +15,12 @@ public class Ufo extends Sprite {
         this.ship = ship;
         this.velocity = PVector.random2D();
         this.velocity.setMag(2.5);
-
-        this.shapeVectors = this.generateShapeVectors();
+        this.ufo = this.generateShape(this.generateShapeVectors());
     }
 
     @Override
     void update() {
         super.update();
-        this.ufo = this.generateShape(this.shapeVectors);
 
         if (this.ship != null) {
             if (this.timerShoot == 0) {
@@ -107,11 +105,10 @@ public class Ufo extends Sprite {
 
         shape.beginShape();
         shape.noFill();
-        shape.strokeWeight(1.3);
+        shape.strokeWeight(1.4);
 
         for (int i = 0 ; i < vectors.length; i++) {
-            float alpha = random(170, 255);
-            shape.stroke(219, 233, 255, alpha);
+            shape.stroke(219, 233, 255);
             shape.vertex(vectors[i].x, vectors[i].y);
         }
 
