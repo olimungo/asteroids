@@ -41,4 +41,14 @@ public class Sprite {
 
         return false;
     }
+    
+    Boolean hits(Sprite sprite) {
+        float distance = dist(this.position.x, this.position.y, sprite.position.x, sprite.position.y);
+
+        if (distance < this.radius + sprite.radius) {
+            return true;
+        }
+
+        return false;
+    }
 }

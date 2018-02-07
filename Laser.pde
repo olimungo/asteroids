@@ -5,6 +5,11 @@ public class Laser extends Sprite {
     private ArrayList<Ufo> ufos;
     private Ship ship;
 
+    Laser(PVector position, float angle) {
+        super(position.x, position.y, 4);
+        this.velocity = PVector.fromAngle(angle).mult(10);
+    }
+
     Laser(PVector position, float angle, ArrayList<Asteroid> asteroids, ArrayList<Ufo> ufos) {
         super(position.x, position.y, 4);
         this.velocity = PVector.fromAngle(angle).mult(10);
@@ -36,43 +41,23 @@ public class Laser extends Sprite {
         return this.isOffScreen;
     }
 
-    Boolean hitsAsteroid() {
-        for (Asteroid asteroid : this.asteroids) {
-            if (asteroid.hit(this.position.x, this.position.y, this.radius)) {
-                if (asteroid.radius > 20) {
-                    asteroids.addAll(asteroid.breakup());
-                }
+    // Boolean hitsUfo() {
+    //     for (Ufo ufo : this.ufos) {
+    //         if (ufo.hit(this.position.x, this.position.y, this.radius)) {
+    //             ufos.remove(ufo);
 
-                asteroids.remove(asteroid);
+    //             return true;
+    //         }
+    //     }
 
-                return true;
-            }
-        }
+    //     return false;
+    // }
 
-        return false;
-    }
+    // Boolean hitsShip() {
+    //     if (this.ship.hit(this.position.x, this.position.y, this.radius)) {
+    //         return true;
+    //     }
 
-    Boolean hitsUfo() {
-        for (Ufo ufo : this.ufos) {
-            if (ufo.hit(this.position.x, this.position.y, this.radius)) {
-                ufos.remove(ufo);
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    Boolean hitsShip() {
-        if (this.ship.hit(this.position.x, this.position.y, this.radius)) {
-            //ufos.remove(ufo);
-
-            println("ship hit");
-
-            return true;
-        }
-
-        return false;
-    }
+    //     return false;
+    // }
 }

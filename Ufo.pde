@@ -24,7 +24,7 @@ public class Ufo extends Sprite {
 
         if (this.ship != null) {
             if (this.timerShoot == 0) {
-                this.timerShoot = millis() + floor(random(10000, 15000));
+                this.timerShoot = millis() + floor(random(1000, 1500));
             }
 
             this.checkTimerShoot();
@@ -35,10 +35,10 @@ public class Ufo extends Sprite {
 
             laser.update();
 
-            if (laser.hitsShip()) {
-                this.lasers.remove(laser);
-                this.shipHit = true;
-            }
+            // if (laser.hitsShip()) {
+            //     this.lasers.remove(laser);
+            //     this.shipHit = true;
+            // }
 
             if (laser.isOffScreen) {
                 this.lasers.remove(laser);

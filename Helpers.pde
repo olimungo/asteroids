@@ -46,11 +46,11 @@ public class Helpers {
         popStyle();
     }
 
-    void showTitles(State state,int lifes, int level, int score, int topScore, Boolean isPaused) {
-        if (state == State.HOMESCREEN) {
+    void showTitles(GameState state,int lifes, int level, int score, int topScore, Boolean isPaused) {
+        if (state == GameState.HOMESCREEN) {
             this.showHomescreen();
             this.showTopScore(topScore);
-        } else if (state == State.PLAYING) {
+        } else if (state == GameState.PLAYING) {
             this.showScore(score);
             this.showRemainingLifes(lifes - 1);
             this.showLevel(level);
@@ -58,17 +58,17 @@ public class Helpers {
             if (isPaused) {
                 this.showPause();
             }
-        } else if (state == State.NEXT_LEVEL) {
+        } else if (state == GameState.NEXT_LEVEL) {
             this.showScore(score);
             this.showRemainingLifes(lifes - 1);
             this.showNextLevel(level);
             this.showTopScore(topScore);
-        } else if (state == State.NEXT_LIFE) {
+        } else if (state == GameState.NEXT_LIFE) {
             this.showScore(score);
             this.showRemainingLifes(lifes);
             this.showLevel(level);
             this.showNextLife(lifes);
-        } else if (state == State.GAME_OVER) {
+        } else if (state == GameState.GAME_OVER) {
             this.showScore(score);
             this.showGameOver();
             this.showTopScore(topScore);
