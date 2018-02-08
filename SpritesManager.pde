@@ -2,6 +2,7 @@ public class SpritesManager {
     private Ship ship;
     private ArrayList<Laser> shipLasers = new ArrayList<Laser>();
     private ArrayList<Ufo> ufos;
+    private ArrayList<Laser> ufosLasers = new ArrayList<Laser>();
     private ArrayList<Asteroid> asteroids;
     private int numUfosHit;
     private int numAsteroidsHit;
@@ -25,7 +26,11 @@ public class SpritesManager {
                 if (this.ship != null && this.ship.hits(asteroid)) {
                     println("ship hit");
                 }
-            } 
+            }
+
+            for (Ufo ufo : this.ufos) {
+                ufo.update();
+            }
 
             for (int i = this.shipLasers.size() - 1; i >= 0; i--) {
                 Laser laser = this.shipLasers.get(i);
@@ -53,6 +58,15 @@ public class SpritesManager {
                 //     this.lasers.remove(laser);
                 //     this.gameManager.ufoHit();
                 // }
+            }
+
+            for (int i = this.ufosLasers.size() - 1; i >= 0; i--) {
+                Laser laser = this.ufosLasers.get(i);
+                laser.update();
+
+                if (laser.isOffScreen) {
+                    this.ufosLasers.remove(laser);
+                }
             }
 
             // if (this.state == GameState.PLAYING) {
@@ -102,7 +116,15 @@ public class SpritesManager {
                 this.ship.draw();
             }
 
+            for (Ufo ufo : this.ufos) {
+                ufo.draw();
+            }
+
             for (Laser laser : this.shipLasers) {
+                laser.draw();
+            }
+
+            for (Laser laser : this.ufosLasers) {
                 laser.draw();
             }
 
@@ -139,12 +161,51 @@ public class SpritesManager {
         this.shipHit = false;
     }
 
+    void createUfos(int num) {
+        for (int i = 0; i < num; i++) {
+            int randomSide = floor(random(4));
+            PVector vector = PVector.random2D();
+
+            switch(randomSide) {
+                case 1:
+                    vector.x += width;
+                    break;
+                case 2:
+                    vector.x -= width;
+                    break;
+                case 3:
+                    vector.y += height;
+                    break;
+                case 4:
+                    vector.y -= height;
+                    break;
+
+            }
+
+            Ufo ufo = new Ufo(vector.x, vector.y);
+            this.ufos.add(ufo);
+
+            if (this.ship != null) {
+                this.timerUfoShoot(ufo);
+            }
+        }
+    }
+
+    void resetUfos() {
+        this.ufos.clear();
+        this.ufosLasers.clear();
+    }
+
     void resetAll() {
         this.numUfosHit = 0;
         this.numAsteroidsHit = 0;
         this.shipHit = false;
+        this.ship = null;
+        this.asteroids.clear();
+        this.ufos.clear();
+        this.shipLasers.clear();
+        this.ufosLasers.clear();
     }
-
 
     void keyPressed(int keyCode) {
         if (this.ship != null) {
@@ -170,5 +231,19 @@ public class SpritesManager {
                 this.ship.setRotation(0);
             }
         }
+    }
+
+    private void timerUfoShoot(final Ufo ufo) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                PVector target = PVector.sub(ship.position, ufo.position);
+                PVector middle = new PVector(ufo.ufoWidth / 2, ufo.ufoHeight / 2);
+                PVector position = PVector.add(ufo.position, middle);
+
+                ufosLasers.add(new Laser(position, target.heading()));
+            }
+        }, floor(random(2000, 2500)));
     }
 }
