@@ -1,0 +1,21 @@
+{
+    "name": "asteroids",
+    "version": "1.0.0",
+    "description": "",
+    "source": "src/index.html",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/p5": "^1.5.0",
+        "parcel": "^2.8.3",
+        "parcel-reporter-static-files-copy": "^1.5.0",
+        "typescript": "^4.9.5"
+    },
+    "dependencies": {
+        "p5": "^1.5.0"
+    }
+}
