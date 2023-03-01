@@ -1,6 +1,5 @@
 import Patatoid from './patatoid';
 import P5 from 'p5';
-import Explosion from './explosion';
 import Sprite from './sprite';
 
 const SIDES_MIN = 8;
@@ -15,10 +14,6 @@ export default class Asteroid extends Patatoid {
     static radiusMax = RADIUS_MAX;
     static sidesMin = SIDES_MIN;
     static sidesMax = SIDES_MAX;
-
-    explosionIsOver = false;
-
-    private explosion: Explosion | null;
 
     constructor(
         p5: P5,
@@ -59,36 +54,6 @@ export default class Asteroid extends Patatoid {
         this.velocity = P5.Vector.random2D();
     }
 
-    update() {
-        if (this.explosion) {
-            this.explosionIsOver = this.explosion.isOver();
-
-            if (!this.explosionIsOver) {
-                this.explosion.update();
-            }
-        } else {
-            super.update();
-        }
-    }
-
-    draw() {
-        if (this.explosion) {
-            if (!this.explosionIsOver) {
-                this.explosion.draw();
-            }
-        } else {
-            super.draw();
-        }
-    }
-
-    collideWith(sprite: Sprite): boolean {
-        if (!this.explosion) {
-            return super.collideWith(sprite);
-        }
-
-        return false;
-    }
-
     breakup(): Asteroid[] {
         if (this.diameter > ASTEROID_MINIMAL_DIAMETER_BREAKUP) {
             const countnewAsteroids =
@@ -109,14 +74,9 @@ export default class Asteroid extends Patatoid {
             }
 
             return newAsteroids;
-        } else {
-            this.explode();
-            return [];
         }
-    }
 
-    explode() {
-        this.explosion = new Explosion(this.p5, this.position.copy());
+        return [];
     }
 
     static setRadius(min: number, max: number) {

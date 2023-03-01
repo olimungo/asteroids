@@ -27,10 +27,10 @@ const sketch = (p5: P5) => {
     p5.draw = () => {
         p5.background(Colors.BACKGROUND);
 
-        // gameManager.update();
-        // gameManager.draw();
+        gameManager.update();
+        gameManager.draw();
 
-        ship.draw();
+        // ship.draw();
     };
 
     p5.keyPressed = (event: any) => {

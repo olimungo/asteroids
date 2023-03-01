@@ -3,6 +3,7 @@ import Colors from '../ui/colors';
 import Patatoid from './patatoid';
 import Laser from './laser';
 import Sprite from './sprite';
+import Interval from '../interval';
 
 const SHIP_SHELL_SIZE = 36;
 
@@ -13,6 +14,8 @@ export default class Ship extends Sprite {
     fillShip: boolean;
 
     private lasers: Laser[] = [];
+    private boosterFlamesInterval: Interval;
+    private switchFlames = false;
 
     constructor(p5: P5, position?: P5.Vector, fillShip?: boolean) {
         position = position || new P5.Vector(p5.width / 2, p5.height / 2);
@@ -21,6 +24,8 @@ export default class Ship extends Sprite {
 
         this.fillShip = fillShip || false;
         this.heading = -p5.PI / 2;
+
+        this.boosterFlamesInterval = new Interval(100);
     }
 
     update() {
@@ -83,6 +88,14 @@ export default class Ship extends Sprite {
 
         this.p5.endShape();
 
+        if (this.isBoosting) {
+            if (this.boosterFlamesInterval.isElapsed()) {
+                this.switchFlames = !this.switchFlames;
+            }
+
+            this.drawBoosterFlames();
+        }
+
         this.p5.pop();
     }
 
@@ -141,5 +154,41 @@ export default class Ship extends Sprite {
         }
 
         return patatoids;
+    }
+
+    private drawBoosterFlames() {
+        const smallerRadius = (this.diameter / 10) * 3.5;
+        const marginX = this.diameter / 9;
+        const marginY = this.diameter / 3;
+
+        if (this.switchFlames) {
+            this.p5.line(
+                smallerRadius - marginX,
+                this.diameter / 2,
+                0,
+                this.diameter
+            );
+
+            this.p5.line(
+                -smallerRadius + marginX,
+                this.diameter / 2,
+                0,
+                this.diameter
+            );
+        } else {
+            this.p5.line(
+                smallerRadius - marginX,
+                this.diameter / 2,
+                0,
+                this.diameter - marginY
+            );
+
+            this.p5.line(
+                -smallerRadius + marginX,
+                this.diameter / 2,
+                0,
+                this.diameter - marginY
+            );
+        }
     }
 }

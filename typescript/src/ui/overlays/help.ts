@@ -14,10 +14,10 @@ export default class Help extends Overlay {
     constructor(p5: P5) {
         super(p5);
 
-        this.keycapLeft = new Keycap(p5, new P5.Vector(650, 350), -90);
-        this.keycapRight = new Keycap(p5, new P5.Vector(770, 350), 90);
-        this.keycapUp = new Keycap(p5, new P5.Vector(710, 280), 0);
-        this.spacebar = new Spacebar(p5, new P5.Vector(710, 440));
+        this.keycapLeft = new Keycap(p5, new P5.Vector(650, 285), -90);
+        this.keycapRight = new Keycap(p5, new P5.Vector(770, 285), 90);
+        this.keycapUp = new Keycap(p5, new P5.Vector(710, 215), 0);
+        this.spacebar = new Spacebar(p5, new P5.Vector(710, 365));
     }
 
     draw() {
@@ -56,10 +56,19 @@ export default class Help extends Overlay {
 
         this.p5.textSize(15);
         this.p5.textAlign(this.p5.CENTER);
-        this.p5.text('BOOST', 710, 315);
-        this.p5.text('TURN LEFT', 650, 385);
-        this.p5.text('TURN RIGHT', 770, 385);
-        this.p5.text('SHOOT', 710, 475);
+        this.p5.text('BOOST', 710, 250);
+        this.p5.text('TURN LEFT', 650, 320);
+        this.p5.text('TURN RIGHT', 770, 320);
+        this.p5.text('SHOOT', 710, 400);
+
+        this.p5.textAlign(this.p5.LEFT);
+        this.p5.text('ASTEROID', 600, 450);
+        this.p5.text('UFO', 600, 475);
+        this.p5.text('NEW LIFE', 600, 500);
+
+        this.p5.text('10 POINTS', 745, 450);
+        this.p5.text('50 POINTS', 745, 475);
+        this.p5.text('3000 POINTS', 745, 500);
 
         this.spacebar.draw();
 

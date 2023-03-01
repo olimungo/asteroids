@@ -4,23 +4,17 @@ import SpritesManager from './sprites/sprites-manager';
 import OverlaysManager from './ui/overlays/overlays-manager';
 
 const LIFES_WHEN_STARTING = 3;
-const ASTEROIDS_START_MAX = 10;
+const ASTEROIDS_START_MAX = 12;
 const ASTEROIDS_LEVEL_INCREMENT = 3;
 const GAME_OVER_STATE_TIMEOUT = 8000; // ms
 const ADD_LIFE_WHEN_SCORED = 3000;
 const ASTEROID_HIT_SCORE = 10;
 const UFO_HIT_SCORE = 50;
-// const UFO_INIT_FREQUENCY = 5000; // ms
-// const UFO_DECREMENT_FREQUENCY = 5000; // ms
-// const UFO_MINIMAL_FREQUENCY = 5000; // ms
-const UFO_INIT_FREQUENCY = 30000; // ms
-const UFO_DECREMENT_FREQUENCY = 5000; // ms
-const UFO_MINIMAL_FREQUENCY = 15000; // ms
-// const UFO_SHOOT_INIT_FREQUENCY = 3000; // ms
-// const UFO_SHOOT_DECREMENT_FREQUENCY = 1000; // ms
-// const UFO_SHOOT_MINIMAL_FREQUENCY = 3000; // ms
+const UFO_INIT_FREQUENCY = 25000; // ms
+const UFO_DECREMENT_FREQUENCY = 1000; // ms
+const UFO_MINIMAL_FREQUENCY = 10000; // ms
 const UFO_SHOOT_INIT_FREQUENCY = 10000; // ms
-const UFO_SHOOT_DECREMENT_FREQUENCY = 1000; // ms
+const UFO_SHOOT_DECREMENT_FREQUENCY = 500; // ms
 const UFO_SHOOT_MINIMAL_FREQUENCY = 5000; // ms
 
 export default class GameManager {
@@ -50,6 +44,14 @@ export default class GameManager {
 
         this.spritesManager.createAsteroids(ASTEROIDS_START_MAX);
         this.spritesManager.createUfo(0);
+
+        for (const cookie of document.cookie.replace(/ /g, '').split(';')) {
+            const cookieSplit = cookie.split('=');
+
+            if (cookieSplit[0] === 'top-score') {
+                this.topScore = parseInt(cookieSplit[1]);
+            }
+        }
     }
 
     update() {
@@ -176,7 +178,7 @@ export default class GameManager {
 
     private checkLevel() {
         if (!this.spritesManager.shipHit()) {
-            if (this.spritesManager.getAsteroidsCount() == 0) {
+            if (this.spritesManager.getAsteroidsCount() === 0) {
                 this.gameState = GameState.NEXT_LEVEL;
                 this.spritesManager.stopLevel();
                 this.score = this.getScore();
@@ -191,6 +193,8 @@ export default class GameManager {
 
                 const score = this.getScore();
                 this.topScore = score > this.topScore ? score : this.topScore;
+
+                document.cookie = `top-score=${this.topScore}`;
 
                 // Return to homescreen after some time...
                 this.gameOverTimeout = setTimeout(() => {
