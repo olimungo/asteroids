@@ -7,14 +7,14 @@ permissions:
     contents: read
     pages: write
     id-token: write
-  
+
 jobs:
     build:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout sources
               uses: actions/checkout@v3
-            - name: Install node v16 
+            - name: Install node v16
               uses: actions/setup-node@v3
               with:
                   node-version: 16
@@ -28,12 +28,12 @@ jobs:
             - name: Setup Pages
               uses: actions/configure-pages@v3
             - name: Build Artifact
-              run: cd typescript/dist && tar -cvf ../../github-pages.tar.gz .
+              run: cd typescript/dist && tar -cvf ../../asteroids.tar.gz .
             - name: Upload Artifact
               uses: actions/upload-artifact@v2
               with:
                   name: github-pages
-                  path: github-pages.tar.gz
+                  path: asteroids.tar.gz
     deploy:
         needs: build
         runs-on: ubuntu-latest
@@ -44,4 +44,3 @@ jobs:
             - name: Deploy to GitHub Pages
               id: deployment
               uses: actions/deploy-pages@v1
-              
