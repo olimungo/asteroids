@@ -14,9 +14,9 @@ jobs:
               with:
                   node-version: 16
                   cache: 'npm'
-                  cache-dependency-path: www/package-lock.json
+                  cache-dependency-path: typescript/package-lock.json
             - name: Build the app
-              working-directory: ./typescript
+              working-directory: typescript
               run: |
                   npm ci
                   npm run build
@@ -25,7 +25,7 @@ jobs:
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v1
               with:
-                  path: .typescript/dist
+                  path: typescript/dist
     deploy:
         needs: build
         runs-on: ubuntu-latest
