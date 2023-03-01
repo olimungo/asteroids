@@ -28,7 +28,7 @@ jobs:
             - name: Setup Pages
               uses: actions/configure-pages@v3
             - name: Build Artifact
-              run: tar -czvf github-pages.tar.gz typescript/dist/
+              run: cd typescript/dist && tar -cvf ../../github-pages.tar.gz .
             - name: Upload Artifact
               uses: actions/upload-artifact@v2
               with:
