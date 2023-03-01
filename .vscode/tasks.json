@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Upload",
+            "type": "shell",
+            "command": "processing-java --force --sketch=${workspaceRoot}/java/Asteroids --output=${workspaceRoot}/java/Asteroids/out --run",
+            "group": "build",
+            "problemMatcher": [],
+            "presentation": {
+                "focus": true
+            }
+        }
+    ]
+}
