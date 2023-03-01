@@ -7,7 +7,7 @@ export default class Explosion {
     constructor(p5: P5, position: P5.Vector) {
         for (let index = 0; index < 8; index++) {
             this.particles.push(
-                new Particle(p5, position.copy(), p5.random(2, 4))
+                new Particle(p5, position.copy(), p5.random(1, 4))
             );
         }
     }
