@@ -9,7 +9,6 @@ const SHIP_SHELL_SIZE = 36;
 
 export default class Ship extends Sprite {
     heading: number;
-    rotation = 0;
     isBoosting = false;
     fillShip: boolean;
 

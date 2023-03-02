@@ -10,7 +10,10 @@
 // GameManager gameManager;
 
 Patatoid patatoid;
+ArrayList<Patatoid> patatoids;
+Ship ship;
 OverlaysManager overlaysManager;
+int timerShoot = 3000;
 
 void pre() {
 }
@@ -31,7 +34,8 @@ void setup() {
 
     overlaysManager = new OverlaysManager();
 
-    patatoid = new Patatoid(new PVector(100,100), 50, new PVector(0, 0), 0.01, 8);
+    patatoid = new Patatoid(PVector.random2D(), 46, PVector.random2D(), 0.01, 8);
+    ship = new Ship(new PVector(width / 2, height / 2), false);
 }
 
 void draw() {
@@ -49,12 +53,25 @@ void draw() {
     //     helpers.showFrameRate();
     // }
 
-    patatoid.update();
-    patatoid.draw();
+    if (millis() > timerShoot) {
+        timerShoot = 50000000;
+        patatoids = patatoid.breakup();
+    }
+
+    if (patatoids != null) {
+        for (Patatoid patatoid : patatoids) {
+            patatoid.update();
+            patatoid.draw();
+        }
+    } else {
+        patatoid.update();
+        patatoid.draw();
+    }
+
+    ship.update();
+    ship.draw();
 
     overlaysManager.draw();
-
-    
 }
 
 void mousePressed() {
@@ -73,12 +90,32 @@ void mouseReleased() {
 }
 
 void keyPressed() {
-    // if (keyCode == 68) { // D
-    //     this.fineTuning = !this.fineTuning;
-    // }
-    // gameManager.keyPressed(keyCode);
+    // println(keyCode);
+
+    switch (keyCode) {
+        case 37: // LEFT ARROW
+            ship.setRotation(-0.1);
+            break;
+        case 39: // RIGHT ARROW
+            ship.setRotation(0.1);
+            break;
+        case 38: // UP ARROW
+            ship.setBoost(true);
+            break;
+        case 32: // SPACE
+            ship.shoot();
+            break;
+    }
 }
 
 void keyReleased() {
-    // gameManager.keyReleased(keyCode);
+    switch (keyCode) {
+        case 37: // LEFT ARROW
+        case 39: // RiGHT ARROW
+            ship.setRotation(0);
+            break;
+        case 38: // UP ARROW
+            ship.setBoost(false);
+            break;
+    }
 }

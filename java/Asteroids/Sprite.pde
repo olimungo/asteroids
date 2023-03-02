@@ -38,26 +38,27 @@ public class Sprite {
     }
 
     Boolean checkWindowEdges() {
+        Boolean result = false;
         float radius = this.diameter / 2;
         float x = this.position.x;
         float y = this.position.y;
 
         if (x > width + radius) {
             this.position.x = -radius;
-            return true;
+            result = true;
         } else if (x < -radius) {
             this.position.x = width + radius;
-            return true;
+            result = true;
         }
 
         if (y > height + radius) {
             this.position.y = -radius;
-            return true;
+            result = true;
         } else if (y < -radius) {
             this.position.y = height + radius;
-            return true;
+            result = true;
         }
 
-        return false;
+        return result;
     }
 }

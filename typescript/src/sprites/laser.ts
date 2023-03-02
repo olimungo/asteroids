@@ -1,5 +1,4 @@
 import P5 from 'p5';
-import Asteroid from './asteroid';
 import Colors from '../ui/colors';
 import Sprite from './sprite';
 

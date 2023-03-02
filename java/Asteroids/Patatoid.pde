@@ -1,5 +1,6 @@
 public class Patatoid extends Sprite {
-    // final static ASTEROID_MINIMAL_DIAMETER_BREAKUP = 50;
+    final static int DIAMETER_MAX = 120;
+    final static int ASTEROID_MINIMAL_DIAMETER_BREAKUP = 45;
 
     PGraphics shape;
 
@@ -34,44 +35,16 @@ public class Patatoid extends Sprite {
     ArrayList<Patatoid> breakup() {
         ArrayList<Patatoid> patatoids = new ArrayList<Patatoid>();
 
-        patatoids.add(new Patatoid(this.position.copy(), this.diameter, PVector.random2D(), this.rotationStep, this.sides));
-        patatoids.add(new Patatoid(this.position.copy(), this.diameter, PVector.random2D(), this.rotationStep, this.sides));
+        if (this.diameter > ASTEROID_MINIMAL_DIAMETER_BREAKUP) {
+            int countNewAsteroids = this.diameter > DIAMETER_MAX * 0.7 ? 3 : 2;
+
+            for (int counter = 0; counter < countNewAsteroids; counter++) {
+                patatoids.add(new Patatoid(this.position.copy(), this.diameter / (countNewAsteroids * 0.7), PVector.random2D(), this.rotationStep, this.sides));
+            }
+        }
 
         return patatoids;
     }
-
-        // if (this.diameter > ASTEROID_MINIMAL_DIAMETER_BREAKUP) {
-        //     const countnewAsteroids =
-        //         this.diameter > (DIAMETER_MAX / 10) * 7 ? 3 : 2;
-
-        //     const newAsteroids: Asteroid[] = [];
-
-        //     for (let counter = 0; counter < countnewAsteroids; counter++) {
-        //         newAsteroids.push(
-        //             new Asteroid(
-        //                 this.p5,
-        //                 this.position.copy(),
-        //                 this.diameter / countnewAsteroids,
-        //                 this.sides,
-        //                 this.rotationStep
-        //             )
-        //         );
-        //     }
-
-        //     return newAsteroids;
-        // }
-
-        // return [];
-
-    // Boolean hit(float x, float y, float radius) {
-    //     float distance = dist(this.position.x, this.position.y, x, y);
-
-    //     if (distance < this.radius + radius) {
-    //         return true;
-    //     }
-
-    //     return false;
-    // }
 
     private ArrayList<PVector> generateVertices() {
         ArrayList<PVector> vertices = new ArrayList<PVector>();
