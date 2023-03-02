@@ -1,4 +1,6 @@
 public class Patatoid extends Sprite {
+    // final static ASTEROID_MINIMAL_DIAMETER_BREAKUP = 50;
+
     PGraphics shape;
 
     int sides = 0;
@@ -6,19 +8,19 @@ public class Patatoid extends Sprite {
     Patatoid(
         PVector position,
         float diameter,
-        int sides,
-        float rotationStep
+        PVector velocity,
+        float rotationStep,
+        int sides
     ) {
-        super(position, diameter, rotationStep);
+        super(position, diameter, velocity, rotationStep);
 
         this.sides = sides;
-
         this.shape = this.generateShape(this.generateVertices());
     }
 
     @Override
     void draw() {
-        pushStyle();
+        push();
 
         translate(this.position.x, this.position.y);
 
@@ -26,8 +28,50 @@ public class Patatoid extends Sprite {
 
         image(this.shape, -this.diameter / 2, -this.diameter / 2);
 
-        popStyle();
+        pop();
     }
+
+    ArrayList<Patatoid> breakup() {
+        ArrayList<Patatoid> patatoids = new ArrayList<Patatoid>();
+
+        patatoids.add(new Patatoid(this.position.copy(), this.diameter, PVector.random2D(), this.rotationStep, this.sides));
+        patatoids.add(new Patatoid(this.position.copy(), this.diameter, PVector.random2D(), this.rotationStep, this.sides));
+
+        return patatoids;
+    }
+
+        // if (this.diameter > ASTEROID_MINIMAL_DIAMETER_BREAKUP) {
+        //     const countnewAsteroids =
+        //         this.diameter > (DIAMETER_MAX / 10) * 7 ? 3 : 2;
+
+        //     const newAsteroids: Asteroid[] = [];
+
+        //     for (let counter = 0; counter < countnewAsteroids; counter++) {
+        //         newAsteroids.push(
+        //             new Asteroid(
+        //                 this.p5,
+        //                 this.position.copy(),
+        //                 this.diameter / countnewAsteroids,
+        //                 this.sides,
+        //                 this.rotationStep
+        //             )
+        //         );
+        //     }
+
+        //     return newAsteroids;
+        // }
+
+        // return [];
+
+    // Boolean hit(float x, float y, float radius) {
+    //     float distance = dist(this.position.x, this.position.y, x, y);
+
+    //     if (distance < this.radius + radius) {
+    //         return true;
+    //     }
+
+    //     return false;
+    // }
 
     private ArrayList<PVector> generateVertices() {
         ArrayList<PVector> vertices = new ArrayList<PVector>();

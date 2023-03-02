@@ -1,13 +1,14 @@
 public class Sprite {
     PVector position;
-    PVector velocity = new PVector();
+    PVector velocity;
     float diameter;
     float rotation;
     float rotationStep;
 
-    Sprite(PVector position, float diameter, float rotationStep) {
+    Sprite(PVector position, float diameter, PVector velocity, float rotationStep) {
         this.position = position;
         this.diameter = diameter;
+        this.velocity = velocity;
         this.rotationStep = rotationStep;
     }
 
@@ -19,21 +20,21 @@ public class Sprite {
     }
 
     void draw() {
-        pushStyle();
+        push();
 
         translate(this.position.x, this.position.y);
         rotate(this.rotation);
 
-        fill(255);
+        fill(Colors.EDGE);
         noStroke();
 
         ellipse(0, 0, this.diameter, this.diameter);
 
-        fill(127);
+        fill(Colors.DARK);
         rectMode(CENTER);
         rect(0, 0, this.diameter / 4, this.diameter / 4);
 
-        popStyle();
+        pop();
     }
 
     Boolean checkWindowEdges() {

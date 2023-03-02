@@ -1,24 +1,23 @@
 import Patatoid from './patatoid';
 import P5 from 'p5';
-import Sprite from './sprite';
 
 const SIDES_MIN = 8;
 const SIDES_MAX = 20;
-const RADIUS_MIN = 40;
-const RADIUS_MAX = 120;
+const DIAMETER_MIN = 40;
+const DIAMETER_MAX = 120;
 const ASTEROID_MIN_DISTANCE_TO_CENTER = 250;
 const ASTEROID_MINIMAL_DIAMETER_BREAKUP = 50;
 
 export default class Asteroid extends Patatoid {
-    static radiusMin = RADIUS_MIN;
-    static radiusMax = RADIUS_MAX;
+    static diameterMin = DIAMETER_MIN;
+    static diameterMax = DIAMETER_MAX;
     static sidesMin = SIDES_MIN;
     static sidesMax = SIDES_MAX;
 
     constructor(
         p5: P5,
         position?: P5.Vector,
-        radius?: number,
+        diameter?: number,
         sides?: number,
         rotationStep?: number
     ) {
@@ -35,9 +34,9 @@ export default class Asteroid extends Patatoid {
             }
         }
 
-        if (!radius) {
-            radius = p5.floor(
-                p5.random(Asteroid.radiusMin, Asteroid.radiusMax)
+        if (!diameter) {
+            diameter = p5.floor(
+                p5.random(Asteroid.diameterMin, Asteroid.diameterMax)
             );
         }
 
@@ -49,7 +48,7 @@ export default class Asteroid extends Patatoid {
             rotationStep = p5.map(p5.random(1), 0, 1, -0.01, 0.01);
         }
 
-        super(p5, position, radius, sides, rotationStep);
+        super(p5, position, diameter, sides, rotationStep);
 
         this.velocity = P5.Vector.random2D();
     }
@@ -57,7 +56,7 @@ export default class Asteroid extends Patatoid {
     breakup(): Asteroid[] {
         if (this.diameter > ASTEROID_MINIMAL_DIAMETER_BREAKUP) {
             const countnewAsteroids =
-                this.diameter > (RADIUS_MAX / 10) * 7 ? 3 : 2;
+                this.diameter > (DIAMETER_MAX / 10) * 7 ? 3 : 2;
 
             const newAsteroids: Asteroid[] = [];
 
@@ -80,8 +79,8 @@ export default class Asteroid extends Patatoid {
     }
 
     static setRadius(min: number, max: number) {
-        this.radiusMin = min;
-        this.radiusMax = max;
+        this.diameterMin = min;
+        this.diameterMax = max;
     }
 
     static setSides(min: number, max: number) {

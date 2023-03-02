@@ -9,8 +9,8 @@
 
 // GameManager gameManager;
 
-Sprite sprite;
 Patatoid patatoid;
+OverlaysManager overlaysManager;
 
 void pre() {
 }
@@ -28,8 +28,10 @@ void setup() {
     // textFont(fontThin);
 
     // gameManager = new GameManager();
-    sprite = new Sprite(new PVector(100,100), 50, 0.01);
-    patatoid = new Patatoid(new PVector(200,200), 50, 8, 0.01);
+
+    overlaysManager = new OverlaysManager();
+
+    patatoid = new Patatoid(new PVector(100,100), 50, new PVector(0, 0), 0.01, 8);
 }
 
 void draw() {
@@ -47,11 +49,12 @@ void draw() {
     //     helpers.showFrameRate();
     // }
 
-    sprite.update();
-    sprite.draw();
-
     patatoid.update();
     patatoid.draw();
+
+    overlaysManager.draw();
+
+    
 }
 
 void mousePressed() {
