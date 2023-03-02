@@ -3,6 +3,10 @@ name: Deploy to github.io
     push:
         branches:
             - main
+    pull_request:
+        branches:
+            - main
+
 permissions:
     contents: read
     pages: write

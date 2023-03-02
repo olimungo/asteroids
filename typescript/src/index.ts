@@ -2,11 +2,9 @@ import P5 from 'p5';
 import Colors from './ui/colors';
 import GameManager from './game-manager';
 import Fonts from './ui/fonts';
-import Ship from './sprites/ship';
 
 const sketch = (p5: P5) => {
     let gameManager: GameManager;
-    let ship: Ship;
 
     p5.preload = () => {
         Fonts.getInstance().loadFonts(p5);
@@ -21,7 +19,6 @@ const sketch = (p5: P5) => {
         p5.textFont(Fonts.getInstance().fontThin);
 
         gameManager = new GameManager(p5);
-        ship = new Ship(p5, new P5.Vector(500, 350));
     };
 
     p5.draw = () => {
@@ -29,8 +26,6 @@ const sketch = (p5: P5) => {
 
         gameManager.update();
         gameManager.draw();
-
-        // ship.draw();
     };
 
     p5.keyPressed = (event: any) => {

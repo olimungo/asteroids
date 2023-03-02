@@ -37,7 +37,7 @@ export default class Help extends Overlay {
 
         this.p5.textAlign(this.p5.LEFT);
         this.p5.textSize(15);
-        this.p5.text('START', 220, 275);
+        this.p5.text('INSERT COIN', 220, 275);
         this.p5.text('PAUSE', 220, 325);
         this.p5.text('HUB', 220, 375);
         this.p5.text('SHOW EGDES', 220, 425);
