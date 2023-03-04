@@ -3,6 +3,10 @@ name: Deploy to github.io
     push:
         branches:
             - main
+    pull_request:
+        branches:
+            - main
+
 permissions:
     contents: read
     pages: write
@@ -17,7 +21,7 @@ jobs:
             - name: Install node v16
               uses: actions/setup-node@v3
               with:
-                  node-version: 16
+                  node-version: 18
                   cache: 'npm'
                   cache-dependency-path: typescript/package-lock.json
             - name: Build the app

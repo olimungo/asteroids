@@ -1,14 +1,13 @@
 import P5 from 'p5';
-import Asteroid from './asteroid';
 import Colors from '../ui/colors';
 import Sprite from './sprite';
 
+const LASER_SIZE = 4;
 export default class Laser extends Sprite {
     isOffScreen = false;
 
     constructor(p5: P5, position: P5.Vector, angle: number) {
-        super(p5, position, 4);
-        this.velocity = P5.Vector.fromAngle(angle).mult(10);
+        super(p5, position, LASER_SIZE, P5.Vector.fromAngle(angle).mult(10), 0);
     }
 
     draw() {

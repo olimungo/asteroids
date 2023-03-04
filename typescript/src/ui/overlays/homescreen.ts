@@ -15,7 +15,7 @@ export default class Homescreen extends Overlay {
         this.p5.textSize(100);
         this.p5.text('ASTEROIDS', this.centerX, this.centerY - 100);
 
-        this.p5.textFont(Fonts.getInstance().fontLight);
+        this.p5.textFont(Fonts.fontLight);
         this.p5.textSize(15);
         this.p5.text('by olimungo', this.centerX, this.centerY - 65);
 
@@ -26,14 +26,14 @@ export default class Homescreen extends Overlay {
             this.pastMillis = now;
         }
 
-        this.p5.textFont(Fonts.getInstance().fontThin);
+        this.p5.textFont(Fonts.fontThin);
 
         if (this.displayInsertCoin) {
             this.p5.textSize(40);
             this.p5.text('INSERT 1 COIN', this.centerX, this.centerY + 50);
         }
 
-        this.p5.textFont(Fonts.getInstance().fontLight);
+        this.p5.textFont(Fonts.fontLight);
         this.p5.textSize(25);
         this.p5.text('PRESS "H" FOR HELP', this.centerX, this.centerY + 250);
 

@@ -1,134 +1,157 @@
 public class Ufo extends Sprite {
-    int ufoWidth = 60;
-    int ufoHeight = 25;
-    Boolean shipHit = false;
+    private final static int UFO_WIDTH = 60;
+    private final static int UFO_HEIHT = 25;
+    private final static int UFO_VELOCITY = 2;
+    private final static int CHANGE_HEADING_FREQUENCY = 6000;
+    private final static int VARIABILITY_IN_HEADING = 3000;
+    private final static int VARIABILITY_IN_SHOOTING = 1000;
 
-    private PVector[] shapeVectors;
-    private PShape ufo;
-    private Ship ship;
+    private PShape shape;
     private ArrayList<Laser> lasers = new ArrayList<Laser>();
-    private int timerShoot = 0;
 
-    Ufo(float x, float y, Ship ship) {
-        super(x, y, 20);
+    // Helps to define actions based on a time frequency
+    private Interval changeHeadingInterval;
+    private Interval shootInterval;
 
-        this.ship = ship;
-        this.velocity = PVector.random2D();
-        this.velocity.setMag(2.5);
+    Ufo(PVector position, int shootIntervalFrequency) {
+        super(
+            position,
+            (UFO_WIDTH + UFO_HEIHT) / 2,
+            PVector.random2D(),
+            0);
 
-        this.shapeVectors = this.generateShapeVectors();
+        this.velocity.setMag(UFO_VELOCITY);
+        this.shape = this.generateShape(this.generateVertices());
+
+        this.changeHeadingInterval = new Interval(
+            int(random(
+                CHANGE_HEADING_FREQUENCY - VARIABILITY_IN_HEADING,
+                CHANGE_HEADING_FREQUENCY + VARIABILITY_IN_HEADING
+            ))
+        );
+
+        if (shootIntervalFrequency > 0) {
+            this.shootInterval = new Interval(
+                int(random(
+                    shootIntervalFrequency - VARIABILITY_IN_SHOOTING,
+                    shootIntervalFrequency + VARIABILITY_IN_SHOOTING
+                ))
+            );
+        }
     }
 
-    @Override
-    void update() {
+    Boolean update(PVector shipPosition) {
+        if (this.changeHeadingInterval.isElapsed()) {
+            this.velocity = PVector.random2D();
+            this.velocity.setMag(UFO_VELOCITY);
+        }
+
+        if (shipPosition != null) {
+            if (this.shootInterval != null && this.shootInterval.isElapsed()) {
+                PVector target = PVector.sub(shipPosition, this.position);
+
+                this.lasers.add(
+                    new Laser(this.position.copy(), target.heading())
+                );
+            }
+
+            for (int laserIndex = this.lasers.size() - 1; laserIndex >= 0 ; laserIndex--) {
+                Laser laser = this.lasers.get(laserIndex);
+
+                laser.update();
+
+                if (laser.isOffScreen) {
+                    this.lasers.remove(laserIndex);
+                }
+            }
+        }
+
         super.update();
-        this.ufo = this.generateShape(this.shapeVectors);
 
-        if (this.ship != null) {
-            if (this.timerShoot == 0) {
-                this.timerShoot = millis() + floor(random(10000, 15000));
-            }
-
-            this.checkTimerShoot();
-        }
-
-        for (int i = this.lasers.size() - 1; i >= 0; i--) {
-            Laser laser = this.lasers.get(i);
-
-            laser.update();
-
-            if (laser.hitsShip()) {
-                this.lasers.remove(laser);
-                this.shipHit = true;
-            }
-
-            if (laser.isOffScreen) {
-                this.lasers.remove(laser);
-            }
-        }
+        return true;
     }
 
-    @Override
     void draw() {
-        pushStyle();
-        pushMatrix();
-            translate(this.position.x, this.position.y);
-            shape(this.ufo, 0, 0);
-        popMatrix();
-        popStyle();
+        push();
 
-        for (int i = this.lasers.size() - 1; i >= 0; i--) {
-            Laser laser = this.lasers.get(i);
+        translate(
+            this.position.x - this.UFO_WIDTH / 2,
+            this.position.y - this.UFO_HEIHT / 2
+        );
+
+        shape(this.shape, 0, 0);
+
+        pop();
+
+        for (Laser laser : this.lasers) {
             laser.draw();
         }
     }
 
-    Boolean hit(float x, float y, float radius) {
-        if ((x + radius > this.position.x && x + radius < this.position.x + this.ufoWidth) &&
-            (y + radius > this.position.y && y + radius < this.position.y + this.ufoHeight)) {
+    void pause() {
+        this.changeHeadingInterval.pause();
+        this.shootInterval.pause();
+    }
+
+    void unpause() {
+        this.changeHeadingInterval.unpause();
+        this.shootInterval.unpause();
+    }
+
+     Boolean lasersHit(Sprite sprite) {
+        for (int laserIndex = this.lasers.size() - 1; laserIndex >= 0 ; laserIndex--) {
+            Laser laser = this.lasers.get(laserIndex);
+
+            if (laser.collideWith(sprite)) {
+                this.lasers.remove(laserIndex);
                 return true;
+            }
         }
 
         return false;
     }
 
-    Boolean hitsShip() {
-        return this.shipHit;
+    private ArrayList<PVector> generateVertices() {
+        ArrayList<PVector> vertices = new ArrayList<PVector>();
+
+        float height1 = UFO_HEIHT / 4;
+        float height2 = (UFO_HEIHT / 8) * 5;
+        float width1 = UFO_WIDTH / 3;
+        float width2 = UFO_WIDTH * 0.66;
+        float width3 = (UFO_WIDTH / 10) * 6;
+        float width4 = (UFO_WIDTH / 10) * 4;
+
+        vertices.add(new PVector(7, height2));
+        vertices.add(new PVector(width1, UFO_HEIHT - 1));
+        vertices.add(new PVector(width2, UFO_HEIHT - 1));
+        vertices.add(new PVector(UFO_WIDTH - 7, height2));
+        vertices.add(new PVector(7, height2));
+        vertices.add(new PVector(width1, height1));
+        vertices.add(new PVector(width2, height1));
+        vertices.add(new PVector(UFO_WIDTH - 7, height2));
+        vertices.add(new PVector(width2, height1));
+        vertices.add(new PVector(width3, 1));
+        vertices.add(new PVector(width4, 1));
+        vertices.add(new PVector(width1, height1));
+
+        return vertices;
     }
 
-    private PVector[] generateShapeVectors() {
-        PVector[] vectors = new PVector[12];
-
-        float height1 = this.ufoHeight / 4;
-        float height2 = this.ufoHeight / 8 * 5;
-        float width1 = this.ufoWidth / 3;
-        float width2 = this.ufoWidth * 0.66;
-        float width3 = this.ufoWidth / 10 * 6;
-        float width4 = this.ufoWidth / 10 * 4;
-
-        vectors[0] = new PVector(0, height2);
-        vectors[1] = new PVector(width1, this.ufoHeight);
-        vectors[2] = new PVector(width2, this.ufoHeight);
-        vectors[3] = new PVector(this.ufoWidth, height2);
-        vectors[4] = new PVector(0, height2);
-        vectors[5] = new PVector(width1, height1);
-        vectors[6] = new PVector(width2, height1);
-        vectors[7] = new PVector(this.ufoWidth, height2);
-        vectors[8] = new PVector(width2, height1);
-        vectors[9] = new PVector(width3, 0);
-        vectors[10] = new PVector(width4, 0);
-        vectors[11] = new PVector(width1, height1);
-
-        return vectors;
-    }
-
-    private PShape generateShape(PVector[] vectors) {
+    private PShape generateShape(ArrayList<PVector> vertices) {
         PShape shape = createShape();
 
         shape.beginShape();
+
         shape.noFill();
+        shape.stroke(Colors.EDGE);
         shape.strokeWeight(1.3);
 
-        for (int i = 0 ; i < vectors.length; i++) {
-            float alpha = random(170, 255);
-            shape.stroke(219, 233, 255, alpha);
-            shape.vertex(vectors[i].x, vectors[i].y);
+        for (PVector vertex : vertices) {
+            shape.vertex(vertex.x, vertex.y);
         }
 
-        shape.endShape();
+        shape.endShape(CLOSE);
 
         return shape;
-    }
-
-    private void checkTimerShoot() {
-        if (millis() > this.timerShoot) {
-            this.timerShoot = 0;
-
-            PVector target = PVector.sub(this.ship.position, this.position);
-            PVector middle = new PVector(this.ufoWidth / 2, this.ufoHeight / 2);
-            PVector position = PVector.add(this.position, middle);
-
-            this.lasers.add(new Laser(position, target.heading(), this.ship));
-        }
     }
 }

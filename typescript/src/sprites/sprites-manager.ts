@@ -1,16 +1,20 @@
 import P5 from 'p5';
 import Interval from '../interval';
-import Asteroid from './asteroid';
 import Explosion from './explosion';
 import Patatoid from './patatoid';
 import Ship from './ship';
 import Ufo from './ufo';
 
 const VARIABILITY_IN_CREATING_UFOS = 5000;
+const ASTEROID_MIN_DISTANCE_TO_CENTER = 250;
+const DIAMETER_MIN = 40;
+const DIAMETER_MAX = 120;
+const SIDES_MIN = 8;
+const SIDES_MAX = 20;
 
 export default class SpritesManager {
     private p5: P5;
-    private asteroids: Asteroid[] = [];
+    private asteroids: Patatoid[] = [];
     private ship: Ship | null;
     private shipFragments: Patatoid[] = [];
     private ufos: Ufo[] = [];
@@ -18,8 +22,8 @@ export default class SpritesManager {
     private createUfoInterval: Interval | null;
     private ufoShootFrequency: number = 0;
 
-    countAsteroidsHit = 0;
-    countUfosHit = 0;
+    countAsteroidsHit;
+    countUfosHit;
 
     constructor(p5: P5) {
         this.p5 = p5;
@@ -34,14 +38,14 @@ export default class SpritesManager {
             }
         }
 
-        let newAsteroids: Asteroid[] = [];
+        let newAsteroids: Patatoid[] = [];
 
         this.asteroids = this.asteroids.filter((asteroid) => {
             asteroid.update();
 
             if (this.ship) {
                 if (this.ship.lasersHit(asteroid)) {
-                    const asteroids = asteroid.breakup();
+                    const asteroids = asteroid.breakUp();
 
                     if (asteroids.length > 0) {
                         newAsteroids = [...newAsteroids, ...asteroids];
@@ -57,7 +61,7 @@ export default class SpritesManager {
                 }
 
                 if (this.ship.collideWith(asteroid)) {
-                    this.shipFragments = this.ship.breakup();
+                    this.shipFragments = this.ship.breakUp();
                     this.ship = null;
                 }
             }
@@ -68,7 +72,7 @@ export default class SpritesManager {
         this.asteroids = [...this.asteroids, ...newAsteroids];
 
         this.ufos = this.ufos.filter((ufo) => {
-            ufo.update(this.ship);
+            ufo.update(this.ship?.position.copy());
 
             if (this.ship) {
                 if (this.ship.lasersHit(ufo)) {
@@ -82,7 +86,7 @@ export default class SpritesManager {
                 }
 
                 if (this.ship.collideWith(ufo) || ufo.lasersHit(this.ship)) {
-                    this.shipFragments = this.ship.breakup();
+                    this.shipFragments = this.ship.breakUp();
                     this.ship = null;
                 }
             }
@@ -94,15 +98,9 @@ export default class SpritesManager {
             this.createUfo(this.ufoShootFrequency);
         }
 
-        for (const shipFragment of this.shipFragments) {
-            shipFragment.update();
-        }
-
-        this.explosions = this.explosions.filter((explosion) => {
-            explosion.update();
-
-            return !explosion.isOver();
-        });
+        this.explosions = this.explosions.filter((explosion) =>
+            explosion.update()
+        );
     }
 
     draw() {
@@ -136,7 +134,12 @@ export default class SpritesManager {
 
         this.reset();
 
-        this.ship = new Ship(this.p5);
+        this.ship = new Ship(
+            this.p5,
+            new P5.Vector(this.p5.width / 2, this.p5.height / 2),
+            false
+        );
+
         this.createAsteroids(countAsteroids);
 
         this.createUfoInterval = new Interval(
@@ -157,7 +160,40 @@ export default class SpritesManager {
         this.asteroids = [];
 
         for (let counter = 0; counter < count; counter++) {
-            this.asteroids.push(new Asteroid(this.p5));
+            const radius = this.p5.random(
+                this.p5.height / 2,
+                (this.p5.height / 2) * 1.3
+            );
+
+            const angle = this.p5.map(counter, 0, count, 0, this.p5.TWO_PI);
+            const x = radius * this.p5.cos(angle);
+            const y = radius * this.p5.sin(angle);
+            const position = new P5.Vector(x, y);
+
+            position.add(this.p5.width / 2, this.p5.height / 2);
+
+            const diameter = this.p5.random(DIAMETER_MIN, DIAMETER_MAX);
+
+            const rotationStep = this.p5.map(
+                this.p5.random(1),
+                0,
+                1,
+                -0.01,
+                0.01
+            );
+
+            const sides = this.p5.floor(this.p5.random(SIDES_MIN, SIDES_MAX));
+
+            this.asteroids.push(
+                new Patatoid(
+                    this.p5,
+                    position,
+                    diameter,
+                    P5.Vector.random2D(),
+                    rotationStep,
+                    sides
+                )
+            );
         }
     }
 
@@ -193,7 +229,7 @@ export default class SpritesManager {
     }
 
     keyPressed(keyCode: number) {
-        if (this.ship !== null) {
+        if (this.ship) {
             switch (keyCode) {
                 case this.p5.LEFT_ARROW:
                     this.ship.setRotation(-0.1);
@@ -212,7 +248,7 @@ export default class SpritesManager {
     }
 
     keyReleased(keyCode: number) {
-        if (this.ship != null) {
+        if (this.ship) {
             if (keyCode == this.p5.UP_ARROW) {
                 this.ship.setBoost(false);
             } else if (
@@ -234,5 +270,21 @@ export default class SpritesManager {
         this.ufos = [];
         this.countAsteroidsHit = 0;
         this.countUfosHit = 0;
+    }
+
+    pause() {
+        this.createUfoInterval?.pause();
+
+        for (const ufo of this.ufos) {
+            ufo.pause();
+        }
+    }
+
+    unpause() {
+        this.createUfoInterval?.unpause();
+
+        for (const ufo of this.ufos) {
+            ufo.unpause();
+        }
     }
 }

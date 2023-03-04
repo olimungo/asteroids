@@ -2,6 +2,9 @@ import P5 from 'p5';
 import Colors from '../ui/colors';
 import Sprite from './sprite';
 
+const DIAMETER_MAX = 130;
+const PATATOID_MINIMAL_DIAMETER_BREAKUP = 60;
+
 export default class Patatoid extends Sprite {
     private shape: P5.Graphics;
 
@@ -11,10 +14,11 @@ export default class Patatoid extends Sprite {
         p5: P5,
         position: P5.Vector,
         diameter: number,
-        sides: number,
-        rotationStep: number
+        velocity: P5.Vector,
+        rotationStep: number,
+        sides: number
     ) {
-        super(p5, position, diameter, rotationStep);
+        super(p5, position, diameter, velocity, rotationStep);
 
         this.sides = sides;
         this.shape = this.generateShape(this.generateVertices());
@@ -30,6 +34,32 @@ export default class Patatoid extends Sprite {
         this.p5.image(this.shape, -this.diameter / 2, -this.diameter / 2);
 
         this.p5.pop();
+    }
+
+    breakUp(): Patatoid[] {
+        if (this.diameter > PATATOID_MINIMAL_DIAMETER_BREAKUP) {
+            const countNewPatatoids =
+                this.diameter > (DIAMETER_MAX / 10) * 7 ? 3 : 2;
+
+            const newAsteroids: Patatoid[] = [];
+
+            for (let counter = 0; counter < countNewPatatoids; counter++) {
+                newAsteroids.push(
+                    new Patatoid(
+                        this.p5,
+                        this.position.copy(),
+                        this.diameter / (countNewPatatoids * 0.7),
+                        P5.Vector.random2D(),
+                        this.rotationStep,
+                        this.sides
+                    )
+                );
+            }
+
+            return newAsteroids;
+        }
+
+        return [];
     }
 
     private generateVertices(): P5.Vector[] {

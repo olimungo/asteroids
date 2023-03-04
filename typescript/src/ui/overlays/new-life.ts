@@ -17,11 +17,11 @@ export default class NewLife extends Overlay {
         if (this.displayNewLife) {
             this.p5.push();
 
-            this.p5.textFont(Fonts.getInstance().fontThin);
+            this.p5.textFont(Fonts.fontThin);
             this.p5.fill(Colors.EDGE);
-            this.p5.textFont(Fonts.getInstance().fontLight);
+            this.p5.textFont(Fonts.fontLight);
             this.p5.textAlign(this.p5.CENTER);
-            this.p5.textSize(15);
+            this.p5.textSize(20);
 
             this.p5.text('NEW LIFE!', this.centerX, 85);
 

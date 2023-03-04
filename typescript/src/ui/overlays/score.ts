@@ -7,7 +7,7 @@ export default class Score extends Overlay {
         this.p5.push();
 
         this.p5.fill(Colors.EDGE);
-        this.p5.textFont(Fonts.getInstance().fontLight);
+        this.p5.textFont(Fonts.fontLight);
         this.p5.textAlign(this.p5.RIGHT);
         this.p5.textSize(25);
 

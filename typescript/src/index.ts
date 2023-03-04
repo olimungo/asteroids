@@ -2,26 +2,23 @@ import P5 from 'p5';
 import Colors from './ui/colors';
 import GameManager from './game-manager';
 import Fonts from './ui/fonts';
-import Ship from './sprites/ship';
 
 const sketch = (p5: P5) => {
     let gameManager: GameManager;
-    let ship: Ship;
+    let slowFrameRate = false;
 
     p5.preload = () => {
-        Fonts.getInstance().loadFonts(p5);
-
-        // p5.frameRate(25);
+        Fonts.setFontThin(p5.loadFont('fonts/Exo2-Thin.ttf'));
+        Fonts.setFontLight(p5.loadFont('fonts/Exo2-Light.ttf'));
     };
 
     p5.setup = () => {
         const canvas = p5.createCanvas(1024, 700, 'p2d');
         canvas.parent('p5');
 
-        p5.textFont(Fonts.getInstance().fontThin);
+        p5.textFont(Fonts.fontThin);
 
         gameManager = new GameManager(p5);
-        ship = new Ship(p5, new P5.Vector(500, 350));
     };
 
     p5.draw = () => {
@@ -29,8 +26,21 @@ const sketch = (p5: P5) => {
 
         gameManager.update();
         gameManager.draw();
+    };
 
-        // ship.draw();
+    p5.mousePressed = () => {
+        if (slowFrameRate) {
+            p5.frameRate(60);
+        } else {
+            p5.frameRate(10);
+        }
+
+        slowFrameRate = !slowFrameRate;
+        p5.noLoop();
+    };
+
+    p5.mouseReleased = () => {
+        p5.loop();
     };
 
     p5.keyPressed = (event: any) => {

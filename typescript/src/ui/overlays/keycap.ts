@@ -1,15 +1,15 @@
 import P5 from 'p5';
 import Colors from '../colors';
+import Overlay from './overlay';
 
 const SIZE = 30;
 
-export default class Keycap {
-    private p5: P5;
+export default class Keycap extends Overlay {
     private position: P5.Vector;
     private angle: number;
 
     constructor(p5: P5, position: P5.Vector, angle: number = 0) {
-        this.p5 = p5;
+        super(p5);
 
         this.position = position;
         this.angle = angle;

@@ -1,41 +1,78 @@
 public class Sprite {
     PVector position;
     PVector velocity;
-    float radius;
+    float diameter;
+    float rotation;
+    float rotationStep;
 
-    Sprite(float x, float y, float radius) {
-        this.position = new PVector(x, y);
-        this.velocity = new PVector();
-        this.radius = radius;
+    Sprite(PVector position, float diameter, PVector velocity, float rotationStep) {
+        this.position = position;
+        this.diameter = diameter;
+        this.velocity = velocity;
+        this.rotationStep = rotationStep;
     }
 
-    void update() {
+    Boolean update() {
         this.position.add(this.velocity);
-        this.checkEdges();
+        this.checkWindowEdges();
+
+        this.rotation += this.rotationStep;
+
+        return true;
     }
 
     void draw() {
-        pushStyle();
-            fill(255);
-            noStroke();
-            ellipse(this.position.x, this.position.y, this.radius, this.radius);
-        popStyle();
+        push();
+
+        translate(this.position.x, this.position.y);
+        rotate(this.rotation);
+
+        fill(Colors.EDGE);
+        noStroke();
+
+        ellipse(0, 0, this.diameter, this.diameter);
+
+        fill(Colors.DARK);
+        rectMode(CENTER);
+        rect(0, 0, this.diameter / 4, this.diameter / 4);
+
+        pop();
     }
 
-    Boolean checkEdges() {
-        if (this.position.x > width + this.radius) {
-            this.position.x = -this.radius; 
-            return true;
-        } else if (this.position.x < -this.radius) {
-            this.position.x = width + this.radius;
-            return true;
+    Boolean checkWindowEdges() {
+        Boolean result = false;
+        float radius = this.diameter / 2;
+        float x = this.position.x;
+        float y = this.position.y;
+
+        if (x > width + radius) {
+            this.position.x = -radius;
+            result = true;
+        } else if (x < -radius) {
+            this.position.x = width + radius;
+            result = true;
         }
 
-        if (this.position.y > height + this.radius) {
-            this.position.y = -this.radius; 
-            return true;
-        } else if (this.position.y < -this.radius) {
-            this.position.y = height + this.radius;
+        if (y > height + radius) {
+            this.position.y = -radius;
+            result = true;
+        } else if (y < -radius) {
+            this.position.y = height + radius;
+            result = true;
+        }
+
+        return result;
+    }
+
+    Boolean collideWith(Sprite sprite) {
+        float distance = dist(
+            this.position.x,
+            this.position.y,
+            sprite.position.x,
+            sprite.position.y
+        );
+
+        if (distance < this.diameter / 2 + sprite.diameter / 2) {
             return true;
         }
 

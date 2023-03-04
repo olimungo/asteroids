@@ -1,14 +1,14 @@
 public class Star {
-    float x;
-    float y;
-    float z;
-    float pz;
+    private float x;
+    private float y;
+    private float z;
+    private float pz;
 
     Star() {
         this.x = random(-width, width);
         this.y = random(-height, height);
         this.z = random(width);
-        this.pz = z;
+        this.pz = this.z;
     }
 
     void update() {
@@ -17,25 +17,27 @@ public class Star {
         if (this.z < 1) {
             this.x = random(-width, width);
             this.y = random(-height, height);
-            this.z = width; 
-            this.pz = z;
+            this.z = width;
+            this.pz = this.z;
         }
     }
 
     void draw() {
-        float sx = map(x / z, 0, 1, 0, width);
-        float sy = map(y / z, 0, 1, 0, height);
-        float radius = map(z, 0, width, 8, 0);
-        float px = map(x / pz, 0, 1, 0, width);
-        float py = map(y / pz, 0, 1, 0, height);
+        float sx = map(this.x / this.z, 0, 1, 0, width);
+        float sy = map(this.y / this.z, 0, 1, 0, height);
+        float radius = map(this.z, 0, width, 8, 0);
+        float px = map(this.x / this.pz, 0, 1, 0, width);
+        float py = map(this.y / this.pz, 0, 1, 0, height);
 
-        this.pz = z;
+        this.pz = this.z;
 
-        pushMatrix();
-            fill(219, 233, 255);
-            noStroke();
-            stroke(219, 233, 255);
-            line(px, py, sx, sy);
-        popMatrix();
+        push();
+
+        fill(Colors.LIGHT);
+        stroke(Colors.LIGHT);
+
+        line(px, py, sx, sy);
+
+        pop();
     }
 }

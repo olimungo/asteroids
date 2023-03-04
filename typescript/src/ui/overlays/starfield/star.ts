@@ -1,4 +1,5 @@
 import P5 from 'p5';
+import Colors from '../../colors';
 
 export default class Star {
     p5: P5;
@@ -38,8 +39,8 @@ export default class Star {
 
         this.p5.push();
 
-        this.p5.fill('#999');
-        this.p5.stroke('#999');
+        this.p5.fill(Colors.LIGHT);
+        this.p5.stroke(Colors.LIGHT);
 
         this.p5.line(px, py, sx, sy);
 

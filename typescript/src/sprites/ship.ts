@@ -6,10 +6,10 @@ import Sprite from './sprite';
 import Interval from '../interval';
 
 const SHIP_SHELL_SIZE = 36;
+const BOOSTER_INTERVAL = 150;
 
 export default class Ship extends Sprite {
     heading: number;
-    rotation = 0;
     isBoosting = false;
     fillShip: boolean;
 
@@ -17,18 +17,15 @@ export default class Ship extends Sprite {
     private boosterFlamesInterval: Interval;
     private switchFlames = false;
 
-    constructor(p5: P5, position?: P5.Vector, fillShip?: boolean) {
-        position = position || new P5.Vector(p5.width / 2, p5.height / 2);
+    constructor(p5: P5, position: P5.Vector, fillShip: boolean) {
+        super(p5, position, SHIP_SHELL_SIZE, new P5.Vector(0, 0), 0);
 
-        super(p5, position, SHIP_SHELL_SIZE);
-
-        this.fillShip = fillShip || false;
+        this.fillShip = fillShip;
         this.heading = -p5.PI / 2;
-
-        this.boosterFlamesInterval = new Interval(100);
+        this.boosterFlamesInterval = new Interval(BOOSTER_INTERVAL);
     }
 
-    update() {
+    update(): boolean {
         this.heading += this.rotation;
 
         if (this.isBoosting) {
@@ -39,15 +36,16 @@ export default class Ship extends Sprite {
         }
 
         this.velocity.limit(10);
+        this.velocity.mult(0.995);
 
         super.update();
-
-        this.velocity.mult(0.995);
 
         this.lasers = this.lasers.filter((laser) => {
             laser.update();
             return !laser.isOffScreen;
         });
+
+        return true;
     }
 
     draw() {
@@ -131,24 +129,23 @@ export default class Ship extends Sprite {
         return false;
     }
 
-    breakup(): Patatoid[] {
+    breakUp(): Patatoid[] {
         const patatoids: Patatoid[] = [];
 
         for (let index of [
-            [0.9, 5, 0.05],
-            [0.9, 6, -0.08],
-            [0.9, 3, 0.15],
-            [0.7, 5, -0.1],
+            [0.9, 0.05, 5],
+            [0.9, -0.08, 6],
+            [0.9, 0.15, 3],
+            [0.7, -0.1, 5],
         ]) {
             let patatoid = new Patatoid(
                 this.p5,
                 this.position.copy(),
                 this.diameter * index[0],
+                P5.Vector.random2D(),
                 index[1],
                 index[2]
             );
-
-            patatoid.velocity = P5.Vector.random2D();
 
             patatoids.push(patatoid);
         }

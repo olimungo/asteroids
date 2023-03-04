@@ -1,78 +1,97 @@
 public class Ship extends Sprite {
-    private float heading = -PI / 2;
-    private float rotation = 0;
-    private Boolean isBoosting = false;
+    private final static int SHIP_SIZE = 36;
+    private final static int BOOSTER_INTERVAL = 150;
+
+    float heading;
+    Boolean isBoosting = false;
+    Boolean fillShip;
+
     private ArrayList<Laser> lasers = new ArrayList<Laser>();
-    private ArrayList<Asteroid> asteroids;
-    private ArrayList<Ufo> ufos;
-    private ArrayList<Fragment> fragments = new ArrayList<Fragment>();
-    private GameManager gameManager;
-    private ShipShell shipShell;
+    private Interval boosterFlamesInterval;
+    private Boolean switchFlames = false;
 
-    Ship(GameManager gameManager, ArrayList<Asteroid> asteroids, ArrayList<Ufo> ufos) {
-        super(width / 2, height / 2, 18);
+    Ship(PVector position, Boolean fillShip) {
+        super(position, SHIP_SIZE, new PVector(0, 0), 0);
 
-        this.gameManager = gameManager;
-        this.asteroids = asteroids;
-        this.ufos = ufos;
-        this.shipShell = new ShipShell(this.position.x, this.position.y);
+        this.fillShip = fillShip;
+        this.heading = -PI / 2;
+        this.boosterFlamesInterval = new Interval(BOOSTER_INTERVAL);
     }
   
-    @Override
-    void update() {
-        if (this.fragments.size() == 0) {
-            this.turn();
+    Boolean update() {
+        this.heading += this.rotation;
 
-            if (this.isBoosting) {
-                this.boost();
-            }
+        if (this.isBoosting) {
+            PVector force = PVector.fromAngle(this.heading);
+            force.limit(0.15);
 
-            for (int i = this.lasers.size() - 1; i >= 0; i--) {
-                Laser laser = this.lasers.get(i);
-                laser.update();
+            this.velocity.add(force);
+        }
 
-                if (laser.isOffScreen) {
-                    this.lasers.remove(laser);
-                }
+        this.velocity.limit(10);
+        this.velocity.mult(0.995);
 
-                if (laser.hitsAsteroid()) {
-                    this.lasers.remove(laser);
-                    this.gameManager.asteroidHit();
-                }
+        super.update();
 
-                if (laser.hitsUfo()) {
-                    this.lasers.remove(laser);
-                    this.gameManager.ufoHit();
-                }
-            }
+        for (int laserIndex = this.lasers.size() - 1; laserIndex >= 0; laserIndex--) {
+            Laser laser = this.lasers.get(laserIndex);
+            laser.update();
 
-            this.shipShell.heading = this.heading;
-            this.shipShell.position = this.position;
-
-            this.velocity.limit(10);
-
-            super.update();
-            this.velocity.mult(0.995);
-        } else {
-            for (Fragment fragment : this.fragments) {
-                fragment.update();
+            if (laser.isOffScreen) {
+                lasers.remove(laserIndex);
             }
         }
+
+        return true;
     }
 
-    @Override
     void draw() {
-        if (this.fragments.size() == 0) {
-            for (Laser laser : this.lasers) {
-                laser.draw();
+        for (Laser laser : this.lasers) {
+            laser.draw();
+        }
+
+        push();
+
+        translate(this.position.x, this.position.y);
+        rotate(this.heading + PI / 2);
+
+        float smallerRadius = (this.diameter / 10) * 3.5;
+
+        beginShape();
+
+        if (this.fillShip) {
+            fill(Colors.EDGE);
+        } else {
+            fill(Colors.BACKGROUND);
+        }
+
+        stroke(Colors.EDGE);
+        strokeWeight(1.4);
+
+        vertex(smallerRadius, this.diameter / 2);
+        vertex(0, -this.diameter / 2);
+        vertex(-smallerRadius, this.diameter / 2);
+
+        bezierVertex(
+            0,
+            smallerRadius,
+            0,
+            smallerRadius,
+            smallerRadius,
+            this.diameter / 2
+        );
+
+        endShape();
+
+        if (this.isBoosting) {
+            if (this.boosterFlamesInterval.isElapsed()) {
+                this.switchFlames = !this.switchFlames;
             }
 
-            this.shipShell.draw();
-        } else {
-            for (Fragment fragment : this.fragments) {
-                fragment.draw();
-            }
+            this.drawBoosterFlames();
         }
+
+        pop();
     }
 
     void setRotation(float angle) {
@@ -84,75 +103,74 @@ public class Ship extends Sprite {
     }
 
     void shoot() {
-        this.lasers.add(new Laser(this.position, this.heading, this.asteroids, this.ufos));
+        this.lasers.add(new Laser(this.position.copy(), this.heading));
     }
 
-    void explode() {
-        if (this.fragments.size() == 0) {
-            Fragment fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.8, 5, 0.1);
-            fragment.velocity = PVector.random2D();
-            this.fragments.add(fragment);
-            fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.8, 3, -0.1);
-            fragment.velocity = PVector.random2D();
-            this.fragments.add(fragment);
-            fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.5, 3, 0.2);
-            fragment.velocity = PVector.random2D();
-            this.fragments.add(fragment);
-        }
-    }
+    Boolean lasersHit(Sprite sprite) {
+        for (int laserIndex = this.lasers.size() - 1; laserIndex >= 0; laserIndex--) {
+            Laser laser = this.lasers.get(laserIndex);
 
-    Boolean hitsAsteroid() {
-        if (this.fragments.size() == 0) {
-            for (Asteroid asteroid : this.asteroids) {
-                if (asteroid.hit(this.position.x, this.position.y, this.radius)) {
-                    this.explode();
-                    return true;
-                }
+            if (laser.collideWith(sprite)) {
+                this.lasers.remove(laserIndex);
+                return true;
             }
         }
 
         return false;
     }
 
-    Boolean hitsUfo() {
-        if (this.fragments.size() == 0) {
-            for (Ufo ufo : this.ufos) {
-                if (ufo.hit(this.position.x, this.position.y, this.radius)) {
-                    Fragment fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.8, 5, 0.1);
-                    fragment.velocity = PVector.random2D();
-                    this.fragments.add(fragment);
-                    fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.8, 3, -0.1);
-                    fragment.velocity = PVector.random2D();
-                    this.fragments.add(fragment);
-                    fragment = new Fragment(this.position.x, this.position.y, this.radius * 0.5, 3, 0.2);
-                    fragment.velocity = PVector.random2D();
-                    this.fragments.add(fragment);
+    ArrayList<Patatoid> breakUp() {
+        ArrayList<Patatoid> patatoids = new ArrayList<Patatoid>();
+        float[][] data = {{0.9, 0.05, 5}, {0.9, -0.08, 6}, {0.9, 0.15, 3}, {0.7, -0.1, 5},};
 
-                    return true;
-                }
-            }
+        for(float[] element : data) {
+            Patatoid patatoid = new Patatoid(
+                this.position.copy(),
+                this.diameter * element[0],
+                PVector.random2D(),
+                element[1],
+                int(element[2])
+            );
+
+            patatoids.add(patatoid);
         }
 
-        return false;
+        return patatoids;
     }
 
-    Boolean hit(float x, float y, float radius) {
-        float distance = dist(this.position.x, this.position.y, x, y);
+    private void drawBoosterFlames() {
+        float smallerRadius = (this.diameter / 10) * 3.5;
+        float marginX = this.diameter / 9;
+        float marginY = this.diameter / 3;
 
-        if (distance < this.radius + radius) {
-            return true;
+        if (this.switchFlames) {
+            line(
+                smallerRadius - marginX,
+                this.diameter / 2,
+                0,
+                this.diameter
+            );
+
+            line(
+                -smallerRadius + marginX,
+                this.diameter / 2,
+                0,
+                this.diameter
+            );
+        } else {
+            line(
+                smallerRadius - marginX,
+                this.diameter / 2,
+                0,
+                this.diameter - marginY
+            );
+
+            line(
+                -smallerRadius + marginX,
+                this.diameter / 2,
+                0,
+                this.diameter - marginY
+            );
         }
-
-        return false;
-    }
-
-    private void boost() {
-        PVector force = PVector.fromAngle(this.heading);
-        force.limit(.15);
-        this.velocity.add(force);
-    }
-
-    private void turn() {
-        this.heading += this.rotation;
     }
 }

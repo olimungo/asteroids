@@ -19,9 +19,10 @@ export default class Lifes extends Overlay {
         this.p5.pop();
     }
 
-    setShipCount(count: number) {
+    setLifeCount(count: number) {
         const y = 50;
         let x = 50;
+
         this.ships = [];
 
         for (let counter = 0; counter < count; counter++) {

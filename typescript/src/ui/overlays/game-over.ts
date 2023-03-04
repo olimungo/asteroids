@@ -13,7 +13,7 @@ export default class GameOver extends Overlay {
         this.p5.textAlign(this.p5.CENTER);
 
         this.p5.textSize(80);
-        this.p5.text('GAME OVER', this.p5.width / 2, this.p5.height / 2);
+        this.p5.text('GAME OVER', this.centerX, this.centerY);
 
         const now = this.p5.millis();
 
@@ -23,13 +23,13 @@ export default class GameOver extends Overlay {
         }
 
         if (this.displayPlayAgain) {
-            this.p5.textFont(Fonts.getInstance().fontLight);
+            this.p5.textFont(Fonts.fontLight);
 
             this.p5.textSize(25);
             this.p5.text(
                 'PRESS "S" TO PLAY AGAIN',
-                this.p5.width / 2,
-                this.p5.height / 2 + 50
+                this.centerX,
+                this.centerY + 50
             );
         }
 
