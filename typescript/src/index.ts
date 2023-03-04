@@ -7,7 +7,8 @@ const sketch = (p5: P5) => {
     let gameManager: GameManager;
 
     p5.preload = () => {
-        Fonts.getInstance().loadFonts(p5);
+        Fonts.setFontThin(p5.loadFont('fonts/Exo2-Thin.ttf'));
+        Fonts.setFontLight(p5.loadFont('fonts/Exo2-Light.ttf'));
 
         // p5.frameRate(25);
     };
@@ -16,7 +17,7 @@ const sketch = (p5: P5) => {
         const canvas = p5.createCanvas(1024, 700, 'p2d');
         canvas.parent('p5');
 
-        p5.textFont(Fonts.getInstance().fontThin);
+        p5.textFont(Fonts.fontThin);
 
         gameManager = new GameManager(p5);
     };

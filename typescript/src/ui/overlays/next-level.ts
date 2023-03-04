@@ -27,7 +27,7 @@ export default class NextLevel extends Overlay {
         }
 
         if (this.displayNextLevel) {
-            this.p5.textFont(Fonts.getInstance().fontLight);
+            this.p5.textFont(Fonts.fontLight);
             this.p5.textSize(25);
 
             this.p5.text(

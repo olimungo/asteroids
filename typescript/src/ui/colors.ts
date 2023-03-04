@@ -3,4 +3,5 @@ export default class Colors {
     static EDGE = '#dbe9ff';
     static WARNING = 'orange';
     static DARK = '#555';
+    static LIGHT = '#999';
 }

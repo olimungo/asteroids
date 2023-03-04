@@ -7,6 +7,10 @@ public class Overlay {
         this.centerY = height / 2;
     }
 
+    void draw(int param) {
+        this.draw();
+    }
+
     void draw() {
         push();
 

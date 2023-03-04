@@ -6,7 +6,7 @@ public class Hub extends Overlay {
         stroke(Colors.DARK);
         noFill();
 
-        rect(0, 0, width-1, height-1);
+        rect(0, 0, width, height);
 
         line(0, this.centerY, width, this.centerY);
         line(this.centerX, 0, this.centerX, height);

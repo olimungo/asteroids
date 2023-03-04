@@ -21,7 +21,7 @@ export default class NextLife extends Overlay {
             message += ' LEFT';
         }
 
-        this.p5.text(message, this.p5.width / 2, this.p5.height / 2);
+        this.p5.text(message, this.centerX, this.centerY);
 
         const now = this.p5.millis();
 
@@ -31,13 +31,13 @@ export default class NextLife extends Overlay {
         }
 
         if (this.displayRetry) {
-            this.p5.textFont(Fonts.getInstance().fontLight);
+            this.p5.textFont(Fonts.fontLight);
             this.p5.textSize(25);
 
             this.p5.text(
                 'PRESS "S" TO RE-TRY',
-                this.p5.width / 2,
-                this.p5.height / 2 + 50
+                this.centerX,
+                this.centerY + 50
             );
         }
 

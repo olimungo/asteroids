@@ -1,8 +1,8 @@
 public class Patatoid extends Sprite {
-    final static int DIAMETER_MAX = 120;
-    final static int ASTEROID_MINIMAL_DIAMETER_BREAKUP = 45;
+    private final static int DIAMETER_MAX = 130;
+    private final static int PATATOID_MINIMAL_DIAMETER_BREAKUP = 60;
 
-    PGraphics shape;
+    private PGraphics shape;
 
     int sides = 0;
 
@@ -19,7 +19,6 @@ public class Patatoid extends Sprite {
         this.shape = this.generateShape(this.generateVertices());
     }
 
-    @Override
     void draw() {
         push();
 
@@ -32,14 +31,19 @@ public class Patatoid extends Sprite {
         pop();
     }
 
-    ArrayList<Patatoid> breakup() {
+    ArrayList<Patatoid> breakUp() {
         ArrayList<Patatoid> patatoids = new ArrayList<Patatoid>();
 
-        if (this.diameter > ASTEROID_MINIMAL_DIAMETER_BREAKUP) {
-            int countNewAsteroids = this.diameter > DIAMETER_MAX * 0.7 ? 3 : 2;
+        if (this.diameter > PATATOID_MINIMAL_DIAMETER_BREAKUP) {
+            int countNewPatatoids = this.diameter > DIAMETER_MAX * 0.7 ? 3 : 2;
 
-            for (int counter = 0; counter < countNewAsteroids; counter++) {
-                patatoids.add(new Patatoid(this.position.copy(), this.diameter / (countNewAsteroids * 0.7), PVector.random2D(), this.rotationStep, this.sides));
+            for (int counter = 0; counter < countNewPatatoids; counter++) {
+                patatoids.add(
+                    new Patatoid(this.position.copy(),
+                    this.diameter / (countNewPatatoids * 0.7),
+                    PVector.random2D(),
+                    this.rotationStep,
+                    this.sides));
             }
         }
 
@@ -73,7 +77,7 @@ public class Patatoid extends Sprite {
         shape.translate(this.diameter / 2, this.diameter / 2);
 
         shape.strokeWeight(1.4);
-        shape.stroke(255);
+        shape.stroke(Colors.EDGE);
         shape.noFill();
 
         shape.beginShape();

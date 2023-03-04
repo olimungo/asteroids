@@ -25,9 +25,14 @@ export default class Ufo extends Sprite {
         position: P5.Vector,
         shootIntervalFrequency: number = 0
     ) {
-        super(p5, position, (UFO_WIDTH + UFO_HEIHT) / 2);
+        super(
+            p5,
+            position,
+            (UFO_WIDTH + UFO_HEIHT) / 2,
+            P5.Vector.random2D(),
+            0
+        );
 
-        this.velocity = P5.Vector.random2D();
         this.velocity.setMag(UFO_VELOCITY);
         this.shape = this.generateShape(this.generateVertices());
 
@@ -48,15 +53,15 @@ export default class Ufo extends Sprite {
         }
     }
 
-    update(ship: Ship | null) {
+    update(shipPosition: P5.Vector | undefined): boolean {
         if (this.changeHeadingInterval.isElapsed()) {
             this.velocity = P5.Vector.random2D();
             this.velocity.setMag(UFO_VELOCITY);
         }
 
-        if (ship) {
+        if (shipPosition) {
             if (this.shootInterval && this.shootInterval.isElapsed()) {
-                const target = P5.Vector.sub(ship.position, this.position);
+                const target = P5.Vector.sub(shipPosition, this.position);
 
                 this.lasers.push(
                     new Laser(this.p5, this.position.copy(), target.heading())
@@ -70,6 +75,8 @@ export default class Ufo extends Sprite {
         }
 
         super.update();
+
+        return true;
     }
 
     draw() {
@@ -87,6 +94,34 @@ export default class Ufo extends Sprite {
         for (let laser of this.lasers) {
             laser.draw();
         }
+    }
+
+    pause() {
+        this.changeHeadingInterval.pause();
+        this.shootInterval.pause();
+    }
+
+    unpause() {
+        this.changeHeadingInterval.unpause();
+        this.shootInterval.unpause();
+    }
+
+    lasersHit(sprite: Sprite): boolean {
+        let laserIndex: number = -1;
+
+        for (let [index, laser] of this.lasers.entries()) {
+            if (laser.collideWith(sprite)) {
+                laserIndex = index;
+                break;
+            }
+        }
+
+        if (laserIndex > -1) {
+            this.lasers.splice(laserIndex, 1);
+            return true;
+        }
+
+        return false;
     }
 
     private generateVertices(): P5.Vector[] {
@@ -132,23 +167,5 @@ export default class Ufo extends Sprite {
         shape.endShape(this.p5.CLOSE);
 
         return shape;
-    }
-
-    lasersHit(sprite: Sprite): boolean {
-        let laserIndex: number = -1;
-
-        for (let [index, laser] of this.lasers.entries()) {
-            if (laser.collideWith(sprite)) {
-                laserIndex = index;
-                break;
-            }
-        }
-
-        if (laserIndex > -1) {
-            this.lasers.splice(laserIndex, 1);
-            return true;
-        }
-
-        return false;
     }
 }

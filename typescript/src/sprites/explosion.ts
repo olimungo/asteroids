@@ -12,17 +12,15 @@ export default class Explosion {
         }
     }
 
-    update() {
+    update(): boolean {
         this.particles = this.particles.filter((particle) => particle.update());
+
+        return this.particles.length > 0;
     }
 
     draw() {
         for (const particle of this.particles) {
             particle.draw();
         }
-    }
-
-    isOver(): boolean {
-        return this.particles.length === 0;
     }
 }

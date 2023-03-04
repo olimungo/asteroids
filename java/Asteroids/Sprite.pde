@@ -12,11 +12,13 @@ public class Sprite {
         this.rotationStep = rotationStep;
     }
 
-    void update() {
+    Boolean update() {
         this.position.add(this.velocity);
         this.checkWindowEdges();
 
         this.rotation += this.rotationStep;
+
+        return true;
     }
 
     void draw() {
@@ -60,5 +62,20 @@ public class Sprite {
         }
 
         return result;
+    }
+
+    Boolean collideWith(Sprite sprite) {
+        float distance = dist(
+            this.position.x,
+            this.position.y,
+            sprite.position.x,
+            sprite.position.y
+        );
+
+        if (distance < this.diameter / 2 + sprite.diameter / 2) {
+            return true;
+        }
+
+        return false;
     }
 }

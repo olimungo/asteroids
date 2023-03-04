@@ -1,7 +1,8 @@
 public class Ship extends Sprite {
-    final static int SHIP_SIZE = 36;
+    private final static int SHIP_SIZE = 36;
+    private final static int BOOSTER_INTERVAL = 150;
 
-    float heading = -PI / 2;
+    float heading;
     Boolean isBoosting = false;
     Boolean fillShip;
 
@@ -14,11 +15,10 @@ public class Ship extends Sprite {
 
         this.fillShip = fillShip;
         this.heading = -PI / 2;
-        this.boosterFlamesInterval = new Interval(150);
+        this.boosterFlamesInterval = new Interval(BOOSTER_INTERVAL);
     }
   
-    @Override
-    void update() {
+    Boolean update() {
         this.heading += this.rotation;
 
         if (this.isBoosting) {
@@ -29,22 +29,22 @@ public class Ship extends Sprite {
         }
 
         this.velocity.limit(10);
+        this.velocity.mult(0.995);
 
         super.update();
 
-        this.velocity.mult(0.995);
-
-        for (int laserIndex = lasers.size() - 1; laserIndex >= 0; laserIndex--) {
-            Laser laser = lasers.get(laserIndex);
+        for (int laserIndex = this.lasers.size() - 1; laserIndex >= 0; laserIndex--) {
+            Laser laser = this.lasers.get(laserIndex);
             laser.update();
 
             if (laser.isOffScreen) {
                 lasers.remove(laserIndex);
             }
         }
+
+        return true;
     }
 
-    @Override
     void draw() {
         for (Laser laser : this.lasers) {
             laser.draw();
@@ -104,6 +104,38 @@ public class Ship extends Sprite {
 
     void shoot() {
         this.lasers.add(new Laser(this.position.copy(), this.heading));
+    }
+
+    Boolean lasersHit(Sprite sprite) {
+        for (int laserIndex = this.lasers.size() - 1; laserIndex >= 0; laserIndex--) {
+            Laser laser = this.lasers.get(laserIndex);
+
+            if (laser.collideWith(sprite)) {
+                this.lasers.remove(laserIndex);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    ArrayList<Patatoid> breakUp() {
+        ArrayList<Patatoid> patatoids = new ArrayList<Patatoid>();
+        float[][] data = {{0.9, 0.05, 5}, {0.9, -0.08, 6}, {0.9, 0.15, 3}, {0.7, -0.1, 5},};
+
+        for(float[] element : data) {
+            Patatoid patatoid = new Patatoid(
+                this.position.copy(),
+                this.diameter * element[0],
+                PVector.random2D(),
+                element[1],
+                int(element[2])
+            );
+
+            patatoids.add(patatoid);
+        }
+
+        return patatoids;
     }
 
     private void drawBoosterFlames() {

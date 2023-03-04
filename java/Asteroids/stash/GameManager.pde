@@ -1,299 +1,118 @@
-
-public static enum State {
-    HOMESCREEN, PLAYING, NEXT_LIFE, NEXT_LEVEL, GAME_OVER 
-}
-
 public class GameManager {
-    int asteroidsHit;
-    int ufosHit;
-    int lifes;
-    int level;
-    State state = State.HOMESCREEN;
+    private final static int LIFES_WHEN_STARTING = 3;
+    private final static int ASTEROIDS_START_MAX = 12;
+    private final static int ASTEROIDS_LEVEL_INCREMENT = 3;
+    private final static int GAME_OVER_STATE_TIMEOUT = 8000; // ms
+    private final static int ADD_LIFE_WHEN_SCORED = 3000;
+    private final static int ASTEROID_HIT_SCORE = 10;
+    private final static int UFO_HIT_SCORE = 50;
+    private final static int UFO_INIT_FREQUENCY = 25000; // ms
+    private final static int UFO_DECREMENT_FREQUENCY = 1000; // ms
+    private final static int UFO_MINIMAL_FREQUENCY = 10000; // ms
+    private final static int UFO_SHOOT_INIT_FREQUENCY = 15000; // ms
+    private final static int UFO_SHOOT_DECREMENT_FREQUENCY = 500; // ms
+    private final static int UFO_SHOOT_MINIMAL_FREQUENCY = 5000; // ms
 
-    private Starfield starfield;
-    private int maxAsteroids = 15;
-    private ArrayList<Asteroid> asteroids;
-    private ArrayList<Ufo> ufos;
-    private Helpers helpers;
-    private Ship ship;
-    private int timerUfo = 0;
-    private Boolean showStarfield = false;
-    private int addLifeWhenScored = 2000;
-    private int lifeAddedSoFar = 0;
-    private Boolean showNewLife = false;
-    private int newLifeTimer = 0;
+    private SpritesManager spritesManager;
+    private OverlaysManager overlaysManager;
+
+    private GameState gameState = GameState.HOMESCREEN;
+
+    private int level;
+    private int lifes;
+    private int score;
     private int topScore = 0;
-    private int homescreenTimer = 0;
-    private Boolean isPaused = false;
+    private int maxAsteroids;
+    private int gameOverTimeout;
+    private int lifeAddedSoFar;
+    private int ufoFrequency;
+    private int ufoShootFrequency;
+    private Boolean gamePaused = false;
 
     GameManager() {
-        this.helpers = new Helpers();
-        this.starfield = new Starfield();
-        this.asteroids = new ArrayList<Asteroid>();
-        this.ufos = new ArrayList<Ufo>();
-        this.ship = new Ship(this, this.asteroids, this.ufos);
-        this.ufos.add(new Ufo(random(width), random(height), null));
+        // this.spritesManager = new SpritesManager();
+        // this.overlaysManager = new OverlaysManager();
 
-        generateAsteroids();
+        // this.spritesManager.createAsteroids(ASTEROIDS_START_MAX);
+        // this.spritesManager.createShip();
+        // this.spritesManager.createUfo(0);
+
+        // for (const cookie of document.cookie.replace(/ /g, '').split(';')) {
+        //     const cookieSplit = cookie.split('=');
+
+        //     if (cookieSplit[0] === 'top-score') {
+        //         this.topScore = parseInt(cookieSplit[1]);
+        //     }
+        // }
     }
 
-    void update() {
-        if (!this.isPaused) {
-            if (this.state == State.PLAYING) {
-                if (this.ship.hitsAsteroid() || ship.hitsUfo()) {
-                    this.lifeLost();
-                }
+    // void update() {
+        // this.overlaysManager.update();
 
-                for (Ufo ufo : this.ufos) {
-                    if (ufo.hitsShip()) {
-                        this.ship.explode();
-                        this.lifeLost();
-                        break;
-                    }
-                }
+        // if (!this.gamePaused) {
+        //     this.spritesManager.update();
 
-                this.checkLevelFinished();
-                this.checkScore();
-            }
-
-            if (this.timerUfo != 0) {
-                this.checkTimerUfo();
-            }
-
-            if (this.state != State.HOMESCREEN) {
-                this.ship.update();
-            }
-
-            for (Ufo ufo : this.ufos) {
-                ufo.update();
-            }
-
-            for (Asteroid asteroid : this.asteroids) {
-                asteroid.update();
-            } 
-
-            if (this.homescreenTimer > 0) {
-                this.checkTimerHomescreen();
-            }
-        }
+        //     // if (this.gameState === GameState.PLAYING) {
+        //     //     this.checkLevel();
+        //     //     this.checkNewLife();
+        //     // }
+        // }
     }
 
-    void draw() {
-        pushStyle();
-            if (this.showStarfield) {
-                starfield.draw();
-            }
+    // void draw() {
+        // this.overlaysManager.drawBackground();
 
-            fill(219, 233, 255, random(200, 255));
+        // this.spritesManager.draw();
 
-            for (Asteroid asteroid : this.asteroids) {
-                asteroid.draw();
-            }
+        // this.overlaysManager.drawForeground(
+        //     this.gameState,
+        //     this.gamePaused,
+        //     this.topScore,
+        //     this.getScore(),
+        //     this.level,
+        //     this.lifes
+        // );
+    // }
 
-            if (this.state != State.HOMESCREEN) {
-                this.ship.draw();
-            }
+    // void keyPressed(int keyCode) {
+        // this.overlaysManager.keyPressed(keyCode);
 
-            this.helpers.showTitles(this.state, this.lifes, this.level, this.getScore(), this.topScore, this.isPaused);
+        // switch (this.gameState) {
+        //     case GameState.HOMESCREEN:
+        //     case GameState.GAME_OVER:
+        //         if (keyCode === 83) {
+        //             // s
+        //             // this.startGame();
+        //         }
 
-            if (this.state == State.PLAYING) {
-                if (this.showNewLife) {
-                    this.helpers.showNewLife();
-                    this.checkTimerNewLife();
-                }
-            }
+        //         break;
+        //     case GameState.PLAYING:
+        //         this.spritesManager.keyPressed(keyCode);
 
-            for (Ufo ufo : this.ufos) {
-                ufo.draw();
-            }
-        popStyle();
-    }
+        //         if (keyCode === 80) {
+        //             // p
+        //             this.gamePaused = !this.gamePaused;
+        //         }
 
-    void startGame() {
-        this.asteroidsHit = 0;
-        this.ufosHit = 0;
-        this.lifes = 3;
-        this.level = 1;
-        this.maxAsteroids = 10;
-        this.homescreenTimer = 0;
-        this.ufos.clear();
-        this.startNewLife();
-    }
+        //         break;
+        //     case GameState.NEXT_LEVEL:
+        //         if (keyCode == 83) {
+        //             // s
+        //             // this.nextLevel();
+        //         }
 
-    void startNewLife() {
-        this.state = State.PLAYING;
+        //         break;
+        //     case GameState.NEXT_LIFE:
+        //         if (keyCode == 83) {
+        //             // s
+        //             // this.startLevel();
+        //         }
 
-        this.generateAsteroids();
-        this.ship = new Ship(this, this.asteroids, this.ufos);
-        this.timerUfo = millis() + floor(random(10000, 15000));
-    }
+        //         break;
+        // }
+    // }
 
-    void startNewLevel() {
-        this.level++;
-        this.maxAsteroids += 5;
-        this.startNewLife();
-    }
-
-    void lifeLost() {
-        this.lifes--;
-
-        if (this.lifes == 0) {
-            this.endGame();
-        } else {
-            this.ufos.clear();
-            this.timerUfo = 0;
-            this.state = State.NEXT_LIFE;
-        }
-    }
-
-    void checkScore() {
-        if (this.getScore() - this.lifeAddedSoFar * this.addLifeWhenScored >= this.addLifeWhenScored) {
-            this.lifes++;
-            this.lifeAddedSoFar++;
-            this.showNewLife = true;
-            this.newLifeTimer = millis() + 2000;
-        }
-    }
-
-    void endGame() {
-        this.state = State.GAME_OVER;
-        this.ufos.clear();
-        this.timerUfo = 0;
-        this.homescreenTimer = millis() + 5000;
-
-        int score = this.getScore();
-
-        if (score > this.topScore) {
-            this.topScore = score;
-        }
-    }
-
-    void asteroidHit() {
-        this.asteroidsHit++;
-    }
-
-    void ufoHit() {
-        this.ufosHit++;
-
-        if (this.ufos.size() == 0) {
-            this.timerUfo = millis() + floor(random(10000, 1500));
-        }
-    }
-
-    void keyPressed(int keyCode) {
-        switch(this.state) {
-            case HOMESCREEN:
-            case GAME_OVER:
-                if (keyCode == 83) { // S
-                    this.startGame();
-                }
-                break;
-            case PLAYING:
-                if (keyCode == LEFT) {
-                    this.ship.setRotation(-0.075);
-                } else if (keyCode == RIGHT) {
-                    this.ship.setRotation(0.075);
-                } else if (keyCode == UP) {
-                    this.ship.setBoost(true);
-                } else if (keyCode == 32) { // SPACE 
-                    this.ship.shoot();
-                } else if (keyCode == 80) { // P
-                    this.isPaused = !this.isPaused;
-                }
-                break;
-            case NEXT_LEVEL:
-                if (keyCode == 83) { // S
-                    this.startNewLevel();
-                    break;
-                }
-            case NEXT_LIFE:
-                if (keyCode == 83) { // S
-                    this.startNewLife();
-                    break;
-                }
-        }
-
-        if (keyCode == 88) { // X
-            this.showStarfield = !this.showStarfield;
-        }
-    }
-
-    void keyReleased(int keyCode) {
-        if (this.state == State.PLAYING) {
-            if (keyCode == UP) {
-                this.ship.setBoost(false);
-            } else if (keyCode == LEFT || keyCode == RIGHT) {
-                this.ship.setRotation(0);
-            }
-        }
-    }
-
-    private void checkLevelFinished() {
-        if (this.asteroids.size() == 0) {
-            this.ufos.clear();
-            this.timerUfo = 0;
-            this.state = State.NEXT_LEVEL;
-
-            int score = this.getScore();
-
-            if (score > this.topScore) {
-                this.topScore = score;
-            }
-        }
-    }
-
-    private int getScore() {
-        return this.asteroidsHit * 10 + this.ufosHit * 50;
-    }
-
-    private void generateAsteroids() {
-        this.asteroids.clear();
-
-        for (int i = 0; i < this.maxAsteroids; i++) {
-            this.asteroids.add(new Asteroid());
-        }
-    }
-
-    private void checkTimerUfo() {
-        if (millis() > this.timerUfo) {
-            this.timerUfo = 0;
-
-            int randomSide = floor(random(4));
-            PVector vector = PVector.random2D();
-
-            switch(randomSide) {
-                case 1:
-                    vector.x += width;
-                    break;
-                case 2:
-                    vector.x -= width;
-                    break;
-                case 3:
-                    vector.y += height;
-                    break;
-                case 4:
-                    vector.y -= height;
-                    break;
-
-            }
-
-            for (int i = 0; i < this.level; i++) {
-                this.ufos.add(new Ufo(vector.x, vector.y, this.ship));
-            }
-        }
-    }
-
-    private void checkTimerNewLife() {
-        if (millis() > this.newLifeTimer) {
-            this.newLifeTimer = 0;
-            this.showNewLife = false;
-        }
-    }
-
-    private void checkTimerHomescreen() {
-        if (millis() > this.homescreenTimer) {
-            this.homescreenTimer = 0;
-            this.state = State.HOMESCREEN;
-        }
-    }
+    // void keyReleased(keyCode) {
+    //     // this.spritesManager.keyReleased(keyCode);
+    // }
 }

@@ -15,13 +15,14 @@ import {
     Starfield,
     GamePaused,
 } from '.';
+import Interval from '../../interval';
 
 const DISPLAY_NEW_LIFE_TIMEOUT = 5000;
 
 export default class OverlaysManager {
     private p5: P5;
 
-    private starField: Starfield;
+    private starfield: Starfield;
 
     private overlayHomeScreen: Homescreen;
     private overlayHub: Hub;
@@ -41,11 +42,12 @@ export default class OverlaysManager {
     private showHelp = false;
     private scaleStage = false;
     private showNewLife = false;
+    private newLifeInterval: Interval | null;
 
     constructor(p5: P5) {
         this.p5 = p5;
 
-        this.starField = new Starfield(p5);
+        this.starfield = new Starfield(p5);
 
         this.overlayHomeScreen = new Homescreen(p5);
         this.overlayHub = new Hub(p5);
@@ -62,8 +64,13 @@ export default class OverlaysManager {
     }
 
     update() {
+        if (this.newLifeInterval && this.newLifeInterval.isElapsed()) {
+            this.showNewLife = false;
+            this.newLifeInterval = null;
+        }
+
         if (this.showStarfield) {
-            this.starField.update();
+            this.starfield.update();
         }
     }
 
@@ -117,13 +124,13 @@ export default class OverlaysManager {
 
     drawBackground() {
         if (this.scaleStage) {
-            this.scale(1.3);
+            this.setScale(1.3);
         } else {
-            this.scale(1);
+            this.setScale(1);
         }
 
         if (this.showStarfield) {
-            this.starField.draw();
+            this.starfield.draw();
         }
     }
 
@@ -135,7 +142,7 @@ export default class OverlaysManager {
             case 72: // h
                 this.showHelp = !this.showHelp;
                 break;
-            case 85: // d
+            case 85: // u
                 this.showHub = !this.showHub;
                 break;
             case 88: // x
@@ -144,20 +151,29 @@ export default class OverlaysManager {
         }
     }
 
-    setShipCount(count: number) {
-        this.overlayLifes.setShipCount(count);
+    setLifeCount(count: number) {
+        this.overlayLifes.setLifeCount(count);
     }
 
     displayNewLife() {
         this.showNewLife = true;
-
-        setTimeout(() => {
-            this.showNewLife = false;
-        }, DISPLAY_NEW_LIFE_TIMEOUT);
+        this.newLifeInterval = new Interval(DISPLAY_NEW_LIFE_TIMEOUT);
     }
 
-    private scale(ratio: number) {
+    pause() {
+        if (this.newLifeInterval != null) {
+            this.newLifeInterval.pause();
+        }
+    }
+    unpause() {
+        if (this.newLifeInterval != null) {
+            this.newLifeInterval.unpause();
+        }
+    }
+
+    private setScale(ratio: number) {
         this.p5.scale(1 / ratio);
+
         this.p5.translate(
             (this.p5.width * ratio - this.p5.width) / 2,
             (this.p5.height * ratio - this.p5.height) / 2

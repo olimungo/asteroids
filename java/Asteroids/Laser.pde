@@ -1,5 +1,5 @@
 public class Laser extends Sprite {
-    final static int LASER_SIZE = 36;
+    private final static int LASER_SIZE = 4;
 
     Boolean isOffScreen = false;
 
@@ -7,12 +7,11 @@ public class Laser extends Sprite {
         super(position, LASER_SIZE, PVector.fromAngle(angle).mult(10), 0);
     }
 
-    @Override
     void draw() {
         push();
 
         stroke(Colors.EDGE);
-        strokeWeight(4);
+        strokeWeight(LASER_SIZE);
         point(this.position.x, this.position.y);
 
         pop();

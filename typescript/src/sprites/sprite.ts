@@ -1,4 +1,5 @@
 import P5 from 'p5';
+import Colors from '../ui/colors';
 
 export default class Sprite {
     p5: P5;
@@ -12,19 +13,23 @@ export default class Sprite {
         p5: P5,
         position: P5.Vector,
         diameter: number,
+        velocity: P5.Vector,
         rotationStep: number = 0
     ) {
         this.p5 = p5;
         this.position = position;
         this.diameter = diameter;
+        this.velocity = velocity;
         this.rotationStep = rotationStep;
     }
 
-    update(...args: any) {
+    update(...args: any): boolean {
         this.position.add(this.velocity);
         this.checkWindowEdges();
 
         this.rotation += this.rotationStep;
+
+        return true;
     }
 
     draw(...args: any) {
@@ -33,12 +38,12 @@ export default class Sprite {
         this.p5.translate(this.position.x, this.position.y);
         this.p5.rotate(this.rotation);
 
-        this.p5.fill(255);
+        this.p5.fill(Colors.EDGE);
         this.p5.noStroke();
 
         this.p5.ellipse(0, 0, this.diameter);
 
-        this.p5.fill(127);
+        this.p5.fill(Colors.DARK);
         this.p5.rectMode(this.p5.CENTER);
         this.p5.rect(0, 0, this.diameter / 4, this.diameter / 4);
 

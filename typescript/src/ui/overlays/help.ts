@@ -30,7 +30,7 @@ export default class Help extends Overlay {
 
         this.p5.fill(Colors.EDGE);
         this.p5.noStroke();
-        this.p5.textFont(Fonts.getInstance().fontLight);
+        this.p5.textFont(Fonts.fontLight);
         this.p5.textAlign(this.p5.CENTER);
         this.p5.textSize(35);
         this.p5.text('HELP', this.centerX, 210);
