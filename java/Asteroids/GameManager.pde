@@ -23,7 +23,7 @@ public class GameManager {
     private int score;
     private int topScore = 0;
     private int maxAsteroids;
-    private int gameOverTimeout;
+    private Interval gameOverInterval;
     private int lifeAddedSoFar;
     private int ufoFrequency;
     private int ufoShootFrequency;
@@ -35,6 +35,13 @@ public class GameManager {
 
         this.spritesManager.createAsteroids(ASTEROIDS_START_MAX);
         this.spritesManager.createUfo(0);
+
+        // Get the top score from a file
+        String[] lines = loadStrings("data/top-score.txt");
+
+        if (lines != null) {
+            this.topScore = Integer.parseInt(lines[0]);
+        }
     }
 
     void update() {
@@ -46,6 +53,16 @@ public class GameManager {
             if (this.gameState == GameState.PLAYING) {
                 this.checkLevel();
                 this.checkNewLife();
+            }
+        }
+
+        if (this.gameOverInterval != null &&  this.gameOverInterval.isElapsed()) {
+            this.gameState = GameState.HOMESCREEN;
+            this.gameOverInterval = null;
+
+            // If there is no UFO on the screen, create one
+            if (this.spritesManager.getUfosCount() == 0) {
+                this.spritesManager.createUfo(0);
             }
         }
     }
@@ -124,7 +141,7 @@ public class GameManager {
     }
 
     private void startGame() {
-        // clearTimeout(this.gameOverTimeout);
+        this.gameOverInterval = null;
 
         this.score = 0;
         this.level = 1;
@@ -185,17 +202,12 @@ public class GameManager {
                 int score = this.getScore();
                 this.topScore = score > this.topScore ? score : this.topScore;
 
-                // document.cookie = `top-score=${this.topScore}`;
+                // Save the top score to a file
+                String[] topScore = split(String.valueOf(this.topScore), ' ');
+                saveStrings("data/top-score.txt", topScore);
 
                 // Return to homescreen after some time...
-                // this.gameOverTimeout = setTimeout(() => {
-                //     this.gameState = GameState.HOMESCREEN;
-
-                //     // If there is no UFO on the screen, create one
-                //     if (this.spritesManager.getUfosCount() === 0) {
-                //         this.spritesManager.createUfo(0);
-                //     }
-                // }, GAME_OVER_STATE_TIMEOUT);
+                this.gameOverInterval = new Interval(GAME_OVER_STATE_TIMEOUT);
             } else {
                 this.gameState = GameState.NEXT_LIFE;
                 this.score = this.getScore();

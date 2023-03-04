@@ -5,12 +5,11 @@ import Fonts from './ui/fonts';
 
 const sketch = (p5: P5) => {
     let gameManager: GameManager;
+    let slowFrameRate = false;
 
     p5.preload = () => {
         Fonts.setFontThin(p5.loadFont('fonts/Exo2-Thin.ttf'));
         Fonts.setFontLight(p5.loadFont('fonts/Exo2-Light.ttf'));
-
-        // p5.frameRate(25);
     };
 
     p5.setup = () => {
@@ -27,6 +26,21 @@ const sketch = (p5: P5) => {
 
         gameManager.update();
         gameManager.draw();
+    };
+
+    p5.mousePressed = () => {
+        if (slowFrameRate) {
+            p5.frameRate(60);
+        } else {
+            p5.frameRate(10);
+        }
+
+        slowFrameRate = !slowFrameRate;
+        p5.noLoop();
+    };
+
+    p5.mouseReleased = () => {
+        p5.loop();
     };
 
     p5.keyPressed = (event: any) => {

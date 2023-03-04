@@ -149,21 +149,20 @@ public class SpritesManager {
         this.asteroids = new ArrayList<Patatoid>();
 
         for (int counter = 0; counter < count; counter++) {
-            PVector position = new PVector(
-                random(width),
-                random(height)
+            float radius = random(
+                height / 2,
+                (height / 2) * 1.3
             );
 
-            // As the position is randomly chosen, make sure that the asteroid is not
-            // placed too close from the center of the screen... where the ship will be.
-            PVector middle = new PVector(width / 2, height / 2);
-            PVector distanceToCenter = PVector.sub(position, middle);
+            float angle = map(counter, 0, count, 0, TWO_PI);
+            float x = radius * cos(angle);
+            float y = radius * sin(angle);
+            PVector position = new PVector(x, y);
 
-            if (distanceToCenter.mag() < ASTEROID_MIN_DISTANCE_TO_CENTER) {
-                position.setMag(ASTEROID_MIN_DISTANCE_TO_CENTER);
-            }
+            position.add(width / 2, height / 2);
 
-            float diameter = random(DIAMETER_MIN, DIAMETER_MAX);
+            float diameter = random(this.DIAMETER_MIN, this.DIAMETER_MAX);
+
             float rotationStep = map(
                 random(1),
                 0,
@@ -171,7 +170,8 @@ public class SpritesManager {
                 -0.01,
                 0.01
             );
-            int sides = floor(random(SIDES_MIN, SIDES_MAX));
+
+            int sides = floor(random(this.SIDES_MIN, this.SIDES_MAX));
 
             this.asteroids.add(
                 new Patatoid(
@@ -183,6 +183,44 @@ public class SpritesManager {
                 )
             );
         }
+
+
+
+        // for (int counter = 0; counter < count; counter++) {
+        //     PVector position = new PVector(
+        //         random(width),
+        //         random(height)
+        //     );
+
+        //     // As the position is randomly chosen, make sure that the asteroid is not
+        //     // placed too close from the center of the screen... where the ship will be.
+        //     PVector middle = new PVector(width / 2, height / 2);
+        //     PVector distanceToCenter = PVector.sub(position, middle);
+
+        //     if (distanceToCenter.mag() < ASTEROID_MIN_DISTANCE_TO_CENTER) {
+        //         position.setMag(ASTEROID_MIN_DISTANCE_TO_CENTER);
+        //     }
+
+        //     float diameter = random(DIAMETER_MIN, DIAMETER_MAX);
+        //     float rotationStep = map(
+        //         random(1),
+        //         0,
+        //         1,
+        //         -0.01,
+        //         0.01
+        //     );
+        //     int sides = floor(random(SIDES_MIN, SIDES_MAX));
+
+        //     this.asteroids.add(
+        //         new Patatoid(
+        //             position,
+        //             diameter,
+        //             PVector.random2D(),
+        //             rotationStep,
+        //             sides
+        //         )
+        //     );
+        // }
     }
 
     void createUfo(int ufoShootFrequency) {

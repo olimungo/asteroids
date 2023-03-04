@@ -160,21 +160,20 @@ export default class SpritesManager {
         this.asteroids = [];
 
         for (let counter = 0; counter < count; counter++) {
-            const position = new P5.Vector(
-                this.p5.random(this.p5.width),
-                this.p5.random(this.p5.height)
+            const radius = this.p5.random(
+                this.p5.height / 2,
+                (this.p5.height / 2) * 1.3
             );
 
-            // As the position is randomly chosen, make sure that the asteroid is not
-            // placed too close from the center of the screen... where the ship will be.
-            const middle = new P5.Vector(this.p5.width / 2, this.p5.height / 2);
-            const distanceToCenter = P5.Vector.sub(position, middle);
+            const angle = this.p5.map(counter, 0, count, 0, this.p5.TWO_PI);
+            const x = radius * this.p5.cos(angle);
+            const y = radius * this.p5.sin(angle);
+            const position = new P5.Vector(x, y);
 
-            if (distanceToCenter.mag() < ASTEROID_MIN_DISTANCE_TO_CENTER) {
-                position.setMag(ASTEROID_MIN_DISTANCE_TO_CENTER);
-            }
+            position.add(this.p5.width / 2, this.p5.height / 2);
 
             const diameter = this.p5.random(DIAMETER_MIN, DIAMETER_MAX);
+
             const rotationStep = this.p5.map(
                 this.p5.random(1),
                 0,
@@ -182,6 +181,7 @@ export default class SpritesManager {
                 -0.01,
                 0.01
             );
+
             const sides = this.p5.floor(this.p5.random(SIDES_MIN, SIDES_MAX));
 
             this.asteroids.push(

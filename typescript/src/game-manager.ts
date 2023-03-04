@@ -45,6 +45,7 @@ export default class GameManager {
         this.spritesManager.createAsteroids(ASTEROIDS_START_MAX);
         this.spritesManager.createUfo(0);
 
+        // Get the cookie top score
         for (const cookie of document.cookie.replace(/ /g, '').split(';')) {
             const cookieSplit = cookie.split('=');
 
@@ -200,6 +201,7 @@ export default class GameManager {
                 const score = this.getScore();
                 this.topScore = score > this.topScore ? score : this.topScore;
 
+                // Save the top score in a cookie
                 document.cookie = `top-score=${this.topScore}`;
 
                 // Return to homescreen after some time...
