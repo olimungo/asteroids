@@ -187,19 +187,20 @@ export default class GameManager {
         if (!this.spritesManager.shipHit()) {
             if (this.spritesManager.getAsteroidsCount() === 0) {
                 this.gameState = GameState.NEXT_LEVEL;
-                this.spritesManager.stopLevel();
                 this.score = this.getScore();
+                this.spritesManager.stopLevel();
             }
         } else {
             this.lifes--;
             this.overlaysManager.setLifeCount(this.lifes - 1);
+            this.score = this.getScore();
             this.spritesManager.stopLevel();
 
             if (this.lifes === 0) {
                 this.gameState = GameState.GAME_OVER;
 
-                const score = this.getScore();
-                this.topScore = score > this.topScore ? score : this.topScore;
+                this.topScore =
+                    this.score > this.topScore ? this.score : this.topScore;
 
                 // Save the top score in a cookie
                 document.cookie = `top-score=${this.topScore}`;
@@ -215,7 +216,6 @@ export default class GameManager {
                 }, GAME_OVER_STATE_TIMEOUT);
             } else {
                 this.gameState = GameState.NEXT_LIFE;
-                this.score = this.getScore();
             }
         }
     }

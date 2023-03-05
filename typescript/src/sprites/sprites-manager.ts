@@ -22,8 +22,8 @@ export default class SpritesManager {
     private createUfoInterval: Interval | null;
     private ufoShootFrequency: number = 0;
 
-    countAsteroidsHit;
-    countUfosHit;
+    countAsteroidsHit = 0;
+    countUfosHit = 0;
 
     constructor(p5: P5) {
         this.p5 = p5;
@@ -152,8 +152,10 @@ export default class SpritesManager {
 
     stopLevel() {
         this.createUfoInterval = null;
-        this.ufoShootFrequency = 0;
         this.ufos = [];
+        this.ufoShootFrequency = 0;
+        this.countAsteroidsHit = 0;
+        this.countUfosHit = 0;
     }
 
     createAsteroids(count: number) {
@@ -268,8 +270,6 @@ export default class SpritesManager {
         this.asteroids = [];
         this.shipFragments = [];
         this.ufos = [];
-        this.countAsteroidsHit = 0;
-        this.countUfosHit = 0;
     }
 
     pause() {
