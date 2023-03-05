@@ -222,7 +222,7 @@ public class GameManager {
         ) {
             this.lifeAddedSoFar++;
             this.lifes++;
-            this.overlaysManager.setLifeCount(this.lifes);
+            this.overlaysManager.setLifeCount(this.lifes - 1);
             this.overlaysManager.displayNewLife();
         }
     }
