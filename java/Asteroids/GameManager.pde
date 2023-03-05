@@ -3,7 +3,7 @@ public class GameManager {
     private final static int ASTEROIDS_START_MAX = 15;
     private final static int ASTEROIDS_LEVEL_INCREMENT = 3;
     private final static int GAME_OVER_STATE_TIMEOUT = 8000; // ms
-    private final static int ADD_LIFE_WHEN_SCORED = 100;
+    private final static int ADD_LIFE_WHEN_SCORED = 3000;
     private final static int ASTEROID_HIT_SCORE = 10;
     private final static int UFO_HIT_SCORE = 50;
     private final static int UFO_INIT_FREQUENCY = 25000; // ms
