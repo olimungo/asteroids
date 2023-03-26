@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>Asteroids</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap"
+            rel="stylesheet"
+        />
+
+        <link rel="stylesheet" href="index.css" />
+    </head>
+
+    <body>
+        <noscript
+            >This page contains webassembly and javascript content, please
+            enable javascript in your browser.</noscript
+        >
+
+        <div class="parent">
+            <div class="canvas">
+                <canvas id="canvas" width="1024" height="700"></canvas>
+            </div>
+
+            <footer>
+                <div>v0.9.0</div>
+
+                <img
+                    src="assets/github.svg"
+                    alt=""
+                    class="svg"
+                    onclick="window.open('https://github.com/olimungo/asteroids', '_blank');"
+                />
+            </footer>
+        </div>
+
+        <script src="./bootstrap.js"></script>
+    </body>
+</html>

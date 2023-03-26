@@ -1,0 +1,78 @@
+:root {
+    --primary-color: #797f8e;
+    --primary-dark-color: #555b69;
+    --secondary-color: #242c37;
+    --secondary-dark-color: #1d242d;
+    --primary-action-color: #4fe4c1;
+    --primary-action-dark-color: #10755d;
+    --secondary-action-color: #fac372;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: transparent;
+    color: white;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    background-color: #111;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+        sans-serif;
+}
+
+.parent {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    grid-template: auto;
+    overflow: hidden;
+}
+
+.top {
+    grid-row: 1;
+}
+
+footer {
+    grid-row: 2;
+    background-color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    box-shadow: 1px 1px 5px black;
+}
+
+canvas {
+    border: solid 0.5rem #333;
+    border-radius: 3rem;
+    box-shadow: 1px 1px 5px black;
+}
+
+.canvas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.svg {
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.svg:hover {
+    background-color: #666;
+}
+
+.svg:active {
+    background-color: #aaa;
+}
