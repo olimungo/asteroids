@@ -12,10 +12,10 @@ impl Vector {
         Vector { x, y }
     }
 
-    pub fn random(max_x: u32, max_y: u32) -> Vector {
+    pub fn random() -> Vector {
         Vector {
-            x: rand::thread_rng().gen_range(0.0..max_x as f64),
-            y: rand::thread_rng().gen_range(0.0..max_y as f64),
+            x: rand::thread_rng().gen_range(-1.2..1.2),
+            y: rand::thread_rng().gen_range(-1.2..1.2),
         }
     }
 
