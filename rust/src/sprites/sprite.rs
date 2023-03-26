@@ -1,7 +1,7 @@
 extern crate web_sys;
 
 use core::f64::consts::PI;
-use rand::Rng;
+
 use web_sys::CanvasRenderingContext2d;
 
 use crate::vector::Vector;
@@ -16,43 +16,39 @@ pub trait Spritable {
     fn collide_width(&self) -> bool;
 }
 
-pub struct Sprite<T: Spritable> {
+pub struct SpriteData {
     pub position: Vector,
     pub velocity: Vector,
     pub diameter: f64,
     pub rotation: f64,
     pub rotation_step: f64,
-    pub sprite: Option<Box<T>>,
-    canvas_width: f64,
-    canvas_height: f64,
 }
 
-impl<T: Spritable> Sprite<T> {
-    pub fn new(sprite: T, canvas_width: f64, canvas_height: f64) -> Sprite<T> {
-        let mut position = Vector::random();
-        position = position + Vector::new(canvas_width / 2.0, canvas_height / 2.0);
+pub struct Canvas {
+    pub width: f64,
+    pub height: f64,
+}
 
+pub struct Sprite {
+    pub sprite_data: SpriteData,
+    pub canvas: Canvas,
+}
+
+impl Sprite {
+    pub fn new(sprite_data: SpriteData, canvas: Canvas) -> Sprite {
         Sprite {
-            position,
-            velocity: Vector::random(),
-            diameter: 50.0,
-            rotation: 0.0,
-            rotation_step: rand::thread_rng().gen_range(-0.05..0.05),
-            sprite: Some(Box::new(sprite)),
-            canvas_width,
-            canvas_height,
+            sprite_data,
+            canvas,
         }
     }
 }
 
-impl<T: Spritable> Spritable for Sprite<T> {
+impl Spritable for Sprite {
     fn update(&mut self) {
-        self.position = self.position + self.velocity;
-        self.rotation += self.rotation_step;
+        self.sprite_data.position = self.sprite_data.position + self.sprite_data.velocity;
+        self.sprite_data.rotation += self.sprite_data.rotation_step;
 
         self.check_window_edges();
-
-        // let x = &self.sprite.unwrap();
     }
 
     fn draw(&self, canvas: CanvasRenderingContext2d) {
@@ -60,11 +56,11 @@ impl<T: Spritable> Spritable for Sprite<T> {
 
         canvas.begin_path();
 
-        let _result = canvas.translate(self.position.x, self.position.y);
-        let _result = canvas.rotate(self.rotation);
+        let _result = canvas.translate(self.sprite_data.position.x, self.sprite_data.position.y);
+        let _result = canvas.rotate(self.sprite_data.rotation);
 
         canvas.set_fill_style(&ALIVE_COLOR.into());
-        let _result = canvas.arc(0f64, 0f64, self.diameter / 2.0, 0f64, 2f64 * PI);
+        let _result = canvas.arc(0f64, 0f64, self.sprite_data.diameter / 2.0, 0f64, 2f64 * PI);
         canvas.fill();
 
         canvas.set_fill_style(&DEAD_COLOR.into());
@@ -78,24 +74,24 @@ impl<T: Spritable> Spritable for Sprite<T> {
     }
 
     fn check_window_edges(&mut self) -> bool {
-        let radius = self.diameter / 2.0;
-        let x = self.position.x;
-        let y = self.position.y;
+        let radius = self.sprite_data.diameter / 2.0;
+        let x = self.sprite_data.position.x;
+        let y = self.sprite_data.position.y;
         let mut result = false;
 
-        if x > self.canvas_width + radius {
-            self.position.x = -radius;
+        if x > self.canvas.width + radius {
+            self.sprite_data.position.x = -radius;
             result = true;
         } else if x < -radius {
-            self.position.x = self.canvas_width + radius;
+            self.sprite_data.position.x = self.canvas.width + radius;
             result = true;
         }
 
-        if y > self.canvas_height + radius {
-            self.position.y = -radius;
+        if y > self.canvas.height + radius {
+            self.sprite_data.position.y = -radius;
             result = true;
         } else if y < -radius {
-            self.position.y = self.canvas_height + radius;
+            self.sprite_data.position.y = self.canvas.height + radius;
             result = true;
         }
 

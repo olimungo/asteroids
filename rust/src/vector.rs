@@ -19,10 +19,10 @@ impl Vector {
         }
     }
 
-    pub fn set(&mut self, x: f64, y: f64) {
-        self.x = x;
-        self.y = y;
-    }
+    // pub fn set(&mut self, x: f64, y: f64) {
+    //     self.x = x;
+    //     self.y = y;
+    // }
 }
 
 impl Add for Vector {
