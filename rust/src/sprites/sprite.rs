@@ -4,18 +4,16 @@ use core::f64::consts::PI;
 
 use web_sys::CanvasRenderingContext2d;
 
+use crate::colors::Colors;
 use crate::vector::Vector;
-
-static DEAD_COLOR: &str = "#242c37";
-static ALIVE_COLOR: &str = "#4fe4c1";
 
 pub trait Spritable {
     fn update(&mut self);
     fn draw(&self, canvas: CanvasRenderingContext2d);
-    fn check_window_edges(&mut self) -> bool;
-    fn collide_width(&self) -> bool;
+    fn collide_with(&self, sprite: Sprite) -> bool;
 }
 
+#[derive(Copy, Clone)]
 pub struct SpriteData {
     pub position: Vector,
     pub velocity: Vector,
@@ -24,53 +22,36 @@ pub struct SpriteData {
     pub rotation_step: f64,
 }
 
-pub struct Canvas {
+#[derive(Copy, Clone)]
+pub struct CanvasDimension {
     pub width: f64,
     pub height: f64,
 }
 
+#[derive(Copy)]
 pub struct Sprite {
     pub sprite_data: SpriteData,
-    pub canvas: Canvas,
+    pub canvas: CanvasDimension,
+    pub is_offscreen: bool,
 }
 
-impl Sprite {
-    pub fn new(sprite_data: SpriteData, canvas: Canvas) -> Sprite {
+impl Clone for Sprite {
+    fn clone(&self) -> Self {
         Sprite {
-            sprite_data,
-            canvas,
+            sprite_data: self.sprite_data,
+            canvas: self.canvas,
+            is_offscreen: self.is_offscreen,
         }
     }
 }
 
-impl Spritable for Sprite {
-    fn update(&mut self) {
-        self.sprite_data.position = self.sprite_data.position + self.sprite_data.velocity;
-        self.sprite_data.rotation += self.sprite_data.rotation_step;
-
-        self.check_window_edges();
-    }
-
-    fn draw(&self, canvas: CanvasRenderingContext2d) {
-        canvas.save();
-
-        canvas.begin_path();
-
-        let _result = canvas.translate(self.sprite_data.position.x, self.sprite_data.position.y);
-        let _result = canvas.rotate(self.sprite_data.rotation);
-
-        canvas.set_fill_style(&ALIVE_COLOR.into());
-        let _result = canvas.arc(0f64, 0f64, self.sprite_data.diameter / 2.0, 0f64, 2f64 * PI);
-        canvas.fill();
-
-        canvas.set_fill_style(&DEAD_COLOR.into());
-        let _result = canvas.translate(-10.0, -10.0);
-
-        canvas.fill_rect(0f64, 0f64, 20f64, 20f64);
-
-        canvas.close_path();
-
-        canvas.restore();
+impl Sprite {
+    pub fn new(sprite_data: SpriteData, canvas: CanvasDimension) -> Sprite {
+        Sprite {
+            sprite_data,
+            canvas,
+            is_offscreen: false,
+        }
     }
 
     fn check_window_edges(&mut self) -> bool {
@@ -95,10 +76,51 @@ impl Spritable for Sprite {
             result = true;
         }
 
+        self.is_offscreen = result;
+
         result
     }
+}
 
-    fn collide_width(&self) -> bool {
+impl Spritable for Sprite {
+    fn update(&mut self) {
+        self.sprite_data.position += self.sprite_data.velocity;
+        self.sprite_data.rotation += self.sprite_data.rotation_step;
+
+        self.check_window_edges();
+    }
+
+    fn draw(&self, canvas: CanvasRenderingContext2d) {
+        canvas.save();
+
+        let _result = canvas.translate(self.sprite_data.position.x, self.sprite_data.position.y);
+        let _result = canvas.rotate(self.sprite_data.rotation);
+
+        canvas.begin_path();
+
+        let _result = canvas.arc(0.0, 0.0, 40.0, 0.0, 2.0 * PI);
+
+        canvas.fill();
+
+        canvas.set_fill_style(&Colors::Dark.value().into());
+
+        let _result = canvas.translate(-10.0, -10.0);
+
+        canvas.fill_rect(0.0, 0.0, 20.0, 20.0);
+
+        canvas.restore();
+    }
+
+    fn collide_with(&self, sprite: Sprite) -> bool {
+        let distance = self
+            .sprite_data
+            .position
+            .distance(sprite.sprite_data.position);
+
+        if distance < self.sprite_data.diameter / 2.0 + sprite.sprite_data.diameter / 2.0 {
+            return true;
+        }
+
         false
     }
 }

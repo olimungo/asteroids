@@ -3,13 +3,12 @@ use std::f64::consts::PI;
 use rand::Rng;
 use web_sys::CanvasRenderingContext2d;
 
+use super::sprite::{CanvasDimension, Spritable, Sprite, SpriteData};
 use crate::vector::Vector;
-
-use super::sprite::{Canvas, Spritable, Sprite, SpriteData};
 
 pub struct Potatoid {
     sides: u8,
-    sprite: Sprite,
+    pub sprite: Sprite,
     vertices: Vec<Vector>,
 }
 
@@ -20,8 +19,6 @@ impl Spritable for Potatoid {
 
     fn draw(&self, canvas: CanvasRenderingContext2d) {
         canvas.save();
-
-        canvas.set_stroke_style(&"#0000ff".into());
 
         let position = self.sprite.sprite_data.position;
         let _result = canvas.translate(position.x, position.y);
@@ -43,17 +40,13 @@ impl Spritable for Potatoid {
         canvas.restore();
     }
 
-    fn check_window_edges(&mut self) -> bool {
-        false
-    }
-
-    fn collide_width(&self) -> bool {
+    fn collide_with(&self, sprite: Sprite) -> bool {
         false
     }
 }
 
 impl Potatoid {
-    pub fn new(sprite_data: SpriteData, sides: u8, canvas: Canvas) -> Potatoid {
+    pub fn new(sprite_data: SpriteData, sides: u8, canvas: CanvasDimension) -> Potatoid {
         let mut potatoid = Potatoid {
             sides,
             sprite: Sprite::new(sprite_data, canvas),
@@ -68,7 +61,7 @@ impl Potatoid {
     fn generate_vertices(&mut self) {
         for side in 0..self.sides {
             let diameter = self.sprite.sprite_data.diameter;
-            let radius = rand::thread_rng().gen_range(diameter * 0.35..diameter * 0.5);
+            let radius = rand::thread_rng().gen_range(diameter * 0.32..diameter * 0.5);
             let angle = 2.0 * PI / self.sides as f64 * side as f64;
             let x = radius * angle.cos();
             let y = radius * angle.sin();

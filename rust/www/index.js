@@ -13,3 +13,11 @@ function renderLoop() {
         renderLoopId = requestAnimationFrame(renderLoop);
     }, 0);
 }
+
+document.addEventListener('keydown', (event) => {
+    game.key_pressed(event.key);
+});
+
+document.addEventListener('keyup', (event) => {
+    game.key_released(event.key);
+});
