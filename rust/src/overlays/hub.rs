@@ -27,19 +27,14 @@ impl Hub {
         canvas.set_stroke_style(&Colors::Warning.value().into());
 
         canvas.set_line_width(1.0);
-        canvas.stroke_rect(
-            20.0,
-            20.0,
-            self.canvas.width - 40.0,
-            self.canvas.height - 40.0,
-        );
+        canvas.stroke_rect(0.0, 0.0, self.canvas.width, self.canvas.height);
 
         canvas.begin_path();
 
-        canvas.move_to(self.center_x, 20.0);
-        canvas.line_to(self.center_x, self.canvas.height - 20.0);
-        canvas.move_to(20.0, self.center_y);
-        canvas.line_to(self.canvas.width - 20.0, self.center_y);
+        canvas.move_to(self.center_x, 0.0);
+        canvas.line_to(self.center_x, self.canvas.height);
+        canvas.move_to(0.0, self.center_y);
+        canvas.line_to(self.canvas.width, self.center_y);
 
         canvas.close_path();
 

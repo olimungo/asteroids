@@ -41,7 +41,7 @@ impl Spritable for Potatoid {
     }
 
     fn collide_with(&self, sprite: Sprite) -> bool {
-        false
+        self.sprite.collide_with(sprite)
     }
 }
 
@@ -68,5 +68,28 @@ impl Potatoid {
 
             self.vertices.push(Vector::new(x, y));
         }
+    }
+
+    pub fn break_up(&self) -> Vec<Potatoid> {
+        let mut new_asteroids = Vec::new();
+        let diameter = self.sprite.sprite_data.diameter;
+
+        if diameter > 60.0 {
+            let count_new_patatoids = match diameter {
+                x if x > 130.0 / 10.0 * 7.0 => 3,
+                _ => 2,
+            };
+
+            for _counter in 0..count_new_patatoids {
+                let mut sprite_data = self.sprite.sprite_data;
+
+                sprite_data.diameter /= count_new_patatoids as f64 * 0.7;
+                sprite_data.velocity = Vector::random();
+
+                new_asteroids.push(Potatoid::new(sprite_data, self.sides, self.sprite.canvas));
+            }
+        }
+
+        new_asteroids
     }
 }

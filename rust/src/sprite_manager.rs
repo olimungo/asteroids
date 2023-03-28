@@ -1,3 +1,5 @@
+use std::f64::consts::PI;
+
 use rand::Rng;
 use web_sys::CanvasRenderingContext2d;
 
@@ -13,6 +15,9 @@ use crate::{
 pub struct SpriteManager {
     asteroids: Vec<Potatoid>,
     ship: Ship,
+    ship_fragments: Vec<Potatoid>,
+    is_ship_active: bool,
+    ufo_create_frequency: u32,
     canvas: CanvasDimension,
 }
 
@@ -38,10 +43,13 @@ impl SpriteManager {
         let mut sprite_manager = SpriteManager {
             asteroids: Vec::new(),
             ship,
+            ship_fragments: Vec::new(),
+            is_ship_active: false,
+            ufo_create_frequency: 0,
             canvas,
         };
 
-        sprite_manager.create_asteroids(5);
+        sprite_manager.create_asteroids(25);
 
         sprite_manager
     }
@@ -66,19 +74,44 @@ impl SpriteManager {
     }
 
     pub fn update(&mut self) {
-        self.ship.update();
+        if self.is_ship_active {
+            self.ship.update();
+        }
+
+        if !self.ship_fragments.is_empty() {
+            for index in 0..self.ship_fragments.len() {
+                self.ship_fragments[index].update();
+            }
+        }
+
+        let mut new_asteroids = Vec::new();
 
         for index in (0..self.asteroids.len()).rev() {
             self.asteroids[index].update();
 
             if self.ship.lasers_collide_with(self.asteroids[index].sprite) {
+                new_asteroids.extend(self.asteroids[index].break_up());
+
                 self.asteroids.remove(index);
+            } else if self.is_ship_active && self.ship.collide_with(self.asteroids[index].sprite) {
+                self.is_ship_active = false;
+                self.ship_fragments = self.ship.break_up();
             }
         }
+
+        self.asteroids.extend(new_asteroids);
     }
 
     pub fn draw(&self, canvas: CanvasRenderingContext2d) {
-        self.ship.draw(canvas.clone());
+        if self.is_ship_active {
+            self.ship.draw(canvas.clone());
+        }
+
+        if !self.ship_fragments.is_empty() {
+            for index in 0..self.ship_fragments.len() {
+                self.ship_fragments[index].draw(canvas.clone());
+            }
+        }
 
         for counter in 0..self.asteroids.len() {
             self.asteroids[counter].draw(canvas.clone());
@@ -88,14 +121,32 @@ impl SpriteManager {
     pub fn create_asteroids(&mut self, count: u32) {
         self.asteroids.clear();
 
-        for _counter in 0..count {
-            let mut position = Vector::random();
+        for counter in 0..count {
+            let radius = rand::thread_rng()
+                .gen_range(self.canvas.height / 2.0..(self.canvas.height / 2.0) * 1.3);
+
+            let angle = 2.0 * PI / count as f64 * counter as f64;
+
+            let x = radius * angle.cos();
+            let y = radius * angle.sin();
+            let mut position = Vector::new(x, y);
+
             position += Vector::new(self.canvas.width / 2.0, self.canvas.height / 2.0);
 
             let velocity = Vector::random();
-            let diameter = rand::thread_rng().gen_range(50.0..100.0);
+
+            let diameter = rand::thread_rng().gen_range(40.0..120.0);
+
             let rotation = 0.0;
-            let rotation_step = rand::thread_rng().gen_range(-0.05..0.05);
+
+            let randomness = rand::thread_rng().gen_range(0..10);
+
+            let rotation_step = match randomness {
+                x if x < 5 => 0.01,
+                _ => -0.01,
+            };
+
+            let sides = rand::thread_rng().gen_range(8..20);
 
             let sprite_data = SpriteData {
                 position,
@@ -106,44 +157,46 @@ impl SpriteManager {
             };
 
             self.asteroids
-                .push(Potatoid::new(sprite_data, 12u8, self.canvas));
+                .push(Potatoid::new(sprite_data, sides, self.canvas));
         }
+    }
 
-        // for (let counter = 0; counter < count; counter++) {
-        //     const radius = this.p5.random(
-        //         this.p5.height / 2,
-        //         (this.p5.height / 2) * 1.3
-        //     );
+    pub fn pause(&self) {
+        todo!("pause sprite manager");
+    }
 
-        //     const angle = this.p5.map(counter, 0, count, 0, this.p5.TWO_PI);
-        //     const x = radius * this.p5.cos(angle);
-        //     const y = radius * this.p5.sin(angle);
-        //     const position = new P5.Vector(x, y);
+    pub fn unpause(&self) {
+        todo!("unpause sprite manager");
+    }
 
-        //     position.add(this.p5.width / 2, this.p5.height / 2);
+    pub fn start_level(
+        &mut self,
+        count_asteroids: u32,
+        ufo_create_frequency: u32,
+        ufo_shoot_frequency: u32,
+    ) {
+        self.ufo_create_frequency = ufo_shoot_frequency;
 
-        //     const diameter = this.p5.random(DIAMETER_MIN, DIAMETER_MAX);
+        self.reset();
 
-        //     const rotationStep = this.p5.map(
-        //         this.p5.random(1),
-        //         0,
-        //         1,
-        //         -0.01,
-        //         0.01
-        //     );
+        self.ship.sprite.sprite_data.position =
+            Vector::new(self.canvas.width / 2.0, self.canvas.height / 2.0);
 
-        //     const sides = this.p5.floor(this.p5.random(SIDES_MIN, SIDES_MAX));
+        self.is_ship_active = true;
 
-        //     this.asteroids.push(
-        //         new Patatoid(
-        //             this.p5,
-        //             position,
-        //             diameter,
-        //             P5.Vector.random2D(),
-        //             rotationStep,
-        //             sides
-        //         )
-        //     );
-        // }
+        self.create_asteroids(count_asteroids);
+
+        // this.createUfoInterval = new Interval(
+        //     this.p5.random(
+        //         ufoCreateFrequency - VARIABILITY_IN_CREATING_UFOS,
+        //         ufoCreateFrequency + VARIABILITY_IN_CREATING_UFOS
+        //     )
+        // );
+    }
+
+    pub fn reset(&mut self) {
+        self.asteroids.clear();
+        self.ship_fragments.clear();
+        // this.ufos = [];
     }
 }

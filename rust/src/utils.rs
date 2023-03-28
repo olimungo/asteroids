@@ -1,3 +1,5 @@
+use wasm_bindgen::prelude::wasm_bindgen;
+
 #[macro_export]
 macro_rules! log {
     ( $( $t:tt )* ) => {
@@ -14,4 +16,9 @@ pub fn set_panic_hook() {
     // https://github.com/rustwasm/console_error_panic_hook#readme
     #[cfg(feature = "console_error_panic_hook")]
     console_error_panic_hook::set_once();
+}
+
+#[wasm_bindgen]
+extern "C" {
+    pub fn millis() -> f64;
 }

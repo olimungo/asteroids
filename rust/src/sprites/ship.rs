@@ -2,15 +2,16 @@ use std::f64::consts::PI;
 
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{log, vector::Vector};
+use crate::vector::Vector;
 
 use super::{
     laser::Laser,
+    potatoid::Potatoid,
     sprite::{CanvasDimension, Spritable, Sprite, SpriteData},
 };
 
 pub struct Ship {
-    sprite: Sprite,
+    pub sprite: Sprite,
     heading: f64,
     is_boosting: bool,
     lasers: Vec<Laser>,
@@ -76,7 +77,7 @@ impl Spritable for Ship {
     }
 
     fn collide_with(&self, sprite: Sprite) -> bool {
-        false
+        self.sprite.collide_with(sprite)
     }
 }
 
@@ -130,5 +131,31 @@ impl Ship {
         }
 
         false
+    }
+
+    pub fn break_up(&self) -> Vec<Potatoid> {
+        let mut new_potatoids = Vec::new();
+        let potatoids_data = [
+            [0.9, 0.05, 5.0],
+            [0.9, -0.08, 6.0],
+            [0.9, 0.15, 3.0],
+            [0.7, -0.1, 5.0],
+        ];
+
+        for potatoid_data in potatoids_data {
+            let mut sprite_data = self.sprite.sprite_data;
+
+            sprite_data.diameter *= potatoid_data[0];
+            sprite_data.velocity = Vector::random();
+            sprite_data.rotation_step = potatoid_data[1];
+
+            new_potatoids.push(Potatoid::new(
+                sprite_data,
+                potatoid_data[2] as u8,
+                self.sprite.canvas,
+            ));
+        }
+
+        new_potatoids
     }
 }

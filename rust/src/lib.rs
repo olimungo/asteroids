@@ -1,5 +1,6 @@
 mod colors;
 mod game_manager;
+mod game_states;
 mod overlays;
 mod sprite_manager;
 mod sprites;
@@ -10,7 +11,6 @@ extern crate js_sys;
 extern crate web_sys;
 
 use game_manager::GameManager;
-use overlays::hub::Hub;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::window;
@@ -29,7 +29,6 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 pub struct Game {
     game_manager: GameManager,
     canvas_context: CanvasRenderingContext2d,
-    overlay_hub: Hub,
 }
 
 /// Public methods, exported to JavaScript
@@ -61,12 +60,9 @@ impl Game {
                 .dyn_into()
                 .expect("> Error when trying to get the canvas element in the html document!");
 
-            let overlay_hub = Hub::new(canvas_dimension);
-
             Game {
                 game_manager: GameManager::new(canvas_dimension),
                 canvas_context,
-                overlay_hub,
             }
         } else {
             panic!("> No canvas element found in the html document!");
@@ -75,9 +71,7 @@ impl Game {
 
     pub fn tick(&mut self) {
         self.game_manager.update();
-
         self.game_manager.draw(self.canvas_context.clone());
-        self.overlay_hub.draw(self.canvas_context.clone());
     }
 
     pub fn key_pressed(&mut self, key: &str) {
