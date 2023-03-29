@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{colors::Colors, sprites::sprite::CanvasDimension};
+use crate::sprites::sprite::CanvasDimension;
 
 pub struct Hub {
     canvas: CanvasDimension,
@@ -24,9 +24,6 @@ impl Hub {
     pub fn draw(&self, canvas: CanvasRenderingContext2d) {
         canvas.save();
 
-        canvas.set_stroke_style(&Colors::Warning.value().into());
-
-        canvas.set_line_width(1.0);
         canvas.stroke_rect(0.0, 0.0, self.canvas.width, self.canvas.height);
 
         canvas.begin_path();

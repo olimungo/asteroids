@@ -49,7 +49,7 @@ impl SpriteManager {
             canvas,
         };
 
-        sprite_manager.create_asteroids(25);
+        sprite_manager.create_asteroids(20);
 
         sprite_manager
     }

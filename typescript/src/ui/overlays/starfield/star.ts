@@ -31,7 +31,6 @@ export default class Star {
     draw() {
         const sx = this.p5.map(this.x / this.z, 0, 1, 0, this.p5.width);
         const sy = this.p5.map(this.y / this.z, 0, 1, 0, this.p5.height);
-        const radius = this.p5.map(this.z, 0, this.p5.width, 8, 0);
         const px = this.p5.map(this.x / this.pz, 0, 1, 0, this.p5.width);
         const py = this.p5.map(this.y / this.pz, 0, 1, 0, this.p5.height);
 

@@ -18,6 +18,10 @@ pub fn set_panic_hook() {
     console_error_panic_hook::set_once();
 }
 
+pub fn map(value: f64, start1: f64, stop1: f64, start2: f64, stop2: f64) -> f64 {
+    (value - start1) / (stop1 - start1) * (stop2 - start2) + start2
+}
+
 #[wasm_bindgen]
 extern "C" {
     pub fn millis() -> f64;

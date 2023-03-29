@@ -4,6 +4,8 @@ import Sprite from './sprite';
 
 const DIAMETER_MAX = 130;
 const PATATOID_MINIMAL_DIAMETER_BREAKUP = 60;
+const VERTEX_RADIUS_MIN = 0.35;
+const VERTEX_RADIUS_MAX = 0.5;
 
 export default class Patatoid extends Sprite {
     private shape: P5.Graphics;
@@ -67,8 +69,8 @@ export default class Patatoid extends Sprite {
 
         for (let side = 0; side < this.sides; side++) {
             const radius = this.p5.random(
-                this.diameter * 0.35,
-                this.diameter * 0.5
+                this.diameter * VERTEX_RADIUS_MIN,
+                this.diameter * VERTEX_RADIUS_MAX
             );
             const angle = this.p5.map(side, 0, this.sides, 0, this.p5.TWO_PI);
             const x = radius * this.p5.cos(angle);

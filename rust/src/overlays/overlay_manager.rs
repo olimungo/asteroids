@@ -2,11 +2,13 @@ use web_sys::CanvasRenderingContext2d;
 
 use crate::{game_states::GameState, sprites::sprite::CanvasDimension};
 
-use super::{homescreen::Homescreen, hub::Hub};
+use super::{help::Help, homescreen::Homescreen, hub::Hub, starfield::Starfield};
 
 pub struct OverlayManager {
     hub: Hub,
     homescreen: Homescreen,
+    help: Help,
+    starfield: Starfield,
     scale_stage: bool,
     show_hub: bool,
     show_help: bool,
@@ -20,6 +22,8 @@ impl OverlayManager {
         OverlayManager {
             hub: Hub::new(canvas),
             homescreen: Homescreen::new(canvas),
+            help: Help::new(canvas),
+            starfield: Starfield::new(canvas),
             scale_stage: false,
             show_hub: false,
             show_help: false,
@@ -35,6 +39,10 @@ impl OverlayManager {
             GameState::NextLife => {}
             GameState::NextLevel => {}
             GameState::GameOver => {}
+        }
+
+        if self.show_starfield {
+            self.starfield.update();
         }
     }
 
@@ -52,7 +60,7 @@ impl OverlayManager {
         }
 
         if self.show_help {
-            // self.help.draw(canvas);
+            self.help.draw(canvas.clone());
         }
 
         if self.show_hub {
@@ -60,11 +68,15 @@ impl OverlayManager {
         }
     }
 
-    pub fn draw_background(&self, canvas: CanvasRenderingContext2d) {
+    pub fn draw_background(&mut self, canvas: CanvasRenderingContext2d) {
         if self.scale_stage {
-            self.set_scale(1.3, canvas);
+            self.set_scale(1.3, canvas.clone());
         } else {
-            self.set_scale(1.0, canvas);
+            self.set_scale(1.0, canvas.clone());
+        }
+
+        if self.show_starfield {
+            self.starfield.draw(canvas);
         }
     }
 
@@ -73,7 +85,7 @@ impl OverlayManager {
             "e" => self.scale_stage = !self.scale_stage,
             "h" => self.show_help = !self.show_help,
             "u" => self.show_hub = !self.show_hub,
-            "x" => self.show_starfield = !self.scale_stage,
+            "x" => self.show_starfield = !self.show_starfield,
             _ => {}
         }
     }

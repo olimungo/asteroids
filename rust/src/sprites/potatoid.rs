@@ -6,6 +6,11 @@ use web_sys::CanvasRenderingContext2d;
 use super::sprite::{CanvasDimension, Spritable, Sprite, SpriteData};
 use crate::vector::Vector;
 
+const DIAMETER_MAX: f64 = 130.0;
+const PATATOID_MINIMAL_DIAMETER_BREAKUP: f64 = 60.0;
+const VERTEX_RADIUS_MIN: f64 = 0.35;
+const VERTEX_RADIUS_MAX: f64 = 0.5;
+
 pub struct Potatoid {
     sides: u8,
     pub sprite: Sprite,
@@ -61,7 +66,8 @@ impl Potatoid {
     fn generate_vertices(&mut self) {
         for side in 0..self.sides {
             let diameter = self.sprite.sprite_data.diameter;
-            let radius = rand::thread_rng().gen_range(diameter * 0.32..diameter * 0.5);
+            let radius = rand::thread_rng()
+                .gen_range(diameter * VERTEX_RADIUS_MIN..diameter * VERTEX_RADIUS_MAX);
             let angle = 2.0 * PI / self.sides as f64 * side as f64;
             let x = radius * angle.cos();
             let y = radius * angle.sin();
@@ -74,9 +80,9 @@ impl Potatoid {
         let mut new_asteroids = Vec::new();
         let diameter = self.sprite.sprite_data.diameter;
 
-        if diameter > 60.0 {
+        if diameter > PATATOID_MINIMAL_DIAMETER_BREAKUP {
             let count_new_patatoids = match diameter {
-                x if x > 130.0 / 10.0 * 7.0 => 3,
+                x if x > DIAMETER_MAX / 10.0 * 7.0 => 3,
                 _ => 2,
             };
 

@@ -1,7 +1,7 @@
 use web_sys::CanvasRenderingContext2d;
 
 use crate::{
-    colors::Colors, game_states::GameState, log, overlays::overlay_manager::OverlayManager,
+    colors::Colors, game_states::GameState, overlays::overlay_manager::OverlayManager,
     sprite_manager::SpriteManager, sprites::sprite::CanvasDimension,
 };
 
@@ -74,9 +74,10 @@ impl GameManager {
         self.overlay_manager.update(self.game_state);
     }
 
-    pub fn draw(&self, canvas: CanvasRenderingContext2d) {
+    pub fn draw(&mut self, canvas: CanvasRenderingContext2d) {
         canvas.save();
 
+        // Clear canvas
         canvas.set_stroke_style(&Colors::Edge.value().into());
         canvas.set_fill_style(&Colors::Background.value().into());
 
@@ -119,7 +120,7 @@ impl GameManager {
     fn start_level(&mut self) {
         self.game_state = GameState::Playing;
 
-        self.sprite_manager.start_level(20, 1000, 1000);
+        self.sprite_manager.start_level(10, 1000, 1000);
 
         // this.spritesManager.startLevel(
         //     this.maxAsteroids,
