@@ -1,8 +1,11 @@
 use web_sys::CanvasRenderingContext2d;
 
 use crate::{
-    colors::Colors, game_states::GameState, overlays::overlay_manager::OverlayManager,
-    sprite_manager::SpriteManager, sprites::sprite::CanvasDimension,
+    colors::Colors,
+    game_states::GameState,
+    overlays::overlay_manager::{OverlayData, OverlayManager},
+    sprite_manager::SpriteManager,
+    sprites::sprite::CanvasDimension,
 };
 
 const LIFES_WHEN_STARTING: u32 = 3;
@@ -118,15 +121,17 @@ impl GameManager {
 
         self.sprite_manager.draw(canvas.clone());
 
-        self.overlay_manager.draw_foreground(
-            self.game_state,
-            self.is_game_paused,
-            self.top_score,
-            self.get_score(),
-            self.level,
-            self.lifes,
-            canvas.clone(),
-        );
+        let overlay_data = OverlayData {
+            game_state: self.game_state,
+            is_game_paused: self.is_game_paused,
+            top_score: self.top_score,
+            score: self.get_score(),
+            level: self.level,
+            lifes: self.lifes,
+            canvas: canvas.clone(),
+        };
+
+        self.overlay_manager.draw_foreground(overlay_data);
 
         canvas.restore();
     }

@@ -3,9 +3,19 @@ use web_sys::CanvasRenderingContext2d;
 use crate::{game_states::GameState, sprites::sprite::CanvasDimension};
 
 use super::{
-    game_over::GameOver, help::Help, homescreen::Homescreen, hub::Hub, next_level::NextLevel,
-    next_life::NextLife, pause::Pause, score::Score, starfield::Starfield,
+    game_over::GameOver, help::Help, homescreen::Homescreen, hub::Hub, level::Level,
+    next_level::NextLevel, next_life::NextLife, pause::Pause, score::Score, starfield::Starfield,
 };
+
+pub struct OverlayData {
+    pub game_state: GameState,
+    pub is_game_paused: bool,
+    pub top_score: u32,
+    pub score: u32,
+    pub level: u32,
+    pub lifes: u32,
+    pub canvas: CanvasRenderingContext2d,
+}
 
 pub struct OverlayManager {
     hub: Hub,
@@ -17,6 +27,7 @@ pub struct OverlayManager {
     next_life: NextLife,
     game_over: GameOver,
     score: Score,
+    level: Level,
     scale_stage: bool,
     show_hub: bool,
     show_help: bool,
@@ -37,6 +48,7 @@ impl OverlayManager {
             next_life: NextLife::new(canvas),
             game_over: GameOver::new(canvas),
             score: Score::new(canvas),
+            level: Level::new(canvas),
             scale_stage: false,
             show_hub: false,
             show_help: false,
@@ -59,36 +71,30 @@ impl OverlayManager {
         }
     }
 
-    pub fn draw_foreground(
-        &self,
-        game_state: GameState,
-        is_game_pause: bool,
-        top_score: u32,
-        score: u32,
-        level: u32,
-        lifes: u32,
-        canvas: CanvasRenderingContext2d,
-    ) {
-        match game_state {
+    pub fn draw_foreground(&self, overlay_data: OverlayData) {
+        let canvas = overlay_data.canvas;
+
+        match overlay_data.game_state {
             GameState::Homescreen => self.homescreen.draw(canvas.clone()),
-            GameState::NextLevel => self.next_level.draw(level, canvas.clone()),
-            GameState::NextLife => self.next_life.draw(lifes, canvas.clone()),
+            GameState::NextLevel => self.next_level.draw(overlay_data.level, canvas.clone()),
+            GameState::NextLife => self.next_life.draw(overlay_data.lifes, canvas.clone()),
             GameState::GameOver => self.game_over.draw(canvas.clone()),
             _ => {}
         }
 
-        if game_state == GameState::Playing {
-            if is_game_pause {
+        if overlay_data.game_state == GameState::Playing {
+            if overlay_data.is_game_paused {
                 self.pause.draw(canvas.clone());
             }
 
-            self.score.draw(score, canvas.clone());
+            self.score.draw(overlay_data.score, canvas.clone());
+            self.level.draw(overlay_data.level, canvas.clone());
 
-            // todo!("overlays: lifes and level");
+            // todo!("overlays: lifes");
         }
 
         if self.show_new_life {
-            self.next_life.draw(lifes, canvas.clone());
+            self.next_life.draw(overlay_data.lifes, canvas.clone());
         }
 
         if self.show_help {
