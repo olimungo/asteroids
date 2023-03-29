@@ -4,7 +4,7 @@ use crate::sprites::sprite::CanvasDimension;
 
 use super::star::Star;
 
-const STARS_COUNT: u16 = 400;
+const STARS_COUNT: u32 = 400;
 
 pub struct Starfield {
     stars: Vec<Star>,

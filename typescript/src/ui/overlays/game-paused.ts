@@ -11,7 +11,7 @@ export default class GamePaused extends Overlay {
         this.p5.textAlign(this.p5.CENTER);
         this.p5.textSize(60);
 
-        this.p5.text('GAME PAUSED ', this.centerX, this.centerY - 100);
+        this.p5.text('GAME PAUSED', this.centerX, this.centerY - 100);
 
         this.p5.pop();
     }

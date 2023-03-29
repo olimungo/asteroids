@@ -5,13 +5,33 @@ use crate::{
     sprite_manager::SpriteManager, sprites::sprite::CanvasDimension,
 };
 
+const LIFES_WHEN_STARTING: u32 = 3;
+const ASTEROIDS_START_MAX: u32 = 1; // 12
+const ASTEROIDS_LEVEL_INCREMENT: u32 = 3;
+const GAME_OVER_STATE_TIMEOUT: u32 = 8000; // ms
+const ADD_LIFE_WHEN_SCORED: u32 = 3000;
+const ASTEROID_HIT_SCORE: u32 = 10;
+const UFO_HIT_SCORE: u32 = 50;
+const UFO_INIT_FREQUENCY: u32 = 25000; // ms
+const UFO_DECREMENT_FREQUENCY: u32 = 1000; // ms
+const UFO_MINIMAL_FREQUENCY: u32 = 10000; // ms
+const UFO_SHOOT_INIT_FREQUENCY: u32 = 15000; // ms
+const UFO_SHOOT_DECREMENT_FREQUENCY: u32 = 500; // ms
+const UFO_SHOOT_MINIMAL_FREQUENCY: u32 = 5000; // ms
+
 pub struct GameManager {
     game_state: GameState,
     sprite_manager: SpriteManager,
     overlay_manager: OverlayManager,
     is_game_paused: bool,
+    level: u32,
+    lifes: u32,
+    top_score: u32,
     score: u32,
-    level: u16,
+    max_asteroids: u32,
+    ufo_frequency: u32,
+    ufo_shoot_frequency: u32,
+    life_added_so_far: u32,
     canvas: CanvasDimension,
 }
 
@@ -22,14 +42,19 @@ impl GameManager {
             sprite_manager: SpriteManager::new(canvas),
             overlay_manager: OverlayManager::new(canvas),
             is_game_paused: false,
-            score: 0,
             level: 0,
+            lifes: 0,
+            top_score: 0,
+            score: 0,
+            max_asteroids: 0,
+            ufo_frequency: 0,
+            ufo_shoot_frequency: 0,
+            life_added_so_far: 0,
             canvas,
         }
     }
 
     pub fn key_pressed(&mut self, key: &str) {
-        self.sprite_manager.key_pressed(key);
         self.overlay_manager.key_pressed(key);
 
         if (self.game_state == GameState::Homescreen || self.game_state == GameState::GameOver)
@@ -53,25 +78,29 @@ impl GameManager {
         }
 
         if self.game_state == GameState::NextLevel && key == "s" {
-            todo!("next level");
-            // self.next_level();
+            self.next_level();
         }
 
         if self.game_state == GameState::NextLife && key == "s" {
-            todo!("next life");
-            // self.next_life();
+            self.start_level();
         }
     }
 
     pub fn key_released(&mut self, key: &str) {
-        if self.game_state == GameState::Playing {
-            self.sprite_manager.key_released(key);
-        }
+        self.sprite_manager.key_released(key);
     }
 
     pub fn update(&mut self) {
-        self.sprite_manager.update();
         self.overlay_manager.update(self.game_state);
+
+        if !self.is_game_paused {
+            self.sprite_manager.update();
+
+            if self.game_state == GameState::Playing {
+                self.check_level();
+                // this.checkNewLife();
+            }
+        }
     }
 
     pub fn draw(&mut self, canvas: CanvasRenderingContext2d) {
@@ -89,8 +118,15 @@ impl GameManager {
 
         self.sprite_manager.draw(canvas.clone());
 
-        self.overlay_manager
-            .draw_foreground(self.game_state, canvas.clone());
+        self.overlay_manager.draw_foreground(
+            self.game_state,
+            self.is_game_paused,
+            self.top_score,
+            self.get_score(),
+            self.level,
+            self.lifes,
+            canvas.clone(),
+        );
 
         canvas.restore();
     }
@@ -101,16 +137,16 @@ impl GameManager {
         self.score = 0;
         self.level = 1;
 
-        // this.score = 0;
-        // this.level = 1;
-        // this.maxAsteroids = ASTEROIDS_START_MAX;
-        // this.lifes = LIFES_WHEN_STARTING;
-        // this.overlaysManager.setLifeCount(this.lifes - 1);
-        // this.lifeAddedSoFar = 0;
-        // this.ufoFrequency = UFO_INIT_FREQUENCY;
-        // this.ufoShootFrequency = UFO_SHOOT_INIT_FREQUENCY;
+        self.score = 0;
+        self.level = 1;
+        self.max_asteroids = ASTEROIDS_START_MAX;
+        self.lifes = LIFES_WHEN_STARTING;
 
-        // this.spritesManager.reset();
+        // this.overlaysManager.setLifeCount(this.lifes - 1);
+
+        self.life_added_so_far = 0;
+        self.ufo_frequency = UFO_INIT_FREQUENCY;
+        self.ufo_shoot_frequency = UFO_SHOOT_INIT_FREQUENCY;
 
         self.sprite_manager.reset();
 
@@ -120,12 +156,52 @@ impl GameManager {
     fn start_level(&mut self) {
         self.game_state = GameState::Playing;
 
-        self.sprite_manager.start_level(10, 1000, 1000);
+        self.sprite_manager.start_level(
+            self.max_asteroids,
+            self.ufo_frequency,
+            self.ufo_shoot_frequency,
+        );
+    }
 
-        // this.spritesManager.startLevel(
-        //     this.maxAsteroids,
-        //     this.ufoFrequency,
-        //     this.ufoShootFrequency
-        // );
+    pub fn next_level(&mut self) {
+        self.level += 1;
+        self.max_asteroids += ASTEROIDS_LEVEL_INCREMENT;
+        self.ufo_frequency -= UFO_DECREMENT_FREQUENCY;
+        self.ufo_shoot_frequency -= UFO_SHOOT_DECREMENT_FREQUENCY;
+
+        if self.ufo_frequency < UFO_MINIMAL_FREQUENCY {
+            self.ufo_frequency = UFO_MINIMAL_FREQUENCY;
+        }
+
+        if self.ufo_shoot_frequency < UFO_SHOOT_MINIMAL_FREQUENCY {
+            self.ufo_shoot_frequency = UFO_SHOOT_MINIMAL_FREQUENCY;
+        }
+
+        self.start_level();
+    }
+
+    fn check_level(&mut self) {
+        if self.sprite_manager.is_ship_active {
+            if self.sprite_manager.get_asteroids_count() == 0 {
+                self.game_state = GameState::NextLevel;
+                // self.score = self.get_score();
+                self.sprite_manager.stop_level();
+            }
+        } else {
+            self.lifes -= 1;
+            self.sprite_manager.stop_level();
+
+            if self.lifes == 0 {
+                self.game_state = GameState::GameOver;
+            } else {
+                self.game_state = GameState::NextLife;
+            }
+        }
+    }
+
+    pub fn get_score(&self) -> u32 {
+        self.score
+            + self.sprite_manager.count_asteroids_hit * ASTEROID_HIT_SCORE
+            + self.sprite_manager.count_ufo_hit * UFO_HIT_SCORE
     }
 }

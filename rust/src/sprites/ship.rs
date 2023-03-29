@@ -12,7 +12,7 @@ use super::{
 
 pub struct Ship {
     pub sprite: Sprite,
-    heading: f64,
+    pub heading: f64,
     is_boosting: bool,
     lasers: Vec<Laser>,
 }

@@ -30,7 +30,7 @@ export default class GameManager {
     private score: number;
     private topScore: number = 0;
     private maxAsteroids: number;
-    private gameOverTimeout: number;
+    private gameOverTimeout: ReturnType<typeof setTimeout>;
     private lifeAddedSoFar: number;
     private ufoFrequency: number;
     private ufoShootFrequency: number;

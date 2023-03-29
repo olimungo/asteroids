@@ -16,8 +16,10 @@ pub struct SpriteManager {
     asteroids: Vec<Potatoid>,
     ship: Ship,
     ship_fragments: Vec<Potatoid>,
-    is_ship_active: bool,
+    pub is_ship_active: bool,
     ufo_create_frequency: u32,
+    pub count_asteroids_hit: u32,
+    pub count_ufo_hit: u32,
     canvas: CanvasDimension,
 }
 
@@ -46,6 +48,8 @@ impl SpriteManager {
             ship_fragments: Vec::new(),
             is_ship_active: false,
             ufo_create_frequency: 0,
+            count_asteroids_hit: 0,
+            count_ufo_hit: 0,
             canvas,
         };
 
@@ -93,6 +97,8 @@ impl SpriteManager {
                 new_asteroids.extend(self.asteroids[index].break_up());
 
                 self.asteroids.remove(index);
+
+                self.count_asteroids_hit += 1;
             } else if self.is_ship_active && self.ship.collide_with(self.asteroids[index].sprite) {
                 self.is_ship_active = false;
                 self.ship_fragments = self.ship.break_up();
@@ -161,12 +167,16 @@ impl SpriteManager {
         }
     }
 
+    pub fn get_asteroids_count(&self) -> usize {
+        self.asteroids.len()
+    }
+
     pub fn pause(&self) {
-        todo!("pause sprite manager");
+        // todo!("pause sprite manager");
     }
 
     pub fn unpause(&self) {
-        todo!("unpause sprite manager");
+        // todo!("unpause sprite manager");
     }
 
     pub fn start_level(
@@ -181,7 +191,8 @@ impl SpriteManager {
 
         self.ship.sprite.sprite_data.position =
             Vector::new(self.canvas.width / 2.0, self.canvas.height / 2.0);
-
+        self.ship.sprite.sprite_data.velocity = Vector::new(0.0, 0.0);
+        self.ship.heading = -PI / 2.0;
         self.is_ship_active = true;
 
         self.create_asteroids(count_asteroids);
@@ -192,6 +203,15 @@ impl SpriteManager {
         //         ufoCreateFrequency + VARIABILITY_IN_CREATING_UFOS
         //     )
         // );
+    }
+
+    pub fn stop_level(&mut self) {
+        // this.createUfoInterval = null;
+        // this.ufos = [];
+        // this.ufoShootFrequency = 0;
+
+        self.count_asteroids_hit = 0;
+        self.count_ufo_hit = 0;
     }
 
     pub fn reset(&mut self) {
