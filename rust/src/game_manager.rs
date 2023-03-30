@@ -147,7 +147,7 @@ impl GameManager {
         self.max_asteroids = ASTEROIDS_START_MAX;
         self.lifes = LIFES_WHEN_STARTING;
 
-        // this.overlaysManager.setLifeCount(this.lifes - 1);
+        self.overlay_manager.set_life_count(self.lifes - 1);
 
         self.life_added_so_far = 0;
         self.ufo_frequency = UFO_INIT_FREQUENCY;
@@ -189,7 +189,7 @@ impl GameManager {
         if self.sprite_manager.is_ship_active {
             if self.sprite_manager.get_asteroids_count() == 0 {
                 self.game_state = GameState::NextLevel;
-                // self.score = self.get_score();
+                self.score = self.get_score();
                 self.sprite_manager.stop_level();
             }
         } else {
@@ -200,6 +200,7 @@ impl GameManager {
                 self.game_state = GameState::GameOver;
             } else {
                 self.game_state = GameState::NextLife;
+                self.overlay_manager.set_life_count(self.lifes - 1);
             }
         }
     }
@@ -208,5 +209,15 @@ impl GameManager {
         self.score
             + self.sprite_manager.count_asteroids_hit * ASTEROID_HIT_SCORE
             + self.sprite_manager.count_ufo_hit * UFO_HIT_SCORE
+    }
+
+    pub fn check_new_life(&mut self) {
+        if self.get_score() - self.life_added_so_far * ADD_LIFE_WHEN_SCORED >= ADD_LIFE_WHEN_SCORED
+        {
+            self.life_added_so_far += 1;
+            self.lifes += 1;
+            self.overlay_manager.set_life_count(self.lifes - 1);
+            self.overlay_manager.dispaly_new_life();
+        }
     }
 }

@@ -3,7 +3,7 @@ use web_sys::CanvasRenderingContext2d;
 use crate::{game_states::GameState, sprites::sprite::CanvasDimension};
 
 use super::{
-    game_over::GameOver, help::Help, homescreen::Homescreen, hub::Hub, level::Level,
+    game_over::GameOver, help::Help, homescreen::Homescreen, hub::Hub, level::Level, lifes::Lifes,
     next_level::NextLevel, next_life::NextLife, pause::Pause, score::Score, starfield::Starfield,
 };
 
@@ -28,6 +28,7 @@ pub struct OverlayManager {
     game_over: GameOver,
     score: Score,
     level: Level,
+    lifes: Lifes,
     scale_stage: bool,
     show_hub: bool,
     show_help: bool,
@@ -49,6 +50,7 @@ impl OverlayManager {
             game_over: GameOver::new(canvas),
             score: Score::new(canvas),
             level: Level::new(canvas),
+            lifes: Lifes::new(canvas),
             scale_stage: false,
             show_hub: false,
             show_help: false,
@@ -89,8 +91,7 @@ impl OverlayManager {
 
             self.score.draw(overlay_data.score, canvas.clone());
             self.level.draw(overlay_data.level, canvas.clone());
-
-            // todo!("overlays: lifes");
+            self.lifes.draw(canvas.clone());
         }
 
         if self.show_new_life {
@@ -126,6 +127,15 @@ impl OverlayManager {
             "x" => self.show_starfield = !self.show_starfield,
             _ => {}
         }
+    }
+
+    pub fn dispaly_new_life(&mut self) {
+        self.show_new_life = true;
+        // this.newLifeInterval = new Interval(DISPLAY_NEW_LIFE_TIMEOUT);
+    }
+
+    pub fn set_life_count(&mut self, count: u32) {
+        self.lifes.set_life_count(count);
     }
 
     fn set_scale(&self, ratio: f64, canvas: CanvasRenderingContext2d) {

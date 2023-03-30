@@ -1,8 +1,7 @@
 use web_sys::CanvasRenderingContext2d;
 
-use crate::sprites::sprite::CanvasDimension;
-
 use super::star::Star;
+use crate::sprites::sprite::CanvasDimension;
 
 const STARS_COUNT: u32 = 400;
 
