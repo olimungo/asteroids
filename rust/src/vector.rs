@@ -12,11 +12,31 @@ impl Vector {
         Vector { x, y }
     }
 
-    pub fn random() -> Vector {
+    pub fn random(min_limit: f64, max_limit: f64) -> Vector {
         Vector {
-            x: rand::thread_rng().gen_range(-1.2..1.2),
-            y: rand::thread_rng().gen_range(-1.2..1.2),
+            x: rand::thread_rng().gen_range(min_limit..max_limit),
+            y: rand::thread_rng().gen_range(min_limit..max_limit),
         }
+    }
+
+    pub fn random_velocity(limit: f64, min_value: f64) -> Vector {
+        let constrain_limit = limit - min_value;
+        let mut x = rand::thread_rng().gen_range(-constrain_limit..constrain_limit);
+        let mut y = rand::thread_rng().gen_range(-constrain_limit..constrain_limit);
+
+        if x > 0.0 {
+            x += min_value;
+        } else {
+            x -= min_value;
+        }
+
+        if y > 0.0 {
+            y += min_value;
+        } else {
+            y -= min_value;
+        }
+
+        Vector { x, y }
     }
 
     pub fn from_angle(angle: f64) -> Vector {

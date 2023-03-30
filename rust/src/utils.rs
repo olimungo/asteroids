@@ -1,3 +1,4 @@
+use rand::Rng;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 #[macro_export]
@@ -20,6 +21,10 @@ pub fn set_panic_hook() {
 
 pub fn map(value: f64, start1: f64, stop1: f64, start2: f64, stop2: f64) -> f64 {
     (value - start1) / (stop1 - start1) * (stop2 - start2) + start2
+}
+
+pub fn random(min_limit: u32, max_limit: u32) -> u32 {
+    rand::thread_rng().gen_range(min_limit..max_limit)
 }
 
 #[wasm_bindgen]

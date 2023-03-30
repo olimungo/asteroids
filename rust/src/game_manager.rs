@@ -9,7 +9,7 @@ use crate::{
 };
 
 const LIFES_WHEN_STARTING: u32 = 3;
-const ASTEROIDS_START_MAX: u32 = 1; // 12
+const ASTEROIDS_START_MAX: u32 = 12;
 const ASTEROIDS_LEVEL_INCREMENT: u32 = 3;
 const GAME_OVER_STATE_TIMEOUT: u32 = 8000; // ms
 const ADD_LIFE_WHEN_SCORED: u32 = 3000;
@@ -101,7 +101,7 @@ impl GameManager {
 
             if self.game_state == GameState::Playing {
                 self.check_level();
-                // this.checkNewLife();
+                self.check_new_life();
             }
         }
     }

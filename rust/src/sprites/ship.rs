@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use web_sys::CanvasRenderingContext2d;
 
-use crate::vector::Vector;
+use crate::{colors::Colors, vector::Vector};
 
 use super::{
     laser::Laser,
@@ -14,6 +14,7 @@ pub struct Ship {
     pub sprite: Sprite,
     pub heading: f64,
     is_boosting: bool,
+    is_plain_ship: bool,
     lasers: Vec<Laser>,
 }
 
@@ -44,6 +45,10 @@ impl Spritable for Ship {
     }
 
     fn draw(&self, canvas: CanvasRenderingContext2d) {
+        for laser in &self.lasers {
+            laser.draw(canvas.clone());
+        }
+
         canvas.save();
 
         let position = self.sprite.sprite_data.position;
@@ -68,12 +73,16 @@ impl Spritable for Ship {
 
         canvas.close_path();
 
-        canvas.stroke();
-        canvas.restore();
-
-        for laser in &self.lasers {
-            laser.draw(canvas.clone());
+        if self.is_plain_ship {
+            canvas.set_fill_style(&Colors::Edge.value().into());
+            canvas.fill();
+        } else {
+            canvas.set_fill_style(&Colors::Background.value().into());
+            canvas.fill();
+            canvas.stroke();
         }
+
+        canvas.restore();
     }
 
     fn collide_with(&self, sprite: Sprite) -> bool {
@@ -82,11 +91,12 @@ impl Spritable for Ship {
 }
 
 impl Ship {
-    pub fn new(sprite_data: SpriteData, canvas: CanvasDimension) -> Ship {
+    pub fn new(sprite_data: SpriteData, is_plain_ship: bool, canvas: CanvasDimension) -> Ship {
         Ship {
             sprite: Sprite::new(sprite_data, canvas),
             heading: -PI / 2.0,
             is_boosting: false,
+            is_plain_ship,
             lasers: Vec::new(),
         }
     }
@@ -146,7 +156,7 @@ impl Ship {
             let mut sprite_data = self.sprite.sprite_data;
 
             sprite_data.diameter *= potatoid_data[0];
-            sprite_data.velocity = Vector::random();
+            sprite_data.velocity = Vector::random(-1.2, 1.2);
             sprite_data.rotation_step = potatoid_data[1];
 
             new_potatoids.push(Potatoid::new(

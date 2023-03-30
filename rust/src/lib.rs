@@ -1,6 +1,7 @@
 mod colors;
 mod game_manager;
 mod game_states;
+mod interval;
 mod overlays;
 mod sprite_manager;
 mod sprites;

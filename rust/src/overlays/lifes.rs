@@ -58,7 +58,7 @@ impl Lifes {
                 rotation_step,
             };
 
-            self.ships.push(Ship::new(sprite_data, self.canvas));
+            self.ships.push(Ship::new(sprite_data, true, self.canvas));
 
             x += 40.0;
         }

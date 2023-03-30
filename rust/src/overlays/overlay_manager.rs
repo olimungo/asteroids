@@ -1,11 +1,14 @@
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{game_states::GameState, sprites::sprite::CanvasDimension};
+use crate::{game_states::GameState, interval::Interval, sprites::sprite::CanvasDimension};
 
 use super::{
-    game_over::GameOver, help::Help, homescreen::Homescreen, hub::Hub, level::Level, lifes::Lifes,
-    next_level::NextLevel, next_life::NextLife, pause::Pause, score::Score, starfield::Starfield,
+    game_over::GameOver, game_paused::GamePaused, help::Help, homescreen::Homescreen, hub::Hub,
+    level::Level, lifes::Lifes, new_life::NewLife, next_level::NextLevel, next_life::NextLife,
+    score::Score, starfield::Starfield,
 };
+
+const DISPLAY_NEW_LIFE_TIMEOUT: u32 = 7000;
 
 pub struct OverlayData {
     pub game_state: GameState,
@@ -22,13 +25,15 @@ pub struct OverlayManager {
     homescreen: Homescreen,
     help: Help,
     starfield: Starfield,
-    pause: Pause,
+    game_paused: GamePaused,
     next_level: NextLevel,
     next_life: NextLife,
     game_over: GameOver,
     score: Score,
     level: Level,
     lifes: Lifes,
+    new_life: NewLife,
+    new_life_interval: Interval,
     scale_stage: bool,
     show_hub: bool,
     show_help: bool,
@@ -44,13 +49,15 @@ impl OverlayManager {
             homescreen: Homescreen::new(canvas),
             help: Help::new(canvas),
             starfield: Starfield::new(canvas),
-            pause: Pause::new(canvas),
+            game_paused: GamePaused::new(canvas),
             next_level: NextLevel::new(canvas),
             next_life: NextLife::new(canvas),
             game_over: GameOver::new(canvas),
             score: Score::new(canvas),
             level: Level::new(canvas),
             lifes: Lifes::new(canvas),
+            new_life: NewLife::new(canvas),
+            new_life_interval: Interval::new(),
             scale_stage: false,
             show_hub: false,
             show_help: false,
@@ -62,10 +69,18 @@ impl OverlayManager {
     pub fn update(&mut self, game_state: GameState) {
         match game_state {
             GameState::Homescreen => self.homescreen.update(),
-            GameState::Playing => {}
             GameState::NextLife => self.next_life.update(),
             GameState::NextLevel => self.next_level.update(),
             GameState::GameOver => self.game_over.update(),
+            _ => {}
+        }
+
+        if self.new_life_interval.not_yet_elapsed {
+            self.new_life.update();
+
+            if self.new_life_interval.become_elapsed() {
+                self.show_new_life = false;
+            }
         }
 
         if self.show_starfield {
@@ -86,7 +101,7 @@ impl OverlayManager {
 
         if overlay_data.game_state == GameState::Playing {
             if overlay_data.is_game_paused {
-                self.pause.draw(canvas.clone());
+                self.game_paused.draw(canvas.clone());
             }
 
             self.score.draw(overlay_data.score, canvas.clone());
@@ -95,7 +110,7 @@ impl OverlayManager {
         }
 
         if self.show_new_life {
-            self.next_life.draw(overlay_data.lifes, canvas.clone());
+            self.new_life.draw(canvas.clone());
         }
 
         if self.show_help {
@@ -131,7 +146,16 @@ impl OverlayManager {
 
     pub fn dispaly_new_life(&mut self) {
         self.show_new_life = true;
-        // this.newLifeInterval = new Interval(DISPLAY_NEW_LIFE_TIMEOUT);
+        self.new_life_interval
+            .set_interval_frequency(DISPLAY_NEW_LIFE_TIMEOUT);
+    }
+
+    pub fn pause(&mut self) {
+        self.new_life_interval.pause();
+    }
+
+    pub fn unpause(&mut self) {
+        self.new_life_interval.unpause();
     }
 
     pub fn set_life_count(&mut self, count: u32) {

@@ -5,6 +5,7 @@ use web_sys::CanvasRenderingContext2d;
 
 use crate::{
     sprites::{
+        explosion::Explosion,
         potatoid::Potatoid,
         ship::Ship,
         sprite::{CanvasDimension, Spritable, SpriteData},
@@ -16,6 +17,7 @@ pub struct SpriteManager {
     asteroids: Vec<Potatoid>,
     ship: Ship,
     ship_fragments: Vec<Potatoid>,
+    explosions: Vec<Explosion>,
     pub is_ship_active: bool,
     ufo_create_frequency: u32,
     pub count_asteroids_hit: u32,
@@ -39,6 +41,7 @@ impl SpriteManager {
                 rotation,
                 rotation_step,
             },
+            false,
             canvas,
         );
 
@@ -46,6 +49,7 @@ impl SpriteManager {
             asteroids: Vec::new(),
             ship,
             ship_fragments: Vec::new(),
+            explosions: Vec::new(),
             is_ship_active: false,
             ufo_create_frequency: 0,
             count_asteroids_hit: 0,
@@ -88,13 +92,20 @@ impl SpriteManager {
             }
         }
 
-        let mut new_asteroids = Vec::new();
-
         for index in (0..self.asteroids.len()).rev() {
             self.asteroids[index].update();
 
             if self.ship.lasers_collide_with(self.asteroids[index].sprite) {
-                new_asteroids.extend(self.asteroids[index].break_up());
+                let new_asteroids = self.asteroids[index].break_up();
+
+                if new_asteroids.is_empty() {
+                    let explosion =
+                        Explosion::new(self.asteroids[index].sprite.sprite_data, self.canvas);
+
+                    self.explosions.push(explosion);
+                } else {
+                    self.asteroids.extend(new_asteroids);
+                }
 
                 self.asteroids.remove(index);
 
@@ -105,10 +116,20 @@ impl SpriteManager {
             }
         }
 
-        self.asteroids.extend(new_asteroids);
+        for index in (0..self.explosions.len()).rev() {
+            self.explosions[index].update();
+
+            if self.explosions[index].is_faded {
+                self.explosions.remove(index);
+            }
+        }
     }
 
     pub fn draw(&self, canvas: CanvasRenderingContext2d) {
+        for explosion in &self.explosions {
+            explosion.draw(canvas.clone());
+        }
+
         if self.is_ship_active {
             self.ship.draw(canvas.clone());
         }
@@ -139,7 +160,7 @@ impl SpriteManager {
 
             position += Vector::new(self.canvas.width / 2.0, self.canvas.height / 2.0);
 
-            let velocity = Vector::random();
+            let velocity = Vector::random_velocity(1.0, 0.2);
 
             let diameter = rand::thread_rng().gen_range(40.0..120.0);
 
