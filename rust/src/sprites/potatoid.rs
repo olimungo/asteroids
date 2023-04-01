@@ -90,7 +90,7 @@ impl Potatoid {
                 let mut sprite_data = self.sprite.sprite_data;
 
                 sprite_data.diameter /= count_new_patatoids as f64 * 0.80;
-                sprite_data.velocity = Vector::random_velocity(1.2, 0.8);
+                sprite_data.velocity = Vector::random_limit(1.2, 0.8);
 
                 new_asteroids.push(Potatoid::new(sprite_data, self.sides, self.sprite.canvas));
             }

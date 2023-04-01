@@ -37,6 +37,10 @@ impl Interval {
         false
     }
 
+    pub fn cancel(&mut self) {
+        self.not_yet_elapsed = false;
+    }
+
     pub fn pause(&mut self) {
         if self.not_yet_elapsed {
             self.time_paused = millis();

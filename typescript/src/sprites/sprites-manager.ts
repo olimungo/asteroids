@@ -1,7 +1,7 @@
 import P5 from 'p5';
 import Interval from '../interval';
 import Explosion from './explosion';
-import Patatoid from './patatoid';
+import Potatoid from './patatoid';
 import Ship from './ship';
 import Ufo from './ufo';
 
@@ -14,9 +14,9 @@ const SIDES_MAX = 20;
 
 export default class SpritesManager {
     private p5: P5;
-    private asteroids: Patatoid[] = [];
+    private asteroids: Potatoid[] = [];
     private ship: Ship | null;
-    private shipFragments: Patatoid[] = [];
+    private shipFragments: Potatoid[] = [];
     private ufos: Ufo[] = [];
     private explosions: Explosion[] = [];
     private createUfoInterval: Interval | null;
@@ -38,7 +38,7 @@ export default class SpritesManager {
             }
         }
 
-        let newAsteroids: Patatoid[] = [];
+        let newAsteroids: Potatoid[] = [];
 
         this.asteroids = this.asteroids.filter((asteroid) => {
             asteroid.update();
@@ -187,7 +187,7 @@ export default class SpritesManager {
             const sides = this.p5.floor(this.p5.random(SIDES_MIN, SIDES_MAX));
 
             this.asteroids.push(
-                new Patatoid(
+                new Potatoid(
                     this.p5,
                     position,
                     diameter,

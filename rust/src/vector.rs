@@ -19,7 +19,7 @@ impl Vector {
         }
     }
 
-    pub fn random_velocity(limit: f64, min_value: f64) -> Vector {
+    pub fn random_limit(limit: f64, min_value: f64) -> Vector {
         let constrain_limit = limit - min_value;
         let mut x = rand::thread_rng().gen_range(-constrain_limit..constrain_limit);
         let mut y = rand::thread_rng().gen_range(-constrain_limit..constrain_limit);

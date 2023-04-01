@@ -7,7 +7,7 @@ const PATATOID_MINIMAL_DIAMETER_BREAKUP = 60;
 const VERTEX_RADIUS_MIN = 0.35;
 const VERTEX_RADIUS_MAX = 0.5;
 
-export default class Patatoid extends Sprite {
+export default class Potatoid extends Sprite {
     private shape: P5.Graphics;
 
     sides = 0;
@@ -38,16 +38,16 @@ export default class Patatoid extends Sprite {
         this.p5.pop();
     }
 
-    breakUp(): Patatoid[] {
+    breakUp(): Potatoid[] {
         if (this.diameter > PATATOID_MINIMAL_DIAMETER_BREAKUP) {
             const countNewPatatoids =
                 this.diameter > (DIAMETER_MAX / 10) * 7 ? 3 : 2;
 
-            const newAsteroids: Patatoid[] = [];
+            const newAsteroids: Potatoid[] = [];
 
             for (let counter = 0; counter < countNewPatatoids; counter++) {
                 newAsteroids.push(
-                    new Patatoid(
+                    new Potatoid(
                         this.p5,
                         this.position.copy(),
                         this.diameter / (countNewPatatoids * 0.7),
