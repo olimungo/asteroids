@@ -3,19 +3,20 @@ use web_sys::CanvasRenderingContext2d;
 use crate::{
     colors::Colors,
     game_states::GameState,
+    log,
     overlays::overlay_manager::{OverlayData, OverlayManager},
     sprite_manager::SpriteManager,
     sprites::sprite::CanvasDimension,
 };
 
 const LIFES_WHEN_STARTING: u32 = 3;
-const ASTEROIDS_START_MAX: u32 = 12;
+const ASTEROIDS_START_MAX: u32 = 2;
 const ASTEROIDS_LEVEL_INCREMENT: u32 = 3;
 const GAME_OVER_STATE_TIMEOUT: u32 = 8000; // ms
 const ADD_LIFE_WHEN_SCORED: u32 = 3000;
 const ASTEROID_HIT_SCORE: u32 = 10;
 const UFO_HIT_SCORE: u32 = 50;
-const UFO_INIT_FREQUENCY: u32 = 25000; // ms
+const UFO_CREATE_INIT_FREQUENCY: u32 = 25000; // ms
 const UFO_DECREMENT_FREQUENCY: u32 = 1000; // ms
 const UFO_MINIMAL_FREQUENCY: u32 = 10000; // ms
 const UFO_SHOOT_INIT_FREQUENCY: u32 = 15000; // ms
@@ -32,7 +33,7 @@ pub struct GameManager {
     top_score: u32,
     score: u32,
     max_asteroids: u32,
-    ufo_frequency: u32,
+    ufo_create_frequency: u32,
     ufo_shoot_frequency: u32,
     life_added_so_far: u32,
     canvas: CanvasDimension,
@@ -50,7 +51,7 @@ impl GameManager {
             top_score: 0,
             score: 0,
             max_asteroids: 0,
-            ufo_frequency: 0,
+            ufo_create_frequency: 0,
             ufo_shoot_frequency: 0,
             life_added_so_far: 0,
             canvas,
@@ -150,7 +151,7 @@ impl GameManager {
         self.overlay_manager.set_life_count(self.lifes - 1);
 
         self.life_added_so_far = 0;
-        self.ufo_frequency = UFO_INIT_FREQUENCY;
+        self.ufo_create_frequency = UFO_CREATE_INIT_FREQUENCY;
         self.ufo_shoot_frequency = UFO_SHOOT_INIT_FREQUENCY;
 
         self.sprite_manager.reset();
@@ -163,7 +164,7 @@ impl GameManager {
 
         self.sprite_manager.start_level(
             self.max_asteroids,
-            self.ufo_frequency,
+            self.ufo_create_frequency,
             self.ufo_shoot_frequency,
         );
     }
@@ -171,11 +172,11 @@ impl GameManager {
     pub fn next_level(&mut self) {
         self.level += 1;
         self.max_asteroids += ASTEROIDS_LEVEL_INCREMENT;
-        self.ufo_frequency -= UFO_DECREMENT_FREQUENCY;
+        self.ufo_create_frequency -= UFO_DECREMENT_FREQUENCY;
         self.ufo_shoot_frequency -= UFO_SHOOT_DECREMENT_FREQUENCY;
 
-        if self.ufo_frequency < UFO_MINIMAL_FREQUENCY {
-            self.ufo_frequency = UFO_MINIMAL_FREQUENCY;
+        if self.ufo_create_frequency < UFO_MINIMAL_FREQUENCY {
+            self.ufo_create_frequency = UFO_MINIMAL_FREQUENCY;
         }
 
         if self.ufo_shoot_frequency < UFO_SHOOT_MINIMAL_FREQUENCY {
@@ -194,6 +195,7 @@ impl GameManager {
             }
         } else {
             self.lifes -= 1;
+            self.score = self.get_score();
             self.sprite_manager.stop_level();
 
             if self.lifes == 0 {

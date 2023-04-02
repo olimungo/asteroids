@@ -6,9 +6,9 @@ public class SpritesManager {
     private final static int SIDES_MIN = 8;
     private final static int SIDES_MAX = 20;
 
-    private ArrayList<Patatoid> asteroids = new ArrayList<Patatoid>();
+    private ArrayList<Potatoid> asteroids = new ArrayList<Potatoid>();
     private Ship ship;
-    private ArrayList<Patatoid> shipFragments = new ArrayList<Patatoid>();
+    private ArrayList<Potatoid> shipFragments = new ArrayList<Potatoid>();
     private ArrayList<Ufo> ufos = new ArrayList<Ufo>();
     private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
     private Interval createUfoInterval;
@@ -21,21 +21,21 @@ public class SpritesManager {
         if (this.ship != null) {
             this.ship.update();
         } else {
-            for (Patatoid shipFragment : this.shipFragments) {
+            for (Potatoid shipFragment : this.shipFragments) {
                 shipFragment.update();
             }
         }
 
         for (int asteroidIndex = this.asteroids.size() - 1; asteroidIndex >= 0; asteroidIndex--) {
-            Patatoid asteroid = this.asteroids.get(asteroidIndex);
+            Potatoid asteroid = this.asteroids.get(asteroidIndex);
             asteroid.update();
 
             if (this.ship != null) {
                 if (this.ship.lasersHit(asteroid)) {
-                    ArrayList<Patatoid> newAsteroids = asteroid.breakUp();
+                    ArrayList<Potatoid> newAsteroids = asteroid.breakUp();
 
                     if (newAsteroids.size() > 0) {
-                        for (Patatoid newAsteroid : newAsteroids) {
+                        for (Potatoid newAsteroid : newAsteroids) {
                             this.asteroids.add(newAsteroid);
                         }
                     } else {
@@ -103,7 +103,7 @@ public class SpritesManager {
             this.ship.draw();
         }
 
-        for (Patatoid asteroid : this.asteroids) {
+        for (Potatoid asteroid : this.asteroids) {
             asteroid.draw();
         }
 
@@ -111,7 +111,7 @@ public class SpritesManager {
             ufo.draw();
         }
 
-        for (Patatoid shipFragment : this.shipFragments) {
+        for (Potatoid shipFragment : this.shipFragments) {
             shipFragment.draw();
         }
     }
@@ -148,7 +148,7 @@ public class SpritesManager {
     }
 
     void createAsteroids(int count) {
-        this.asteroids = new ArrayList<Patatoid>();
+        this.asteroids = new ArrayList<Potatoid>();
 
         for (int counter = 0; counter < count; counter++) {
             float radius = random(
@@ -176,7 +176,7 @@ public class SpritesManager {
             int sides = floor(random(this.SIDES_MIN, this.SIDES_MAX));
 
             this.asteroids.add(
-                new Patatoid(
+                new Potatoid(
                     position,
                     diameter,
                     PVector.random2D(),

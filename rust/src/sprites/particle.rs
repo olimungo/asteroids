@@ -31,8 +31,8 @@ impl Spritable for Particle {
             canvas.save();
 
             self.polygon(
-                self.sprite.sprite_data.position,
-                self.sprite.sprite_data.diameter,
+                self.sprite.data.position,
+                self.sprite.data.diameter,
                 POLYGON_SIDES,
                 canvas.clone(),
             );

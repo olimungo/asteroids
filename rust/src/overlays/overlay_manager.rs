@@ -75,10 +75,10 @@ impl OverlayManager {
             _ => {}
         }
 
-        if self.new_life_interval.not_yet_elapsed {
+        if self.show_new_life {
             self.new_life.update();
 
-            if self.new_life_interval.become_elapsed() {
+            if self.new_life_interval.is_ellapsed() {
                 self.show_new_life = false;
             }
         }
@@ -99,14 +99,23 @@ impl OverlayManager {
             _ => {}
         }
 
-        if overlay_data.game_state == GameState::Playing {
-            if overlay_data.is_game_paused {
-                self.game_paused.draw(canvas.clone());
-            }
+        if overlay_data.game_state == GameState::Playing && overlay_data.is_game_paused {
+            self.game_paused.draw(canvas.clone());
+        }
 
+        if overlay_data.game_state == GameState::Playing
+            || overlay_data.game_state == GameState::NextLevel
+        {
+            self.lifes.draw(canvas.clone());
+        }
+
+        if overlay_data.game_state == GameState::Playing
+            || overlay_data.game_state == GameState::GameOver
+            || overlay_data.game_state == GameState::NextLevel
+            || overlay_data.game_state == GameState::NextLife
+        {
             self.score.draw(overlay_data.score, canvas.clone());
             self.level.draw(overlay_data.level, canvas.clone());
-            self.lifes.draw(canvas.clone());
         }
 
         if self.show_new_life {
@@ -146,8 +155,7 @@ impl OverlayManager {
 
     pub fn dispaly_new_life(&mut self) {
         self.show_new_life = true;
-        self.new_life_interval
-            .set_interval_frequency(DISPLAY_NEW_LIFE_TIMEOUT);
+        self.new_life_interval.set(DISPLAY_NEW_LIFE_TIMEOUT);
     }
 
     pub fn pause(&mut self) {

@@ -1,6 +1,6 @@
 import P5 from 'p5';
 import Colors from '../ui/colors';
-import Potatoid from './patatoid';
+import Potatoid from './potatoid';
 import Laser from './laser';
 import Sprite from './sprite';
 import Interval from '../interval';
@@ -130,7 +130,7 @@ export default class Ship extends Sprite {
     }
 
     breakUp(): Potatoid[] {
-        const patatoids: Potatoid[] = [];
+        const potatoids: Potatoid[] = [];
 
         for (let index of [
             [0.9, 0.05, 5],
@@ -138,7 +138,7 @@ export default class Ship extends Sprite {
             [0.9, 0.15, 3],
             [0.7, -0.1, 5],
         ]) {
-            let patatoid = new Potatoid(
+            let potatoid = new Potatoid(
                 this.p5,
                 this.position.copy(),
                 this.diameter * index[0],
@@ -147,10 +147,10 @@ export default class Ship extends Sprite {
                 index[2]
             );
 
-            patatoids.push(patatoid);
+            potatoids.push(potatoid);
         }
 
-        return patatoids;
+        return potatoids;
     }
 
     private drawBoosterFlames() {

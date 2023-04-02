@@ -1,5 +1,5 @@
 use rand::Rng;
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, SubAssign};
 
 #[derive(Copy, Clone)]
 pub struct Vector {
@@ -134,6 +134,15 @@ impl MulAssign for Vector {
         *self = Self {
             x: self.x * other.x,
             y: self.y * other.y,
+        };
+    }
+}
+
+impl SubAssign for Vector {
+    fn sub_assign(&mut self, other: Self) {
+        *self = Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
         };
     }
 }

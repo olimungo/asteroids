@@ -119,12 +119,12 @@ public class Ship extends Sprite {
         return false;
     }
 
-    ArrayList<Patatoid> breakUp() {
-        ArrayList<Patatoid> patatoids = new ArrayList<Patatoid>();
+    ArrayList<Potatoid> breakUp() {
+        ArrayList<Potatoid> potatoids = new ArrayList<Potatoid>();
         float[][] data = {{0.9, 0.05, 5}, {0.9, -0.08, 6}, {0.9, 0.15, 3}, {0.7, -0.1, 5},};
 
         for(float[] element : data) {
-            Patatoid patatoid = new Patatoid(
+            Potatoid potatoid = new Potatoid(
                 this.position.copy(),
                 this.diameter * element[0],
                 PVector.random2D(),
@@ -132,10 +132,10 @@ public class Ship extends Sprite {
                 int(element[2])
             );
 
-            patatoids.add(patatoid);
+            potatoids.add(potatoid);
         }
 
-        return patatoids;
+        return potatoids;
     }
 
     private void drawBoosterFlames() {

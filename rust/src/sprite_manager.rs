@@ -5,6 +5,7 @@ use web_sys::CanvasRenderingContext2d;
 
 use crate::{
     interval::Interval,
+    log,
     sprites::{
         explosion::Explosion,
         potatoid::Potatoid,
@@ -35,7 +36,7 @@ impl SpriteManager {
     pub fn new(canvas: CanvasDimension) -> SpriteManager {
         let position = Vector::new(canvas.width / 2.0, canvas.height / 2.0);
         let velocity = Vector::new(0.0, 0.0);
-        let diameter = 36.0;
+        let diameter = 0.0;
         let rotation = 0.0;
         let rotation_step = 0.0;
 
@@ -108,8 +109,7 @@ impl SpriteManager {
                 let new_asteroids = self.asteroids[index].break_up();
 
                 if new_asteroids.is_empty() {
-                    let explosion =
-                        Explosion::new(self.asteroids[index].sprite.sprite_data, self.canvas);
+                    let explosion = Explosion::new(self.asteroids[index].sprite.data, self.canvas);
 
                     self.explosions.push(explosion);
                 } else {
@@ -126,24 +126,29 @@ impl SpriteManager {
         }
 
         for index in (0..self.ufos.len()).rev() {
-            self.ufos[index].set_ship_position(self.ship.sprite.sprite_data.position);
+            self.ufos[index].set_ship_position(self.ship.sprite.data.position);
             self.ufos[index].update();
 
             if self.is_ship_active {
                 if self.ship.lasers_collide_with(self.ufos[index].sprite) {
                     self.count_ufo_hit += 1;
 
-                    let explosion =
-                        Explosion::new(self.asteroids[index].sprite.sprite_data, self.canvas);
+                    let explosion = Explosion::new(self.asteroids[index].sprite.data, self.canvas);
 
                     self.explosions.push(explosion);
 
                     self.ufos.remove(index);
-                } else if self.ship.collide_with(self.asteroids[index].sprite) {
+                } else if self.ship.collide_with(self.ufos[index].sprite)
+                    || self.ufos[index].lasers_collide_with(self.ship.sprite)
+                {
                     self.ship_fragments = self.ship.break_up();
                     self.is_ship_active = false;
                 }
             }
+        }
+
+        if self.create_ufo_interval.is_ellapsed() {
+            self.create_ufo(self.ufo_shoot_frequency);
         }
 
         for index in (0..self.explosions.len()).rev() {
@@ -227,10 +232,10 @@ impl SpriteManager {
     pub fn create_ufo(&mut self, ufo_shoot_frequency: u32) {
         self.ufo_shoot_frequency = ufo_shoot_frequency;
 
-        let random_side = random(1, 5);
+        let random_corner = random(1, 5);
         let mut position = Vector::random_limit(1.2, 0.8);
 
-        match random_side {
+        match random_corner {
             1 => position.x += self.canvas.width,
             2 => position.x -= self.canvas.width,
             3 => position.y += self.canvas.height,
@@ -267,17 +272,19 @@ impl SpriteManager {
         ufo_create_frequency: u32,
         ufo_shoot_frequency: u32,
     ) {
-        self.ufo_create_frequency = ufo_shoot_frequency;
+        self.ufo_shoot_frequency = ufo_shoot_frequency;
 
         self.reset();
 
-        self.ship.sprite.sprite_data.position =
+        self.ship.sprite.data.position =
             Vector::new(self.canvas.width / 2.0, self.canvas.height / 2.0);
-        self.ship.sprite.sprite_data.velocity = Vector::new(0.0, 0.0);
+        self.ship.sprite.data.velocity = Vector::new(0.0, 0.0);
         self.ship.heading = -PI / 2.0;
         self.is_ship_active = true;
 
         self.create_asteroids(count_asteroids);
+
+        self.create_ufo_interval.set(ufo_create_frequency);
 
         // this.createUfoInterval = new Interval(
         //     this.p5.random(

@@ -6,8 +6,8 @@ use web_sys::CanvasRenderingContext2d;
 use super::sprite::{CanvasDimension, Spritable, Sprite, SpriteData};
 use crate::vector::Vector;
 
-const DIAMETER_MAX: f64 = 110.0;
-const PATATOID_MINIMAL_DIAMETER_BREAKUP: f64 = 60.0;
+const DIAMETER_MAX: f64 = 100.0;
+const POTATOID_MINIMAL_DIAMETER_BREAKUP: f64 = 60.0;
 const VERTEX_RADIUS_MIN: f64 = 0.35;
 const VERTEX_RADIUS_MAX: f64 = 0.5;
 
@@ -25,9 +25,9 @@ impl Spritable for Potatoid {
     fn draw(&self, canvas: CanvasRenderingContext2d) {
         canvas.save();
 
-        let position = self.sprite.sprite_data.position;
+        let position = self.sprite.data.position;
         let _result = canvas.translate(position.x, position.y);
-        let _result = canvas.rotate(self.sprite.sprite_data.rotation);
+        let _result = canvas.rotate(self.sprite.data.rotation);
         let vertices = &self.vertices;
 
         canvas.begin_path();
@@ -65,7 +65,7 @@ impl Potatoid {
 
     fn generate_vertices(&mut self) {
         for side in 0..self.sides {
-            let diameter = self.sprite.sprite_data.diameter;
+            let diameter = self.sprite.data.diameter;
             let radius = rand::thread_rng()
                 .gen_range(diameter * VERTEX_RADIUS_MIN..diameter * VERTEX_RADIUS_MAX);
             let angle = 2.0 * PI / self.sides as f64 * side as f64;
@@ -78,18 +78,18 @@ impl Potatoid {
 
     pub fn break_up(&self) -> Vec<Potatoid> {
         let mut new_asteroids = Vec::new();
-        let diameter = self.sprite.sprite_data.diameter;
+        let diameter = self.sprite.data.diameter;
 
-        if diameter > PATATOID_MINIMAL_DIAMETER_BREAKUP {
-            let count_new_patatoids = match diameter {
+        if diameter > POTATOID_MINIMAL_DIAMETER_BREAKUP {
+            let count_new_potatoids = match diameter {
                 x if x > DIAMETER_MAX => 3,
                 _ => 2,
             };
 
-            for _counter in 0..count_new_patatoids {
-                let mut sprite_data = self.sprite.sprite_data;
+            for _counter in 0..count_new_potatoids {
+                let mut sprite_data = self.sprite.data;
 
-                sprite_data.diameter /= count_new_patatoids as f64 * 0.80;
+                sprite_data.diameter /= count_new_potatoids as f64 * 0.80;
                 sprite_data.velocity = Vector::random_limit(1.2, 0.8);
 
                 new_asteroids.push(Potatoid::new(sprite_data, self.sides, self.sprite.canvas));

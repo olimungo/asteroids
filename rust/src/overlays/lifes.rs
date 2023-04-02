@@ -11,8 +11,6 @@ use crate::{
 pub struct Lifes {
     ships: Vec<Ship>,
     canvas: CanvasDimension,
-    center_x: f64,
-    center_y: f64,
 }
 
 impl Lifes {
@@ -20,8 +18,6 @@ impl Lifes {
         Lifes {
             ships: Vec::new(),
             canvas,
-            center_x: canvas.width / 2.0,
-            center_y: canvas.height / 2.0,
         }
     }
 }

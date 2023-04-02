@@ -1,7 +1,7 @@
 import P5 from 'p5';
 import Interval from '../interval';
 import Explosion from './explosion';
-import Potatoid from './patatoid';
+import Potatoid from './potatoid';
 import Ship from './ship';
 import Ufo from './ufo';
 

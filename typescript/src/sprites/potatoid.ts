@@ -3,7 +3,7 @@ import Colors from '../ui/colors';
 import Sprite from './sprite';
 
 const DIAMETER_MAX = 130;
-const PATATOID_MINIMAL_DIAMETER_BREAKUP = 60;
+const POTATOID_MINIMAL_DIAMETER_BREAKUP = 60;
 const VERTEX_RADIUS_MIN = 0.35;
 const VERTEX_RADIUS_MAX = 0.5;
 
@@ -39,18 +39,18 @@ export default class Potatoid extends Sprite {
     }
 
     breakUp(): Potatoid[] {
-        if (this.diameter > PATATOID_MINIMAL_DIAMETER_BREAKUP) {
-            const countNewPatatoids =
+        if (this.diameter > POTATOID_MINIMAL_DIAMETER_BREAKUP) {
+            const countNewPotatoids =
                 this.diameter > (DIAMETER_MAX / 10) * 7 ? 3 : 2;
 
             const newAsteroids: Potatoid[] = [];
 
-            for (let counter = 0; counter < countNewPatatoids; counter++) {
+            for (let counter = 0; counter < countNewPotatoids; counter++) {
                 newAsteroids.push(
                     new Potatoid(
                         this.p5,
                         this.position.copy(),
-                        this.diameter / (countNewPatatoids * 0.7),
+                        this.diameter / (countNewPotatoids * 0.7),
                         P5.Vector.random2D(),
                         this.rotationStep,
                         this.sides

@@ -30,7 +30,7 @@ pub struct CanvasDimension {
 
 #[derive(Copy)]
 pub struct Sprite {
-    pub sprite_data: SpriteData,
+    pub data: SpriteData,
     pub canvas: CanvasDimension,
     pub is_offscreen: bool,
 }
@@ -38,7 +38,7 @@ pub struct Sprite {
 impl Clone for Sprite {
     fn clone(&self) -> Self {
         Sprite {
-            sprite_data: self.sprite_data,
+            data: self.data,
             canvas: self.canvas,
             is_offscreen: self.is_offscreen,
         }
@@ -48,31 +48,31 @@ impl Clone for Sprite {
 impl Sprite {
     pub fn new(sprite_data: SpriteData, canvas: CanvasDimension) -> Sprite {
         Sprite {
-            sprite_data,
+            data: sprite_data,
             canvas,
             is_offscreen: false,
         }
     }
 
     fn check_window_edges(&mut self) -> bool {
-        let radius = self.sprite_data.diameter / 2.0;
-        let x = self.sprite_data.position.x;
-        let y = self.sprite_data.position.y;
+        let radius = self.data.diameter / 2.0;
+        let x = self.data.position.x;
+        let y = self.data.position.y;
         let mut result = false;
 
         if x > self.canvas.width + radius {
-            self.sprite_data.position.x = -radius;
+            self.data.position.x = -radius;
             result = true;
         } else if x < -radius {
-            self.sprite_data.position.x = self.canvas.width + radius;
+            self.data.position.x = self.canvas.width + radius;
             result = true;
         }
 
         if y > self.canvas.height + radius {
-            self.sprite_data.position.y = -radius;
+            self.data.position.y = -radius;
             result = true;
         } else if y < -radius {
-            self.sprite_data.position.y = self.canvas.height + radius;
+            self.data.position.y = self.canvas.height + radius;
             result = true;
         }
 
@@ -84,8 +84,8 @@ impl Sprite {
 
 impl Spritable for Sprite {
     fn update(&mut self) {
-        self.sprite_data.position += self.sprite_data.velocity;
-        self.sprite_data.rotation += self.sprite_data.rotation_step;
+        self.data.position += self.data.velocity;
+        self.data.rotation += self.data.rotation_step;
 
         self.check_window_edges();
     }
@@ -93,8 +93,8 @@ impl Spritable for Sprite {
     fn draw(&self, canvas: CanvasRenderingContext2d) {
         canvas.save();
 
-        let _result = canvas.translate(self.sprite_data.position.x, self.sprite_data.position.y);
-        let _result = canvas.rotate(self.sprite_data.rotation);
+        let _result = canvas.translate(self.data.position.x, self.data.position.y);
+        let _result = canvas.rotate(self.data.rotation);
 
         canvas.begin_path();
 
@@ -112,12 +112,9 @@ impl Spritable for Sprite {
     }
 
     fn collide_with(&self, sprite: Sprite) -> bool {
-        let distance = self
-            .sprite_data
-            .position
-            .distance(sprite.sprite_data.position);
+        let distance = self.data.position.distance(sprite.data.position);
 
-        if distance < self.sprite_data.diameter / 2.0 + sprite.sprite_data.diameter / 2.0 {
+        if distance < self.data.diameter / 2.0 + sprite.data.diameter / 2.0 {
             return true;
         }
 

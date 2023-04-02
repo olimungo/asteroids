@@ -64,16 +64,6 @@ public class OverlaysManager {
             case HOMESCREEN:
                 this.overlayHomeScreen.draw();
                 break;
-            case PLAYING:
-                this.overlayScore.draw(score);
-                this.overlayLifes.draw();
-                this.overlayLevel.draw(level);
-
-                if (gamePaused) {
-                    this.overlayGamePaused.draw();
-                }
-
-                break;
             case NEXT_LEVEL:
                 this.overlayNextLevel.draw(level);
                 break;
@@ -84,6 +74,27 @@ public class OverlaysManager {
                 this.overlayGameOver.draw();
                 break;
         }
+
+        if (gameState == GameState.PLAYING && gamePaused) {
+            this.overlayGamePaused.draw();
+        }
+
+        if (
+            gameState == GameState.PLAYING ||
+            gameState == GameState.NEXT_LEVEL
+        ) {
+            this.overlayLifes.draw();
+        }
+
+        if (
+            gameState == GameState.PLAYING ||
+            gameState == GameState.GAME_OVER ||
+            gameState == GameState.NEXT_LEVEL ||
+            gameState == GameState.NEXT_LIFE
+        ) {
+            this.overlayScore.draw(score);
+            this.overlayLevel.draw(level);
+        }        
 
         if (this.showNewLife) {
             this.overlayNewLife.draw();

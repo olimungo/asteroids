@@ -1,8 +1,6 @@
-use std::f64::consts::PI;
-
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{colors::Colors, interval::Interval, vector::Vector};
+use crate::{interval::Interval, log, utils::random, vector::Vector};
 
 use super::{
     laser::Laser,
@@ -11,48 +9,46 @@ use super::{
 
 const UFO_WIDTH: f64 = 60.0;
 const UFO_HEIHT: f64 = 25.0;
+const UFO_VELOCITY: f64 = 2.0;
 const CHANGE_HEADING_FREQUENCY: u32 = 6000;
 const VARIABILITY_IN_HEADING: u32 = 3000;
 const VARIABILITY_IN_SHOOTING: u32 = 1000;
 
 pub struct Ufo {
     pub sprite: Sprite,
-    pub ufo_shoot_frequency: u32,
+    pub shoot_frequency: u32,
     lasers: Vec<Laser>,
     ship_position: Vector,
     vertices: Vec<Vector>,
-    change_heading_interval: Interval,
+    heading_interval: Interval,
     shoot_interval: Interval,
 }
 
 impl Spritable for Ufo {
     fn update(&mut self) {
+        if self.heading_interval.is_ellapsed() {
+            self.sprite.data.velocity = Vector::random(-UFO_VELOCITY, UFO_VELOCITY);
+        }
+
+        if self.shoot_interval.is_ellapsed() {
+            self.shoot();
+        }
+
+        for laser in &mut self.lasers {
+            laser.update();
+        }
+
+        self.lasers = self
+            .lasers
+            .drain(..)
+            .filter(|laser| !laser.sprite.is_offscreen)
+            .collect();
+
         self.sprite.update();
-
-        // self.heading += self.sprite.sprite_data.rotation;
-
-        // if self.is_boosting {
-        //     let mut force = Vector::from_angle(self.heading);
-        //     force.limit(0.15);
-        //     self.sprite.sprite_data.velocity += force;
-        // }
-
-        // self.sprite.sprite_data.velocity.limit(10.0);
-        // self.sprite.sprite_data.velocity.mult(0.995);
-
-        // for laser in &mut self.lasers {
-        //     laser.update();
-        // }
-
-        // self.lasers = self
-        //     .lasers
-        //     .drain(..)
-        //     .filter(|laser| !laser.sprite.is_offscreen)
-        //     .collect();
     }
 
     fn draw(&self, canvas: CanvasRenderingContext2d) {
-        let mut sprite_data = self.sprite.sprite_data;
+        let sprite_data = self.sprite.data;
 
         for laser in &self.lasers {
             laser.draw(canvas.clone());
@@ -88,15 +84,37 @@ impl Spritable for Ufo {
 }
 
 impl Ufo {
-    pub fn new(sprite_data: SpriteData, ufo_shoot_frequency: u32, canvas: CanvasDimension) -> Ufo {
+    pub fn new(sprite_data: SpriteData, shoot_frequency: u32, canvas: CanvasDimension) -> Ufo {
+        let mut shoot_interval = Interval::new();
+        let mut heading_interval = Interval::new();
+
+        let random_interval = random(
+            CHANGE_HEADING_FREQUENCY - VARIABILITY_IN_HEADING,
+            CHANGE_HEADING_FREQUENCY + VARIABILITY_IN_HEADING,
+        );
+
+        heading_interval.set(random_interval);
+
+        if shoot_frequency > 0 {
+            let random_interval = random(
+                shoot_frequency - VARIABILITY_IN_SHOOTING,
+                shoot_frequency + VARIABILITY_IN_SHOOTING,
+            );
+
+            shoot_interval.set(random_interval);
+        }
+
+        let mut new_sprite_data = sprite_data;
+        new_sprite_data.diameter = (UFO_WIDTH + UFO_HEIHT) / 2.0;
+
         Ufo {
-            sprite: Sprite::new(sprite_data, canvas),
-            ufo_shoot_frequency,
+            sprite: Sprite::new(new_sprite_data, canvas),
+            shoot_frequency,
             lasers: Vec::new(),
             ship_position: Vector::new(0.0, 0.0),
             vertices: Ufo::generate_vertices(),
-            shoot_interval: Interval::new(),
-            change_heading_interval: Interval::new(),
+            shoot_interval,
+            heading_interval,
         }
     }
 
@@ -111,7 +129,32 @@ impl Ufo {
         false
     }
 
-    pub fn set_ship_position(&mut self, position: Vector) {}
+    pub fn set_ship_position(&mut self, position: Vector) {
+        self.ship_position = position;
+    }
+
+    pub fn shoot(&mut self) {
+        let mut velocity = self.ship_position;
+        velocity -= self.sprite.data.position;
+        velocity.limit(7.0);
+
+        let diameter = 2.0;
+        let rotation = 0.0;
+        let rotation_step = 0.0;
+
+        let laser = Laser::new(
+            SpriteData {
+                position: self.sprite.data.position,
+                velocity,
+                diameter,
+                rotation,
+                rotation_step,
+            },
+            self.sprite.canvas,
+        );
+
+        self.lasers.push(laser);
+    }
 
     fn generate_vertices() -> Vec<Vector> {
         let mut vertices = Vec::new();

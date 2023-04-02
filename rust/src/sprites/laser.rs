@@ -16,14 +16,11 @@ impl Spritable for Laser {
     fn draw(&self, canvas: CanvasRenderingContext2d) {
         canvas.save();
 
-        let _result = canvas.translate(
-            self.sprite.sprite_data.position.x,
-            self.sprite.sprite_data.position.y,
-        );
+        let _result = canvas.translate(self.sprite.data.position.x, self.sprite.data.position.y);
 
         canvas.begin_path();
 
-        let _result = canvas.arc(0.0, 0.0, self.sprite.sprite_data.diameter, 0.0, 2.0 * PI);
+        let _result = canvas.arc(0.0, 0.0, self.sprite.data.diameter, 0.0, 2.0 * PI);
 
         canvas.fill();
 

@@ -1,12 +1,12 @@
-public class Patatoid extends Sprite {
+public class Potatoid extends Sprite {
     private final static int DIAMETER_MAX = 130;
-    private final static int PATATOID_MINIMAL_DIAMETER_BREAKUP = 60;
+    private final static int POTATOID_MINIMAL_DIAMETER_BREAKUP = 60;
 
     private PGraphics shape;
 
     int sides = 0;
 
-    Patatoid(
+    Potatoid(
         PVector position,
         float diameter,
         PVector velocity,
@@ -31,23 +31,23 @@ public class Patatoid extends Sprite {
         pop();
     }
 
-    ArrayList<Patatoid> breakUp() {
-        ArrayList<Patatoid> patatoids = new ArrayList<Patatoid>();
+    ArrayList<Potatoid> breakUp() {
+        ArrayList<Potatoid> potatoids = new ArrayList<Potatoid>();
 
-        if (this.diameter > PATATOID_MINIMAL_DIAMETER_BREAKUP) {
-            int countNewPatatoids = this.diameter > DIAMETER_MAX * 0.7 ? 3 : 2;
+        if (this.diameter > POTATOID_MINIMAL_DIAMETER_BREAKUP) {
+            int countNewPotatoids = this.diameter > DIAMETER_MAX * 0.7 ? 3 : 2;
 
-            for (int counter = 0; counter < countNewPatatoids; counter++) {
-                patatoids.add(
-                    new Patatoid(this.position.copy(),
-                    this.diameter / (countNewPatatoids * 0.7),
+            for (int counter = 0; counter < countNewPotatoids; counter++) {
+                potatoids.add(
+                    new Potatoid(this.position.copy(),
+                    this.diameter / (countNewPotatoids * 0.7),
                     PVector.random2D(),
                     this.rotationStep,
                     this.sides));
             }
         }
 
-        return patatoids;
+        return potatoids;
     }
 
     private ArrayList<PVector> generateVertices() {
