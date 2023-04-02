@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{colors::Colors, interval::Interval, log, vector::Vector};
+use crate::{colors::Colors, interval::Interval, vector::Vector};
 
 use super::{
     laser::Laser,

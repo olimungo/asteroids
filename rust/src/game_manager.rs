@@ -3,7 +3,6 @@ use web_sys::CanvasRenderingContext2d;
 use crate::{
     colors::Colors,
     game_states::GameState,
-    log,
     overlays::overlay_manager::{OverlayData, OverlayManager},
     sprite_manager::SpriteManager,
     sprites::sprite::CanvasDimension,

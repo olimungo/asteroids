@@ -133,7 +133,7 @@ impl SpriteManager {
                 if self.ship.lasers_collide_with(self.ufos[index].sprite) {
                     self.count_ufo_hit += 1;
 
-                    let explosion = Explosion::new(self.asteroids[index].sprite.data, self.canvas);
+                    let explosion = Explosion::new(self.ufos[index].sprite.data, self.canvas);
 
                     self.explosions.push(explosion);
 
