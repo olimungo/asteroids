@@ -1,6 +1,6 @@
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{sprites::sprite::CanvasDimension, utils::millis};
+use crate::{sprites::sprite::CanvasDimension, utils::javascript::millis};
 
 pub struct GameOver {
     past_millis: f64,

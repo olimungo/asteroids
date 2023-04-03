@@ -1,14 +1,14 @@
 public class GameManager {
     private final static int LIFES_WHEN_STARTING = 3;
-    private final static int ASTEROIDS_START_MAX = 15;
+    private final static int ASTEROIDS_START_COUNT = 12;
     private final static int ASTEROIDS_LEVEL_INCREMENT = 3;
     private final static int GAME_OVER_STATE_TIMEOUT = 8000; // ms
     private final static int ADD_LIFE_WHEN_SCORED = 3000;
     private final static int ASTEROID_HIT_SCORE = 10;
     private final static int UFO_HIT_SCORE = 50;
-    private final static int UFO_INIT_FREQUENCY = 25000; // ms
-    private final static int UFO_DECREMENT_FREQUENCY = 1000; // ms
-    private final static int UFO_MINIMAL_FREQUENCY = 10000; // ms
+    private final static int UFO_CREATE_INIT_FREQUENCY = 15000; // ms
+    private final static int UFO_CREATE_DECREMENT_FREQUENCY = 1000; // ms
+    private final static int UFO_CREATE_MINIMAL_FREQUENCY = 10000; // ms
     private final static int UFO_SHOOT_INIT_FREQUENCY = 15000; // ms
     private final static int UFO_SHOOT_DECREMENT_FREQUENCY = 500; // ms
     private final static int UFO_SHOOT_MINIMAL_FREQUENCY = 5000; // ms
@@ -25,7 +25,7 @@ public class GameManager {
     private int maxAsteroids;
     private Interval gameOverInterval;
     private int lifeAddedSoFar;
-    private int ufoFrequency;
+    private int ufoCreateFrequency;
     private int ufoShootFrequency;
     private Boolean gamePaused = false;
 
@@ -33,7 +33,7 @@ public class GameManager {
         this.spritesManager = new SpritesManager();
         this.overlaysManager = new OverlaysManager();
 
-        this.spritesManager.createAsteroids(ASTEROIDS_START_MAX);
+        this.spritesManager.createAsteroids(ASTEROIDS_START_COUNT);
         this.spritesManager.createUfo(0);
 
         // Get the top score from a file
@@ -60,10 +60,9 @@ public class GameManager {
             this.gameState = GameState.HOMESCREEN;
             this.gameOverInterval = null;
 
-            // If there is no UFO on the screen, create one
-            if (this.spritesManager.getUfosCount() == 0) {
-                this.spritesManager.createUfo(0);
-            }
+            this.spritesManager.reset();
+            this.spritesManager.createUfo(0);
+            this.spritesManager.createAsteroids(ASTEROIDS_START_COUNT);
         }
     }
 
@@ -103,10 +102,8 @@ public class GameManager {
                     
                     if (this.gamePaused) {
                         this.spritesManager.pause();
-                        this.overlaysManager.pause();
                     } else {
                         this.spritesManager.unpause();
-                        this.overlaysManager.unpause();
                     } 
                 }
 
@@ -145,11 +142,11 @@ public class GameManager {
 
         this.score = 0;
         this.level = 1;
-        this.maxAsteroids = ASTEROIDS_START_MAX;
+        this.maxAsteroids = ASTEROIDS_START_COUNT;
         this.lifes = LIFES_WHEN_STARTING;
         this.overlaysManager.setLifeCount(this.lifes - 1);
         this.lifeAddedSoFar = 0;
-        this.ufoFrequency = UFO_INIT_FREQUENCY;
+        this.ufoCreateFrequency = UFO_CREATE_INIT_FREQUENCY;
         this.ufoShootFrequency = UFO_SHOOT_INIT_FREQUENCY;
 
         this.spritesManager.reset();
@@ -162,7 +159,7 @@ public class GameManager {
 
         this.spritesManager.startLevel(
             this.maxAsteroids,
-            this.ufoFrequency,
+            this.ufoCreateFrequency,
             this.ufoShootFrequency
         );
     }
@@ -170,11 +167,11 @@ public class GameManager {
     private void nextLevel() {
         this.level++;
         this.maxAsteroids += ASTEROIDS_LEVEL_INCREMENT;
-        this.ufoFrequency -= UFO_DECREMENT_FREQUENCY;
+        this.ufoCreateFrequency -= UFO_CREATE_DECREMENT_FREQUENCY;
         this.ufoShootFrequency -= UFO_SHOOT_DECREMENT_FREQUENCY;
 
-        if (this.ufoFrequency < UFO_MINIMAL_FREQUENCY) {
-            this.ufoFrequency = UFO_MINIMAL_FREQUENCY;
+        if (this.ufoCreateFrequency < UFO_CREATE_MINIMAL_FREQUENCY) {
+            this.ufoCreateFrequency = UFO_CREATE_MINIMAL_FREQUENCY;
         }
 
         if (this.ufoShootFrequency < UFO_SHOOT_MINIMAL_FREQUENCY) {

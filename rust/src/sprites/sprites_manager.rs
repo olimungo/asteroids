@@ -4,8 +4,6 @@ use rand::Rng;
 use web_sys::CanvasRenderingContext2d;
 
 use crate::{
-    interval::Interval,
-    log,
     sprites::{
         explosion::Explosion,
         potatoid::Potatoid,
@@ -13,9 +11,13 @@ use crate::{
         sprite::{CanvasDimension, Spritable, SpriteData},
         ufo::Ufo,
     },
-    utils::random,
-    vector::Vector,
+    utils::{general::random, interval::Interval, vector::Vector},
 };
+
+const DIAMETER_MIN: f64 = 40.0;
+const DIAMETER_MAX: f64 = 120.0;
+const SIDES_MIN: u32 = 8;
+const SIDES_MAX: u32 = 20;
 
 pub struct SpriteManager {
     asteroids: Vec<Potatoid>,
@@ -24,7 +26,6 @@ pub struct SpriteManager {
     ufos: Vec<Ufo>,
     explosions: Vec<Explosion>,
     pub is_ship_active: bool,
-    ufo_create_frequency: u32,
     pub count_asteroids_hit: u32,
     pub count_ufo_hit: u32,
     create_ufo_interval: Interval,
@@ -59,7 +60,6 @@ impl SpriteManager {
             ufos: Vec::new(),
             explosions: Vec::new(),
             is_ship_active: false,
-            ufo_create_frequency: 0,
             count_asteroids_hit: 0,
             count_ufo_hit: 0,
             create_ufo_interval: Interval::new(),
@@ -203,7 +203,7 @@ impl SpriteManager {
 
             let velocity = Vector::random_limit(1.0, 0.2);
 
-            let diameter = rand::thread_rng().gen_range(40.0..120.0);
+            let diameter = rand::thread_rng().gen_range(DIAMETER_MIN..DIAMETER_MAX);
 
             let rotation = 0.0;
 
@@ -214,7 +214,7 @@ impl SpriteManager {
                 _ => -0.01,
             };
 
-            let sides = rand::thread_rng().gen_range(8..20);
+            let sides = rand::thread_rng().gen_range(SIDES_MIN..SIDES_MAX);
 
             let sprite_data = SpriteData {
                 position,
@@ -258,14 +258,6 @@ impl SpriteManager {
         self.asteroids.len()
     }
 
-    pub fn pause(&self) {
-        // todo!("pause sprite manager");
-    }
-
-    pub fn unpause(&self) {
-        // todo!("unpause sprite manager");
-    }
-
     pub fn start_level(
         &mut self,
         count_asteroids: u32,
@@ -285,13 +277,6 @@ impl SpriteManager {
         self.create_asteroids(count_asteroids);
 
         self.create_ufo_interval.set(ufo_create_frequency);
-
-        // this.createUfoInterval = new Interval(
-        //     this.p5.random(
-        //         ufoCreateFrequency - VARIABILITY_IN_CREATING_UFOS,
-        //         ufoCreateFrequency + VARIABILITY_IN_CREATING_UFOS
-        //     )
-        // );
     }
 
     pub fn stop_level(&mut self) {
@@ -305,6 +290,22 @@ impl SpriteManager {
     pub fn reset(&mut self) {
         self.asteroids.clear();
         self.ship_fragments.clear();
-        // this.ufos = [];
+        self.ufos.clear();
+    }
+
+    pub fn pause(&mut self) {
+        self.create_ufo_interval.pause();
+
+        for index in 0..self.ufos.len() {
+            self.ufos[index].pause();
+        }
+    }
+
+    pub fn unpause(&mut self) {
+        self.create_ufo_interval.unpause();
+
+        for index in 0..self.ufos.len() {
+            self.ufos[index].unpause();
+        }
     }
 }

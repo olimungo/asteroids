@@ -1,6 +1,9 @@
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{colors::Colors, sprites::sprite::CanvasDimension, vector::Vector};
+use crate::{
+    sprites::sprite::CanvasDimension,
+    utils::{colors::Colors, vector::Vector},
+};
 
 use super::{keycap::Keycap, spacebar::Spacebar};
 

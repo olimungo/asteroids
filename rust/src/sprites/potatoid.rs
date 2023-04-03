@@ -3,8 +3,9 @@ use std::f64::consts::PI;
 use rand::Rng;
 use web_sys::CanvasRenderingContext2d;
 
+use crate::utils::vector::Vector;
+
 use super::sprite::{CanvasDimension, Spritable, Sprite, SpriteData};
-use crate::vector::Vector;
 
 const DIAMETER_MAX: f64 = 100.0;
 const POTATOID_MINIMAL_DIAMETER_BREAKUP: f64 = 60.0;
@@ -12,7 +13,7 @@ const VERTEX_RADIUS_MIN: f64 = 0.35;
 const VERTEX_RADIUS_MAX: f64 = 0.5;
 
 pub struct Potatoid {
-    sides: u8,
+    sides: u32,
     pub sprite: Sprite,
     vertices: Vec<Vector>,
 }
@@ -51,7 +52,7 @@ impl Spritable for Potatoid {
 }
 
 impl Potatoid {
-    pub fn new(sprite_data: SpriteData, sides: u8, canvas: CanvasDimension) -> Potatoid {
+    pub fn new(sprite_data: SpriteData, sides: u32, canvas: CanvasDimension) -> Potatoid {
         let mut potatoid = Potatoid {
             sides,
             sprite: Sprite::new(sprite_data, canvas),

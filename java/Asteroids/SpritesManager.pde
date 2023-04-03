@@ -1,6 +1,4 @@
 public class SpritesManager {
-    private final static int VARIABILITY_IN_CREATING_UFOS = 5000;
-    private final static int ASTEROID_MIN_DISTANCE_TO_CENTER = 250;
     private final static int DIAMETER_MIN = 40;
     private final static int DIAMETER_MAX = 120;
     private final static int SIDES_MIN = 8;
@@ -116,37 +114,6 @@ public class SpritesManager {
         }
     }
 
-    void startLevel(
-        int countAsteroids,
-        int ufoCreateFrequency,
-        int ufoShootFrequency
-    ) {
-        this.ufoShootFrequency = ufoShootFrequency;
-
-        this.reset();
-
-        this.ship = new Ship(
-            new PVector(width / 2, height / 2),
-            false);
-
-        this.createAsteroids(countAsteroids);
-
-        this.createUfoInterval = new Interval(
-            int(random(
-                ufoCreateFrequency - VARIABILITY_IN_CREATING_UFOS,
-                ufoCreateFrequency + VARIABILITY_IN_CREATING_UFOS
-            ))
-        );
-    }
-
-    void stopLevel() {
-        this.createUfoInterval = null;
-        this.ufos.clear();
-        this.ufoShootFrequency = 0;
-        this.countAsteroidsHit = 0;
-        this.countUfosHit = 0;
-    }
-
     void createAsteroids(int count) {
         this.asteroids = new ArrayList<Potatoid>();
 
@@ -252,10 +219,37 @@ public class SpritesManager {
         return this.ship == null;
     }
 
+
     void reset() {
         this.asteroids.clear();
         this.shipFragments.clear();
         this.ufos.clear();
+    }
+
+    void startLevel(
+        int countAsteroids,
+        int ufoCreateFrequency,
+        int ufoShootFrequency
+    ) {
+        this.ufoShootFrequency = ufoShootFrequency;
+
+        this.reset();
+
+        this.ship = new Ship(
+            new PVector(width / 2, height / 2),
+            false);
+
+        this.createAsteroids(countAsteroids);
+
+        this.createUfoInterval = new Interval(ufoCreateFrequency);
+    }
+
+    void stopLevel() {
+        this.ufos.clear();
+        this.createUfoInterval.cancel();
+        this.ufoShootFrequency = 0;
+        this.countAsteroidsHit = 0;
+        this.countUfosHit = 0;
     }
 
     void pause() {

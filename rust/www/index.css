@@ -16,6 +16,9 @@
     color: white;
     font-family: 'Exo 2', sans-serif;
     font-weight: 100;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 html,

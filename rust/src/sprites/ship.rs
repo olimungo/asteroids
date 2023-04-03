@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{colors::Colors, interval::Interval, vector::Vector};
+use crate::utils::{colors::Colors, interval::Interval, vector::Vector};
 
 use super::{
     laser::Laser,
@@ -182,7 +182,7 @@ impl Ship {
 
             new_potatoids.push(Potatoid::new(
                 sprite_data,
-                potatoid_data[2] as u8,
+                potatoid_data[2] as u32,
                 self.sprite.canvas,
             ));
         }

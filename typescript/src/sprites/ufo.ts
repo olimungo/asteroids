@@ -17,8 +17,8 @@ export default class Ufo extends Sprite {
     private lasers: Laser[] = [];
 
     // Helps to define actions based on a time frequency
-    private changeHeadingInterval: Interval;
-    private shootInterval: Interval;
+    private headingInterval = new Interval();
+    private shootInterval = new Interval();
 
     constructor(
         p5: P5,
@@ -36,25 +36,25 @@ export default class Ufo extends Sprite {
         this.velocity.setMag(UFO_VELOCITY);
         this.shape = this.generateShape(this.generateVertices());
 
-        this.changeHeadingInterval = new Interval(
-            p5.random(
-                CHANGE_HEADING_FREQUENCY - VARIABILITY_IN_HEADING,
-                CHANGE_HEADING_FREQUENCY + VARIABILITY_IN_HEADING
-            )
+        const randomInterval = p5.random(
+            CHANGE_HEADING_FREQUENCY - VARIABILITY_IN_HEADING,
+            CHANGE_HEADING_FREQUENCY + VARIABILITY_IN_HEADING
         );
 
+        this.headingInterval.set(randomInterval);
+
         if (shootIntervalFrequency > 0) {
-            this.shootInterval = new Interval(
-                p5.random(
-                    shootIntervalFrequency - VARIABILITY_IN_SHOOTING,
-                    shootIntervalFrequency + VARIABILITY_IN_SHOOTING
-                )
+            const randomInterval = p5.random(
+                shootIntervalFrequency - VARIABILITY_IN_SHOOTING,
+                shootIntervalFrequency + VARIABILITY_IN_SHOOTING
             );
+
+            this.shootInterval.set(randomInterval);
         }
     }
 
     update(shipPosition: P5.Vector | undefined): boolean {
-        if (this.changeHeadingInterval.isElapsed()) {
+        if (this.headingInterval.isElapsed()) {
             this.velocity = P5.Vector.random2D();
             this.velocity.setMag(UFO_VELOCITY);
         }
@@ -97,12 +97,12 @@ export default class Ufo extends Sprite {
     }
 
     pause() {
-        this.changeHeadingInterval.pause();
+        this.headingInterval.pause();
         this.shootInterval.pause();
     }
 
     unpause() {
-        this.changeHeadingInterval.unpause();
+        this.headingInterval.unpause();
         this.shootInterval.unpause();
     }
 

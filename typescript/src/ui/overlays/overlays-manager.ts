@@ -17,7 +17,7 @@ import {
 } from '.';
 import Interval from '../../interval';
 
-const DISPLAY_NEW_LIFE_TIMEOUT = 5000;
+const DISPLAY_NEW_LIFE_TIMEOUT = 7000;
 
 export default class OverlaysManager {
     private p5: P5;
@@ -168,18 +168,8 @@ export default class OverlaysManager {
 
     displayNewLife() {
         this.showNewLife = true;
-        this.newLifeInterval = new Interval(DISPLAY_NEW_LIFE_TIMEOUT);
-    }
-
-    pause() {
-        if (this.newLifeInterval != null) {
-            this.newLifeInterval.pause();
-        }
-    }
-    unpause() {
-        if (this.newLifeInterval != null) {
-            this.newLifeInterval.unpause();
-        }
+        this.newLifeInterval = new Interval();
+        this.newLifeInterval.set(DISPLAY_NEW_LIFE_TIMEOUT);
     }
 
     private setScale(ratio: number) {

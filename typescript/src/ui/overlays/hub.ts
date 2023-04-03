@@ -15,7 +15,7 @@ export default class Hub extends Overlay {
         this.p5.line(this.centerX, 0, this.centerX, this.p5.height);
         this.p5.ellipse(this.centerX, this.centerY, 400, 400);
 
-        if (this.p5.frameCount % 10 == 0 || this.p5.frameCount < 5) {
+        if (this.p5.frameCount % 50 == 0 || this.p5.frameCount < 5) {
             this.frame = this.p5.frameRate().toFixed(0) + '';
         }
 

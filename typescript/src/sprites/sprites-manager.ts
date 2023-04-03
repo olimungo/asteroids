@@ -5,8 +5,6 @@ import Potatoid from './potatoid';
 import Ship from './ship';
 import Ufo from './ufo';
 
-const VARIABILITY_IN_CREATING_UFOS = 5000;
-const ASTEROID_MIN_DISTANCE_TO_CENTER = 250;
 const DIAMETER_MIN = 40;
 const DIAMETER_MAX = 120;
 const SIDES_MIN = 8;
@@ -19,7 +17,7 @@ export default class SpritesManager {
     private shipFragments: Potatoid[] = [];
     private ufos: Ufo[] = [];
     private explosions: Explosion[] = [];
-    private createUfoInterval: Interval | null;
+    private createUfoInterval = new Interval();
     private ufoShootFrequency: number = 0;
 
     countAsteroidsHit = 0;
@@ -94,7 +92,7 @@ export default class SpritesManager {
             return true;
         });
 
-        if (this.createUfoInterval?.isElapsed()) {
+        if (this.createUfoInterval.isElapsed()) {
             this.createUfo(this.ufoShootFrequency);
         }
 
@@ -142,17 +140,12 @@ export default class SpritesManager {
 
         this.createAsteroids(countAsteroids);
 
-        this.createUfoInterval = new Interval(
-            this.p5.random(
-                ufoCreateFrequency - VARIABILITY_IN_CREATING_UFOS,
-                ufoCreateFrequency + VARIABILITY_IN_CREATING_UFOS
-            )
-        );
+        this.createUfoInterval.set(ufoCreateFrequency);
     }
 
     stopLevel() {
-        this.createUfoInterval = null;
         this.ufos = [];
+        this.createUfoInterval.cancel();
         this.ufoShootFrequency = 0;
         this.countAsteroidsHit = 0;
         this.countUfosHit = 0;
@@ -226,10 +219,6 @@ export default class SpritesManager {
         return this.asteroids.length;
     }
 
-    getUfosCount() {
-        return this.ufos.length;
-    }
-
     keyPressed(keyCode: number) {
         if (this.ship) {
             switch (keyCode) {
@@ -273,7 +262,7 @@ export default class SpritesManager {
     }
 
     pause() {
-        this.createUfoInterval?.pause();
+        this.createUfoInterval.pause();
 
         for (const ufo of this.ufos) {
             ufo.pause();
@@ -281,7 +270,7 @@ export default class SpritesManager {
     }
 
     unpause() {
-        this.createUfoInterval?.unpause();
+        this.createUfoInterval.unpause();
 
         for (const ufo of this.ufos) {
             ufo.unpause();

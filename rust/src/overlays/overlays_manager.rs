@@ -1,11 +1,11 @@
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{game_states::GameState, interval::Interval, sprites::sprite::CanvasDimension};
+use crate::{game_states::GameState, sprites::sprite::CanvasDimension, utils::interval::Interval};
 
 use super::{
     game_over::GameOver, game_paused::GamePaused, help::Help, homescreen::Homescreen, hub::Hub,
     level::Level, lifes::Lifes, new_life::NewLife, next_level::NextLevel, next_life::NextLife,
-    score::Score, starfield::Starfield,
+    score::Score, starfield::Starfield, top_score::TopScore,
 };
 
 const DISPLAY_NEW_LIFE_TIMEOUT: u32 = 7000;
@@ -30,6 +30,7 @@ pub struct OverlayManager {
     next_life: NextLife,
     game_over: GameOver,
     score: Score,
+    top_score: TopScore,
     level: Level,
     lifes: Lifes,
     new_life: NewLife,
@@ -54,6 +55,7 @@ impl OverlayManager {
             next_life: NextLife::new(canvas),
             game_over: GameOver::new(canvas),
             score: Score::new(canvas),
+            top_score: TopScore::new(canvas),
             level: Level::new(canvas),
             lifes: Lifes::new(canvas),
             new_life: NewLife::new(canvas),
@@ -86,10 +88,14 @@ impl OverlayManager {
         if self.show_starfield {
             self.starfield.update();
         }
+
+        self.hub.update();
     }
 
     pub fn draw_foreground(&self, overlay_data: OverlayData) {
         let canvas = overlay_data.canvas;
+
+        self.top_score.draw(overlay_data.top_score, canvas.clone());
 
         match overlay_data.game_state {
             GameState::Homescreen => self.homescreen.draw(canvas.clone()),
@@ -156,14 +162,6 @@ impl OverlayManager {
     pub fn dispaly_new_life(&mut self) {
         self.show_new_life = true;
         self.new_life_interval.set(DISPLAY_NEW_LIFE_TIMEOUT);
-    }
-
-    pub fn pause(&mut self) {
-        self.new_life_interval.pause();
-    }
-
-    pub fn unpause(&mut self) {
-        self.new_life_interval.unpause();
     }
 
     pub fn set_life_count(&mut self, count: u32) {

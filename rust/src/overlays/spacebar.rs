@@ -1,6 +1,6 @@
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{colors::Colors, vector::Vector};
+use crate::utils::{colors::Colors, vector::Vector};
 
 const WIDTH: f64 = 200.0;
 const HEIGHT: f64 = 30.0;

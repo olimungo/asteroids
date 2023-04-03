@@ -1,6 +1,6 @@
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{interval::Interval, log, utils::random, vector::Vector};
+use crate::utils::{general::random, interval::Interval, vector::Vector};
 
 use super::{
     laser::Laser,
@@ -154,6 +154,16 @@ impl Ufo {
         );
 
         self.lasers.push(laser);
+    }
+
+    pub fn pause(&mut self) {
+        self.heading_interval.pause();
+        self.shoot_interval.pause();
+    }
+
+    pub fn unpause(&mut self) {
+        self.heading_interval.unpause();
+        self.shoot_interval.unpause();
     }
 
     fn generate_vertices() -> Vec<Vector> {

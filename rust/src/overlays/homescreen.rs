@@ -1,6 +1,6 @@
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{sprites::sprite::CanvasDimension, utils::millis};
+use crate::{sprites::sprite::CanvasDimension, utils::javascript::millis};
 
 pub struct Homescreen {
     past_millis: f64,
@@ -45,7 +45,7 @@ impl Homescreen {
             let _result = canvas.fill_text("INSERT 1 COIN", self.center_x, self.center_y + 50.0);
         }
 
-        canvas.set_font("10 25px 'Exo 2'");
+        canvas.set_font("100 25px 'Exo 2'");
         let _result =
             canvas.fill_text("PRESS \"H\" FOR HELP", self.center_x, self.center_y + 250.0);
 

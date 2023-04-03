@@ -1,18 +1,19 @@
 export default class Interval {
-    intervalFrequency: number;
+    interval: number;
     timeReference: number;
     timePaused: number = 0;
 
-    constructor(intervalFrequency: number) {
-        this.intervalFrequency = intervalFrequency;
+    set(interval: number) {
+        this.interval = interval;
+        this.timePaused = 0;
         this.timeReference = Date.now();
     }
 
     isElapsed(): boolean {
-        if (!this.timePaused && this.intervalFrequency > 0) {
+        if (!this.timePaused && this.interval > 0) {
             const now = Date.now();
 
-            if (this.timeReference + this.intervalFrequency < now) {
+            if (this.timeReference + this.interval < now) {
                 this.timeReference = now;
                 return true;
             }
@@ -21,16 +22,19 @@ export default class Interval {
         return false;
     }
 
+    cancel() {
+        this.interval = 0;
+    }
+
     pause() {
         this.timePaused = Date.now();
     }
 
     unpause() {
         const now = Date.now();
-        const timeLeft =
-            this.timeReference + this.intervalFrequency - this.timePaused;
+        const timeLeft = this.timeReference + this.interval - this.timePaused;
 
-        this.timeReference = now + timeLeft - this.intervalFrequency;
+        this.timeReference = now + timeLeft - this.interval;
         this.timePaused = 0;
     }
 }

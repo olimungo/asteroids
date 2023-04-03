@@ -1,4 +1,4 @@
-use crate::utils::millis;
+use super::javascript::millis;
 
 pub struct Interval {
     pub interval: f64,

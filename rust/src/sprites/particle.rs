@@ -2,8 +2,9 @@ use std::f64::consts::PI;
 
 use web_sys::CanvasRenderingContext2d;
 
+use crate::utils::{general::random, vector::Vector};
+
 use super::sprite::{CanvasDimension, Spritable, Sprite, SpriteData};
-use crate::{utils::random, vector::Vector};
 
 const POLYGON_SIDES: u8 = 5;
 const HEALTH_DECREMENT: u32 = 5;
@@ -49,7 +50,7 @@ impl Spritable for Particle {
 impl Particle {
     pub fn new(sprite_data: SpriteData, canvas: CanvasDimension) -> Particle {
         let mut new_sprite_data = sprite_data;
-        new_sprite_data.diameter = random(1, 4) as f64;
+        new_sprite_data.diameter = random(1, 5) as f64;
         new_sprite_data.velocity = Vector::random(-1.2, 1.2);
 
         Particle {
@@ -76,6 +77,6 @@ impl Particle {
 
         canvas.close_path();
 
-        canvas.fill();
+        canvas.stroke();
     }
 }

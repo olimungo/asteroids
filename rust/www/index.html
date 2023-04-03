@@ -28,7 +28,7 @@
             </div>
 
             <footer>
-                <div>v0.9.0</div>
+                <div>v0.9.0 (Rust/WebAssemlby)</div>
 
                 <img
                     src="assets/github.svg"
@@ -42,6 +42,35 @@
         <script>
             function millis() {
                 return new Date().getTime();
+            }
+
+            let lastFrameTimeStamp = performance.now();
+
+            function fps() {
+                const now = performance.now();
+                const delta = now - lastFrameTimeStamp;
+                lastFrameTimeStamp = now;
+                let fps = (1 / delta) * 1000;
+
+                return ('0'.repeat(2) + `${Math.round(fps)}`.trim()).slice(-2);
+            }
+
+            function getCookie() {
+                for (const cookie of document.cookie
+                    .replace(/ /g, '')
+                    .split(';')) {
+                    const cookieSplit = cookie.split('=');
+
+                    if (cookieSplit[0] === 'top-score') {
+                        return parseInt(cookieSplit[1]);
+                    }
+                }
+
+                return 0;
+            }
+
+            function setCookie(topScore) {
+                document.cookie = `top-score=${topScore}`;
             }
         </script>
 

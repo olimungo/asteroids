@@ -1,6 +1,6 @@
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{sprites::sprite::CanvasDimension, utils::millis};
+use crate::{sprites::sprite::CanvasDimension, utils::javascript::millis};
 
 pub struct NextLife {
     past_millis: f64,
@@ -44,7 +44,7 @@ impl NextLife {
         let _result = canvas.fill_text(&text, self.center_x, self.center_y);
 
         if self.display_press_s {
-            canvas.set_font("100 25px 'Exo 2'");
+            canvas.set_font("300 25px 'Exo 2'");
 
             let _result =
                 canvas.fill_text("PRESS \"S\" TO RETRY", self.center_x, self.center_y + 50.0);

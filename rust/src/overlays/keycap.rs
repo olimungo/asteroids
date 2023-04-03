@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{colors::Colors, vector::Vector};
+use crate::utils::{colors::Colors, vector::Vector};
 
 const SIZE: f64 = 30.0;
 

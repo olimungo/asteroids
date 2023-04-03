@@ -2,18 +2,19 @@ import P5 from 'p5';
 import { GameState } from './game-states';
 import SpritesManager from './sprites/sprites-manager';
 import OverlaysManager from './ui/overlays/overlays-manager';
+import Interval from './interval';
 
 const LIFES_WHEN_STARTING = 3;
-const ASTEROIDS_START_MAX = 12;
+const ASTEROIDS_START_COUNT = 12;
 const ASTEROIDS_LEVEL_INCREMENT = 3;
 const GAME_OVER_STATE_TIMEOUT = 8000; // ms
 const ADD_LIFE_WHEN_SCORED = 3000;
 const ASTEROID_HIT_SCORE = 10;
 const UFO_HIT_SCORE = 50;
-const UFO_INIT_FREQUENCY = 25000; // ms
-const UFO_DECREMENT_FREQUENCY = 1000; // ms
-const UFO_MINIMAL_FREQUENCY = 10000; // ms
-const UFO_SHOOT_INIT_FREQUENCY = 3000; // ms // 15000
+const UFO_CREATE_INIT_FREQUENCY = 15000; // ms
+const UFO_CREATE_DECREMENT_FREQUENCY = 1000; // ms
+const UFO_CREATE_MINIMAL_FREQUENCY = 10000; // ms
+const UFO_SHOOT_INIT_FREQUENCY = 15000; // ms
 const UFO_SHOOT_DECREMENT_FREQUENCY = 500; // ms
 const UFO_SHOOT_MINIMAL_FREQUENCY = 5000; // ms
 
@@ -30,9 +31,9 @@ export default class GameManager {
     private score: number;
     private topScore: number = 0;
     private maxAsteroids: number;
-    private gameOverTimeout: ReturnType<typeof setTimeout>;
+    private gameOverInterval = new Interval();
     private lifeAddedSoFar: number;
-    private ufoFrequency: number;
+    private ufoCreateFrequency: number;
     private ufoShootFrequency: number;
     private gamePaused = false;
 
@@ -42,7 +43,7 @@ export default class GameManager {
         this.spritesManager = new SpritesManager(p5);
         this.overlaysManager = new OverlaysManager(p5);
 
-        this.spritesManager.createAsteroids(ASTEROIDS_START_MAX);
+        this.spritesManager.createAsteroids(ASTEROIDS_START_COUNT);
         this.spritesManager.createUfo(0);
 
         // Get the cookie top score
@@ -65,6 +66,15 @@ export default class GameManager {
                 this.checkLevel();
                 this.checkNewLife();
             }
+        }
+
+        if (this.gameOverInterval.isElapsed()) {
+            this.gameOverInterval.cancel();
+            this.gameState = GameState.HOMESCREEN;
+
+            this.spritesManager.reset();
+            this.spritesManager.createUfo(0);
+            this.spritesManager.createAsteroids(ASTEROIDS_START_COUNT);
         }
     }
 
@@ -140,15 +150,15 @@ export default class GameManager {
     }
 
     private startGame() {
-        clearTimeout(this.gameOverTimeout);
+        this.gameOverInterval.cancel();
 
         this.score = 0;
         this.level = 1;
-        this.maxAsteroids = ASTEROIDS_START_MAX;
+        this.maxAsteroids = ASTEROIDS_START_COUNT;
         this.lifes = LIFES_WHEN_STARTING;
         this.overlaysManager.setLifeCount(this.lifes - 1);
         this.lifeAddedSoFar = 0;
-        this.ufoFrequency = UFO_INIT_FREQUENCY;
+        this.ufoCreateFrequency = UFO_CREATE_INIT_FREQUENCY;
         this.ufoShootFrequency = UFO_SHOOT_INIT_FREQUENCY;
 
         this.spritesManager.reset();
@@ -161,7 +171,7 @@ export default class GameManager {
 
         this.spritesManager.startLevel(
             this.maxAsteroids,
-            this.ufoFrequency,
+            this.ufoCreateFrequency,
             this.ufoShootFrequency
         );
     }
@@ -169,11 +179,11 @@ export default class GameManager {
     private nextLevel() {
         this.level++;
         this.maxAsteroids += ASTEROIDS_LEVEL_INCREMENT;
-        this.ufoFrequency -= UFO_DECREMENT_FREQUENCY;
+        this.ufoCreateFrequency -= UFO_CREATE_DECREMENT_FREQUENCY;
         this.ufoShootFrequency -= UFO_SHOOT_DECREMENT_FREQUENCY;
 
-        if (this.ufoFrequency < UFO_MINIMAL_FREQUENCY) {
-            this.ufoFrequency = UFO_MINIMAL_FREQUENCY;
+        if (this.ufoCreateFrequency < UFO_CREATE_MINIMAL_FREQUENCY) {
+            this.ufoCreateFrequency = UFO_CREATE_MINIMAL_FREQUENCY;
         }
 
         if (this.ufoShootFrequency < UFO_SHOOT_MINIMAL_FREQUENCY) {
@@ -206,14 +216,7 @@ export default class GameManager {
                 document.cookie = `top-score=${this.topScore}`;
 
                 // Return to homescreen after some time...
-                this.gameOverTimeout = setTimeout(() => {
-                    this.gameState = GameState.HOMESCREEN;
-
-                    // If there is no UFO on the screen, create one
-                    if (this.spritesManager.getUfosCount() === 0) {
-                        this.spritesManager.createUfo(0);
-                    }
-                }, GAME_OVER_STATE_TIMEOUT);
+                this.gameOverInterval.set(GAME_OVER_STATE_TIMEOUT);
             } else {
                 this.gameState = GameState.NEXT_LIFE;
             }

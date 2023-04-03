@@ -1,12 +1,8 @@
-mod colors;
 mod game_manager;
 mod game_states;
-mod interval;
 mod overlays;
-mod sprite_manager;
 mod sprites;
 mod utils;
-mod vector;
 
 extern crate js_sys;
 extern crate web_sys;
@@ -19,6 +15,7 @@ use web_sys::CanvasRenderingContext2d;
 use web_sys::HtmlCanvasElement;
 
 use crate::sprites::sprite::CanvasDimension;
+use crate::utils::general::set_panic_hook;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -36,7 +33,7 @@ pub struct Game {
 #[wasm_bindgen]
 impl Game {
     pub fn new() -> Game {
-        utils::set_panic_hook();
+        set_panic_hook();
 
         let document = window()
             .expect("> No 'window' found in html page!")

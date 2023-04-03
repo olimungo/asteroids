@@ -1,7 +1,10 @@
 use rand::Rng;
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{colors::Colors, sprites::sprite::CanvasDimension, utils::map};
+use crate::{
+    sprites::sprite::CanvasDimension,
+    utils::{colors::Colors, general::map},
+};
 
 pub struct Star {
     x: f64,

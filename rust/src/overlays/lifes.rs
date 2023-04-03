@@ -5,7 +5,7 @@ use crate::{
         ship::Ship,
         sprite::{CanvasDimension, Spritable, SpriteData},
     },
-    vector::Vector,
+    utils::vector::Vector,
 };
 
 pub struct Lifes {
