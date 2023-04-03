@@ -15,7 +15,7 @@ import {
     Starfield,
     GamePaused,
 } from '.';
-import Interval from '../../interval';
+import Interval from '../../utils/interval';
 
 const DISPLAY_NEW_LIFE_TIMEOUT = 7000;
 
@@ -42,7 +42,7 @@ export default class OverlaysManager {
     private showHelp = false;
     private scaleStage = false;
     private showNewLife = false;
-    private newLifeInterval: Interval | null;
+    private newLifeInterval: Interval;
 
     constructor(p5: P5) {
         this.p5 = p5;
@@ -64,9 +64,9 @@ export default class OverlaysManager {
     }
 
     update() {
-        if (this.newLifeInterval && this.newLifeInterval.isElapsed()) {
+        if (this.showNewLife && this.newLifeInterval.isElapsed()) {
             this.showNewLife = false;
-            this.newLifeInterval = null;
+            this.newLifeInterval.cancel();
         }
 
         if (this.showStarfield) {
@@ -168,7 +168,6 @@ export default class OverlaysManager {
 
     displayNewLife() {
         this.showNewLife = true;
-        this.newLifeInterval = new Interval();
         this.newLifeInterval.set(DISPLAY_NEW_LIFE_TIMEOUT);
     }
 

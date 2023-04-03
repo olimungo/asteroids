@@ -3,7 +3,7 @@ import Colors from '../ui/colors';
 import Potatoid from './potatoid';
 import Laser from './laser';
 import Sprite from './sprite';
-import Interval from '../interval';
+import Interval from '../utils/interval';
 
 const SHIP_SHELL_SIZE = 36;
 const BOOSTER_INTERVAL = 150;

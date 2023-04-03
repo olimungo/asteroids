@@ -39,7 +39,7 @@ impl GameOver {
         let _result = canvas.fill_text("GAME OVER", self.center_x, self.center_y);
 
         if self.display_press_s {
-            canvas.set_font("100 25px 'Exo 2'");
+            canvas.set_font("300 25px 'Exo 2'");
 
             let _result = canvas.fill_text(
                 "PRESS \"S\" TO PLAY AGAIN",

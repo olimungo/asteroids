@@ -12,11 +12,6 @@ use crate::{
     },
 };
 
-const GAME_OVER_STATE_TIMEOUT: u32 = 8000; // ms
-const ADD_LIFE_WHEN_SCORED: u32 = 3000;
-const ASTEROID_HIT_SCORE: u32 = 10;
-const UFO_HIT_SCORE: u32 = 50;
-
 pub struct GameManager {
     game_state: GameState,
     sprite_manager: SpriteManager,
@@ -40,6 +35,11 @@ impl GameManager {
         let top_score = getCookie();
 
         let mut sprite_manager = SpriteManager::new(canvas);
+
+        let config = Config::new();
+        let asteroids_start_count = config.game.asteroids_start_count;
+
+        sprite_manager.create_asteroids(asteroids_start_count);
         sprite_manager.create_ufo(0);
 
         GameManager {
@@ -57,7 +57,7 @@ impl GameManager {
             life_added_so_far: 0,
             game_over_interval: Interval::new(),
             canvas,
-            config: Config::new(),
+            config,
         }
     }
 
@@ -128,7 +128,7 @@ impl GameManager {
         canvas.set_fill_style(&Colors::Background.value().into());
         canvas.set_line_width(1.5);
 
-        canvas.fill_rect(0f64, 0f64, self.canvas.width, self.canvas.height);
+        canvas.fill_rect(0.0, 0.0, self.canvas.width, self.canvas.height);
 
         canvas.set_fill_style(&Colors::Edge.value().into());
 
@@ -214,7 +214,8 @@ impl GameManager {
 
             if self.lifes == 0 {
                 self.game_state = GameState::GameOver;
-                self.game_over_interval.set(GAME_OVER_STATE_TIMEOUT);
+                self.game_over_interval
+                    .set(self.config.game.game_over_state_timeout);
 
                 if self.score > self.top_score {
                     self.top_score = self.score;
@@ -229,12 +230,13 @@ impl GameManager {
 
     pub fn get_score(&self) -> u32 {
         self.score
-            + self.sprite_manager.count_asteroids_hit * ASTEROID_HIT_SCORE
-            + self.sprite_manager.count_ufo_hit * UFO_HIT_SCORE
+            + self.sprite_manager.count_asteroids_hit * self.config.game.asteroid_hit_score
+            + self.sprite_manager.count_ufo_hit * self.config.game.ufo_hit_score
     }
 
     pub fn check_new_life(&mut self) {
-        if self.get_score() - self.life_added_so_far * ADD_LIFE_WHEN_SCORED >= ADD_LIFE_WHEN_SCORED
+        if self.get_score() - self.life_added_so_far * self.config.game.add_life_when_scored
+            >= self.config.game.add_life_when_scored
         {
             self.life_added_so_far += 1;
             self.lifes += 1;

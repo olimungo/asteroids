@@ -1,14 +1,17 @@
 import P5 from 'p5';
-import Interval from '../interval';
+import Interval from '../utils/interval';
 import Explosion from './explosion';
 import Potatoid from './potatoid';
 import Ship from './ship';
 import Ufo from './ufo';
+import { random_limit } from '../utils/random';
 
 const DIAMETER_MIN = 40;
 const DIAMETER_MAX = 120;
 const SIDES_MIN = 8;
 const SIDES_MAX = 20;
+const ASTEROIDS_VELOCITY_MIN_VALUE = 1.0;
+const ASTEROIDS_VELOCITY_LIMIT = 0.2;
 
 export default class SpritesManager {
     private p5: P5;
@@ -167,6 +170,11 @@ export default class SpritesManager {
 
             position.add(this.p5.width / 2, this.p5.height / 2);
 
+            const velocity = random_limit(
+                ASTEROIDS_VELOCITY_LIMIT,
+                ASTEROIDS_VELOCITY_MIN_VALUE
+            );
+
             const diameter = this.p5.random(DIAMETER_MIN, DIAMETER_MAX);
 
             const rotationStep = this.p5.map(
@@ -184,7 +192,7 @@ export default class SpritesManager {
                     this.p5,
                     position,
                     diameter,
-                    P5.Vector.random2D(),
+                    velocity,
                     rotationStep,
                     sides
                 )

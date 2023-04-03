@@ -82,6 +82,7 @@ impl OverlayManager {
 
             if self.new_life_interval.is_ellapsed() {
                 self.show_new_life = false;
+                self.new_life_interval.cancel();
             }
         }
 

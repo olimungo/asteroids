@@ -2,7 +2,7 @@ import P5 from 'p5';
 import { GameState } from './game-states';
 import SpritesManager from './sprites/sprites-manager';
 import OverlaysManager from './ui/overlays/overlays-manager';
-import Interval from './interval';
+import Interval from './utils/interval';
 
 const LIFES_WHEN_STARTING = 3;
 const ASTEROIDS_START_COUNT = 12;

@@ -1,6 +1,6 @@
 import P5 from 'p5';
 import Colors from '../ui/colors';
-import Interval from '../interval';
+import Interval from '../utils/interval';
 import Sprite from './sprite';
 import Ship from './ship';
 import Laser from './laser';

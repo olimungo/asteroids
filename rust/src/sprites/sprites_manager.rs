@@ -11,13 +11,8 @@ use crate::{
         sprite::{CanvasDimension, Spritable, SpriteData},
         ufo::Ufo,
     },
-    utils::{general::random, interval::Interval, vector::Vector},
+    utils::{config::Config, general::random, interval::Interval, vector::Vector},
 };
-
-const DIAMETER_MIN: f64 = 40.0;
-const DIAMETER_MAX: f64 = 120.0;
-const SIDES_MIN: u32 = 8;
-const SIDES_MAX: u32 = 20;
 
 pub struct SpriteManager {
     asteroids: Vec<Potatoid>,
@@ -31,6 +26,7 @@ pub struct SpriteManager {
     create_ufo_interval: Interval,
     ufo_shoot_frequency: u32,
     canvas: CanvasDimension,
+    config: Config,
 }
 
 impl SpriteManager {
@@ -53,7 +49,7 @@ impl SpriteManager {
             canvas,
         );
 
-        let mut sprite_manager = SpriteManager {
+        SpriteManager {
             asteroids: Vec::new(),
             ship,
             ship_fragments: Vec::new(),
@@ -65,11 +61,8 @@ impl SpriteManager {
             create_ufo_interval: Interval::new(),
             ufo_shoot_frequency: 0,
             canvas,
-        };
-
-        sprite_manager.create_asteroids(20);
-
-        sprite_manager
+            config: Config::new(),
+        }
     }
 
     pub fn key_pressed(&mut self, key: &str) {
@@ -201,20 +194,27 @@ impl SpriteManager {
 
             position += Vector::new(self.canvas.width / 2.0, self.canvas.height / 2.0);
 
-            let velocity = Vector::random_limit(1.0, 0.2);
+            let velocity = Vector::random_limit(
+                self.config.sprites.manager.asteroid_velocity_limit,
+                self.config.sprites.manager.asteroid_velocity_min_value,
+            );
 
-            let diameter = rand::thread_rng().gen_range(DIAMETER_MIN..DIAMETER_MAX);
+            let diameter = rand::thread_rng().gen_range(
+                self.config.sprites.manager.diameter_min..self.config.sprites.manager.diameter_max,
+            );
 
             let rotation = 0.0;
 
-            let randomness = rand::thread_rng().gen_range(0..10);
+            let randomness = rand::thread_rng().gen_range(0.0..1.0);
 
             let rotation_step = match randomness {
-                x if x < 5 => 0.01,
+                x if x < 0.5 => 0.01,
                 _ => -0.01,
             };
 
-            let sides = rand::thread_rng().gen_range(SIDES_MIN..SIDES_MAX);
+            let sides = rand::thread_rng().gen_range(
+                self.config.sprites.manager.sides_min..self.config.sprites.manager.sides_max,
+            );
 
             let sprite_data = SpriteData {
                 position,
