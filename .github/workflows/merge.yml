@@ -22,10 +22,18 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: 18
-                  cache: 'npm'
-                  cache-dependency-path: typescript/package-lock.json
+            - name: Install Rust toolchain
+              run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+            - name: Cache Crates
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      target
+                      ~/.cargo
+                  key: cache-${{ runner.os }}-crates
+                  restore-keys: cache-${{ runner.os }}-crates
             - name: Build the app
-              working-directory: typescript
+              working-directory: integration
               run: |
                   npm ci
                   npm run build
@@ -34,7 +42,7 @@ jobs:
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v1
               with:
-                  path: typescript/dist
+                  path: integration/dist
     deploy:
         needs: build
         runs-on: ubuntu-latest

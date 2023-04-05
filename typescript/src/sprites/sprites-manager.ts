@@ -1,25 +1,26 @@
 import P5 from 'p5';
-import Interval from '../interval';
+import Interval from '../utils/interval';
 import Explosion from './explosion';
-import Patatoid from './patatoid';
+import Potatoid from './potatoid';
 import Ship from './ship';
 import Ufo from './ufo';
+import { random_limit } from '../utils/random';
 
-const VARIABILITY_IN_CREATING_UFOS = 5000;
-const ASTEROID_MIN_DISTANCE_TO_CENTER = 250;
 const DIAMETER_MIN = 40;
 const DIAMETER_MAX = 120;
 const SIDES_MIN = 8;
 const SIDES_MAX = 20;
+const ASTEROIDS_VELOCITY_LIMIT = 1.0;
+const ASTEROIDS_VELOCITY_MIN_VALUE = 0.2;
 
 export default class SpritesManager {
     private p5: P5;
-    private asteroids: Patatoid[] = [];
+    private asteroids: Potatoid[] = [];
     private ship: Ship | null;
-    private shipFragments: Patatoid[] = [];
+    private shipFragments: Potatoid[] = [];
     private ufos: Ufo[] = [];
     private explosions: Explosion[] = [];
-    private createUfoInterval: Interval | null;
+    private createUfoInterval = new Interval();
     private ufoShootFrequency: number = 0;
 
     countAsteroidsHit = 0;
@@ -38,7 +39,7 @@ export default class SpritesManager {
             }
         }
 
-        let newAsteroids: Patatoid[] = [];
+        let newAsteroids: Potatoid[] = [];
 
         this.asteroids = this.asteroids.filter((asteroid) => {
             asteroid.update();
@@ -94,7 +95,7 @@ export default class SpritesManager {
             return true;
         });
 
-        if (this.createUfoInterval?.isElapsed()) {
+        if (this.createUfoInterval.isElapsed()) {
             this.createUfo(this.ufoShootFrequency);
         }
 
@@ -142,17 +143,12 @@ export default class SpritesManager {
 
         this.createAsteroids(countAsteroids);
 
-        this.createUfoInterval = new Interval(
-            this.p5.random(
-                ufoCreateFrequency - VARIABILITY_IN_CREATING_UFOS,
-                ufoCreateFrequency + VARIABILITY_IN_CREATING_UFOS
-            )
-        );
+        this.createUfoInterval.set(ufoCreateFrequency);
     }
 
     stopLevel() {
-        this.createUfoInterval = null;
         this.ufos = [];
+        this.createUfoInterval.cancel();
         this.ufoShootFrequency = 0;
         this.countAsteroidsHit = 0;
         this.countUfosHit = 0;
@@ -174,6 +170,11 @@ export default class SpritesManager {
 
             position.add(this.p5.width / 2, this.p5.height / 2);
 
+            const velocity = random_limit(
+                ASTEROIDS_VELOCITY_LIMIT,
+                ASTEROIDS_VELOCITY_MIN_VALUE
+            );
+
             const diameter = this.p5.random(DIAMETER_MIN, DIAMETER_MAX);
 
             const rotationStep = this.p5.map(
@@ -187,11 +188,11 @@ export default class SpritesManager {
             const sides = this.p5.floor(this.p5.random(SIDES_MIN, SIDES_MAX));
 
             this.asteroids.push(
-                new Patatoid(
+                new Potatoid(
                     this.p5,
                     position,
                     diameter,
-                    P5.Vector.random2D(),
+                    velocity,
                     rotationStep,
                     sides
                 )
@@ -200,34 +201,11 @@ export default class SpritesManager {
     }
 
     createUfo(ufoShootFrequency: number) {
-        const randomSide = this.p5.floor(this.p5.random(4));
-        const vector = P5.Vector.random2D();
-
-        switch (randomSide) {
-            case 1:
-                vector.x += this.p5.width;
-                break;
-            case 2:
-                vector.x -= this.p5.width;
-                break;
-            case 3:
-                vector.y += this.p5.height;
-                break;
-            case 4:
-                vector.y -= this.p5.height;
-                break;
-        }
-
-        const ufo = new Ufo(this.p5, vector, ufoShootFrequency);
-        this.ufos.push(ufo);
+        this.ufos.push(new Ufo(this.p5, ufoShootFrequency));
     }
 
     getAsteroidsCount(): number {
         return this.asteroids.length;
-    }
-
-    getUfosCount() {
-        return this.ufos.length;
     }
 
     keyPressed(keyCode: number) {
@@ -273,7 +251,7 @@ export default class SpritesManager {
     }
 
     pause() {
-        this.createUfoInterval?.pause();
+        this.createUfoInterval.pause();
 
         for (const ufo of this.ufos) {
             ufo.pause();
@@ -281,7 +259,7 @@ export default class SpritesManager {
     }
 
     unpause() {
-        this.createUfoInterval?.unpause();
+        this.createUfoInterval.unpause();
 
         for (const ufo of this.ufos) {
             ufo.unpause();

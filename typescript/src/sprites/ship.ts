@@ -1,9 +1,9 @@
 import P5 from 'p5';
 import Colors from '../ui/colors';
-import Patatoid from './patatoid';
+import Potatoid from './potatoid';
 import Laser from './laser';
 import Sprite from './sprite';
-import Interval from '../interval';
+import Interval from '../utils/interval';
 
 const SHIP_SHELL_SIZE = 36;
 const BOOSTER_INTERVAL = 150;
@@ -129,8 +129,8 @@ export default class Ship extends Sprite {
         return false;
     }
 
-    breakUp(): Patatoid[] {
-        const patatoids: Patatoid[] = [];
+    breakUp(): Potatoid[] {
+        const potatoids: Potatoid[] = [];
 
         for (let index of [
             [0.9, 0.05, 5],
@@ -138,7 +138,7 @@ export default class Ship extends Sprite {
             [0.9, 0.15, 3],
             [0.7, -0.1, 5],
         ]) {
-            let patatoid = new Patatoid(
+            let potatoid = new Potatoid(
                 this.p5,
                 this.position.copy(),
                 this.diameter * index[0],
@@ -147,10 +147,10 @@ export default class Ship extends Sprite {
                 index[2]
             );
 
-            patatoids.push(patatoid);
+            potatoids.push(potatoid);
         }
 
-        return patatoids;
+        return potatoids;
     }
 
     private drawBoosterFlames() {

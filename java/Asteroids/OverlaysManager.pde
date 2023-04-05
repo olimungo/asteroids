@@ -1,5 +1,5 @@
 public class OverlaysManager {
-    private final static int DISPLAY_NEW_LIFE_TIMEOUT = 5000;
+    private final static int DISPLAY_NEW_LIFE_TIMEOUT = 7000;
 
     private Starfield starfield;
 
@@ -64,16 +64,6 @@ public class OverlaysManager {
             case HOMESCREEN:
                 this.overlayHomeScreen.draw();
                 break;
-            case PLAYING:
-                this.overlayScore.draw(score);
-                this.overlayLifes.draw();
-                this.overlayLevel.draw(level);
-
-                if (gamePaused) {
-                    this.overlayGamePaused.draw();
-                }
-
-                break;
             case NEXT_LEVEL:
                 this.overlayNextLevel.draw(level);
                 break;
@@ -84,6 +74,27 @@ public class OverlaysManager {
                 this.overlayGameOver.draw();
                 break;
         }
+
+        if (gameState == GameState.PLAYING && gamePaused) {
+            this.overlayGamePaused.draw();
+        }
+
+        if (
+            gameState == GameState.PLAYING ||
+            gameState == GameState.NEXT_LEVEL
+        ) {
+            this.overlayLifes.draw();
+        }
+
+        if (
+            gameState == GameState.PLAYING ||
+            gameState == GameState.GAME_OVER ||
+            gameState == GameState.NEXT_LEVEL ||
+            gameState == GameState.NEXT_LIFE
+        ) {
+            this.overlayScore.draw(score);
+            this.overlayLevel.draw(level);
+        }        
 
         if (this.showNewLife) {
             this.overlayNewLife.draw();
@@ -133,18 +144,8 @@ public class OverlaysManager {
 
     void displayNewLife() {
         this.showNewLife = true;
-        this.newLifeInterval = new Interval(DISPLAY_NEW_LIFE_TIMEOUT);
-    }
-
-    void pause() {
-        if (this.newLifeInterval != null) {
-            this.newLifeInterval.pause();
-        }
-    }
-    void unpause() {
-        if (this.newLifeInterval != null) {
-            this.newLifeInterval.unpause();
-        }
+        this.newLifeInterval = new Interval();
+        this.newLifeInterval.set(DISPLAY_NEW_LIFE_TIMEOUT);
     }
 
     private void setScale(float ratio) {

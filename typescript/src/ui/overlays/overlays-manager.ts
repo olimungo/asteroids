@@ -15,9 +15,9 @@ import {
     Starfield,
     GamePaused,
 } from '.';
-import Interval from '../../interval';
+import Interval from '../../utils/interval';
 
-const DISPLAY_NEW_LIFE_TIMEOUT = 5000;
+const DISPLAY_NEW_LIFE_TIMEOUT = 7000;
 
 export default class OverlaysManager {
     private p5: P5;
@@ -42,7 +42,7 @@ export default class OverlaysManager {
     private showHelp = false;
     private scaleStage = false;
     private showNewLife = false;
-    private newLifeInterval: Interval | null;
+    private newLifeInterval: Interval;
 
     constructor(p5: P5) {
         this.p5 = p5;
@@ -64,9 +64,9 @@ export default class OverlaysManager {
     }
 
     update() {
-        if (this.newLifeInterval && this.newLifeInterval.isElapsed()) {
+        if (this.showNewLife && this.newLifeInterval.isElapsed()) {
             this.showNewLife = false;
-            this.newLifeInterval = null;
+            this.newLifeInterval.cancel();
         }
 
         if (this.showStarfield) {
@@ -88,16 +88,6 @@ export default class OverlaysManager {
             case GameState.HOMESCREEN:
                 this.overlayHomeScreen.draw();
                 break;
-            case GameState.PLAYING:
-                this.overlayScore.draw(score);
-                this.overlayLifes.draw();
-                this.overlayLevel.draw(level);
-
-                if (gamePaused) {
-                    this.overlayGamePaused.draw();
-                }
-
-                break;
             case GameState.NEXT_LEVEL:
                 this.overlayNextLevel.draw(level);
                 break;
@@ -107,6 +97,27 @@ export default class OverlaysManager {
             case GameState.GAME_OVER:
                 this.overlayGameOver.draw();
                 break;
+        }
+
+        if (gameState == GameState.PLAYING && gamePaused) {
+            this.overlayGamePaused.draw();
+        }
+
+        if (
+            gameState == GameState.PLAYING ||
+            gameState == GameState.NEXT_LEVEL
+        ) {
+            this.overlayLifes.draw();
+        }
+
+        if (
+            gameState == GameState.PLAYING ||
+            gameState == GameState.GAME_OVER ||
+            gameState == GameState.NEXT_LEVEL ||
+            gameState == GameState.NEXT_LIFE
+        ) {
+            this.overlayScore.draw(score);
+            this.overlayLevel.draw(level);
         }
 
         if (this.showNewLife) {
@@ -157,18 +168,7 @@ export default class OverlaysManager {
 
     displayNewLife() {
         this.showNewLife = true;
-        this.newLifeInterval = new Interval(DISPLAY_NEW_LIFE_TIMEOUT);
-    }
-
-    pause() {
-        if (this.newLifeInterval != null) {
-            this.newLifeInterval.pause();
-        }
-    }
-    unpause() {
-        if (this.newLifeInterval != null) {
-            this.newLifeInterval.unpause();
-        }
+        this.newLifeInterval.set(DISPLAY_NEW_LIFE_TIMEOUT);
     }
 
     private setScale(ratio: number) {

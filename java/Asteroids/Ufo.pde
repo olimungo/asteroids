@@ -23,20 +23,20 @@ public class Ufo extends Sprite {
         this.velocity.setMag(UFO_VELOCITY);
         this.shape = this.generateShape(this.generateVertices());
 
-        this.changeHeadingInterval = new Interval(
-            int(random(
-                CHANGE_HEADING_FREQUENCY - VARIABILITY_IN_HEADING,
-                CHANGE_HEADING_FREQUENCY + VARIABILITY_IN_HEADING
-            ))
-        );
+        this.changeHeadingInterval = new Interval();
+        this.changeHeadingInterval.set(int(random(
+            CHANGE_HEADING_FREQUENCY - VARIABILITY_IN_HEADING,
+            CHANGE_HEADING_FREQUENCY + VARIABILITY_IN_HEADING
+        )));
 
         if (shootIntervalFrequency > 0) {
             this.shootInterval = new Interval(
-                int(random(
-                    shootIntervalFrequency - VARIABILITY_IN_SHOOTING,
-                    shootIntervalFrequency + VARIABILITY_IN_SHOOTING
-                ))
             );
+
+            this.shootInterval.set(int(random(
+                shootIntervalFrequency - VARIABILITY_IN_SHOOTING,
+                shootIntervalFrequency + VARIABILITY_IN_SHOOTING
+            )));
         }
     }
 

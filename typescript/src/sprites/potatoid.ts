@@ -3,9 +3,11 @@ import Colors from '../ui/colors';
 import Sprite from './sprite';
 
 const DIAMETER_MAX = 130;
-const PATATOID_MINIMAL_DIAMETER_BREAKUP = 60;
+const POTATOID_MINIMAL_DIAMETER_BREAKUP = 60;
+const VERTEX_RADIUS_MIN = 0.35;
+const VERTEX_RADIUS_MAX = 0.5;
 
-export default class Patatoid extends Sprite {
+export default class Potatoid extends Sprite {
     private shape: P5.Graphics;
 
     sides = 0;
@@ -36,19 +38,19 @@ export default class Patatoid extends Sprite {
         this.p5.pop();
     }
 
-    breakUp(): Patatoid[] {
-        if (this.diameter > PATATOID_MINIMAL_DIAMETER_BREAKUP) {
-            const countNewPatatoids =
+    breakUp(): Potatoid[] {
+        if (this.diameter > POTATOID_MINIMAL_DIAMETER_BREAKUP) {
+            const countNewPotatoids =
                 this.diameter > (DIAMETER_MAX / 10) * 7 ? 3 : 2;
 
-            const newAsteroids: Patatoid[] = [];
+            const newAsteroids: Potatoid[] = [];
 
-            for (let counter = 0; counter < countNewPatatoids; counter++) {
+            for (let counter = 0; counter < countNewPotatoids; counter++) {
                 newAsteroids.push(
-                    new Patatoid(
+                    new Potatoid(
                         this.p5,
                         this.position.copy(),
-                        this.diameter / (countNewPatatoids * 0.7),
+                        this.diameter / (countNewPotatoids * 0.7),
                         P5.Vector.random2D(),
                         this.rotationStep,
                         this.sides
@@ -67,8 +69,8 @@ export default class Patatoid extends Sprite {
 
         for (let side = 0; side < this.sides; side++) {
             const radius = this.p5.random(
-                this.diameter * 0.35,
-                this.diameter * 0.5
+                this.diameter * VERTEX_RADIUS_MIN,
+                this.diameter * VERTEX_RADIUS_MAX
             );
             const angle = this.p5.map(side, 0, this.sides, 0, this.p5.TWO_PI);
             const x = radius * this.p5.cos(angle);

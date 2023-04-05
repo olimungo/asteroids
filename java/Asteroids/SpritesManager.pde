@@ -1,14 +1,12 @@
 public class SpritesManager {
-    private final static int VARIABILITY_IN_CREATING_UFOS = 5000;
-    private final static int ASTEROID_MIN_DISTANCE_TO_CENTER = 250;
     private final static int DIAMETER_MIN = 40;
     private final static int DIAMETER_MAX = 120;
     private final static int SIDES_MIN = 8;
     private final static int SIDES_MAX = 20;
 
-    private ArrayList<Patatoid> asteroids = new ArrayList<Patatoid>();
+    private ArrayList<Potatoid> asteroids = new ArrayList<Potatoid>();
     private Ship ship;
-    private ArrayList<Patatoid> shipFragments = new ArrayList<Patatoid>();
+    private ArrayList<Potatoid> shipFragments = new ArrayList<Potatoid>();
     private ArrayList<Ufo> ufos = new ArrayList<Ufo>();
     private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
     private Interval createUfoInterval;
@@ -21,21 +19,21 @@ public class SpritesManager {
         if (this.ship != null) {
             this.ship.update();
         } else {
-            for (Patatoid shipFragment : this.shipFragments) {
+            for (Potatoid shipFragment : this.shipFragments) {
                 shipFragment.update();
             }
         }
 
         for (int asteroidIndex = this.asteroids.size() - 1; asteroidIndex >= 0; asteroidIndex--) {
-            Patatoid asteroid = this.asteroids.get(asteroidIndex);
+            Potatoid asteroid = this.asteroids.get(asteroidIndex);
             asteroid.update();
 
             if (this.ship != null) {
                 if (this.ship.lasersHit(asteroid)) {
-                    ArrayList<Patatoid> newAsteroids = asteroid.breakUp();
+                    ArrayList<Potatoid> newAsteroids = asteroid.breakUp();
 
                     if (newAsteroids.size() > 0) {
-                        for (Patatoid newAsteroid : newAsteroids) {
+                        for (Potatoid newAsteroid : newAsteroids) {
                             this.asteroids.add(newAsteroid);
                         }
                     } else {
@@ -103,7 +101,7 @@ public class SpritesManager {
             this.ship.draw();
         }
 
-        for (Patatoid asteroid : this.asteroids) {
+        for (Potatoid asteroid : this.asteroids) {
             asteroid.draw();
         }
 
@@ -111,44 +109,13 @@ public class SpritesManager {
             ufo.draw();
         }
 
-        for (Patatoid shipFragment : this.shipFragments) {
+        for (Potatoid shipFragment : this.shipFragments) {
             shipFragment.draw();
         }
     }
 
-    void startLevel(
-        int countAsteroids,
-        int ufoCreateFrequency,
-        int ufoShootFrequency
-    ) {
-        this.ufoShootFrequency = ufoShootFrequency;
-
-        this.reset();
-
-        this.ship = new Ship(
-            new PVector(width / 2, height / 2),
-            false);
-
-        this.createAsteroids(countAsteroids);
-
-        this.createUfoInterval = new Interval(
-            int(random(
-                ufoCreateFrequency - VARIABILITY_IN_CREATING_UFOS,
-                ufoCreateFrequency + VARIABILITY_IN_CREATING_UFOS
-            ))
-        );
-    }
-
-    void stopLevel() {
-        this.createUfoInterval = null;
-        this.ufos.clear();
-        this.ufoShootFrequency = 0;
-        this.countAsteroidsHit = 0;
-        this.countUfosHit = 0;
-    }
-
     void createAsteroids(int count) {
-        this.asteroids = new ArrayList<Patatoid>();
+        this.asteroids = new ArrayList<Potatoid>();
 
         for (int counter = 0; counter < count; counter++) {
             float radius = random(
@@ -176,7 +143,7 @@ public class SpritesManager {
             int sides = floor(random(this.SIDES_MIN, this.SIDES_MAX));
 
             this.asteroids.add(
-                new Patatoid(
+                new Potatoid(
                     position,
                     diameter,
                     PVector.random2D(),
@@ -252,10 +219,38 @@ public class SpritesManager {
         return this.ship == null;
     }
 
+
     void reset() {
         this.asteroids.clear();
         this.shipFragments.clear();
         this.ufos.clear();
+    }
+
+    void startLevel(
+        int countAsteroids,
+        int ufoCreateFrequency,
+        int ufoShootFrequency
+    ) {
+        this.ufoShootFrequency = ufoShootFrequency;
+
+        this.reset();
+
+        this.ship = new Ship(
+            new PVector(width / 2, height / 2),
+            false);
+
+        this.createAsteroids(countAsteroids);
+
+        this.createUfoInterval = new Interval();
+        this.createUfoInterval.set(ufoCreateFrequency);
+    }
+
+    void stopLevel() {
+        this.ufos.clear();
+        this.createUfoInterval.cancel();
+        this.ufoShootFrequency = 0;
+        this.countAsteroidsHit = 0;
+        this.countUfosHit = 0;
     }
 
     void pause() {
