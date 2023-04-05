@@ -7,7 +7,7 @@
         "build": "npm run build:step1; npm run build:step2",
         "build:step1": "npm run build:rust; npm run build:rustweb; npm run build:typescript",
         "build:step2": "npm run create:dist; npm run copy:dist; npm run copy:integration",
-        "build:typescript": "npm --prefix ../typescript run build",
+        "build:typescript": "npm --prefix ../typescript ci; npm --prefix ../typescript run build",
         "build:rustweb": "export NODE_OPTIONS=--openssl-legacy-provider; npm --prefix ../rust/www run build",
         "build:rust": "cd ../rust; wasm-pack build",
         "create:dist": "mkdirp dist/rust; mkdir dist/typescript",
