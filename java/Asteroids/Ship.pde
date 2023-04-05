@@ -15,7 +15,8 @@ public class Ship extends Sprite {
 
         this.fillShip = fillShip;
         this.heading = -PI / 2;
-        this.boosterFlamesInterval = new Interval(BOOSTER_INTERVAL);
+        this.boosterFlamesInterval = new Interval();
+        this.boosterFlamesInterval.set(BOOSTER_INTERVAL);
     }
   
     Boolean update() {

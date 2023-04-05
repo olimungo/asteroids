@@ -1,9 +1,7 @@
 use web_sys::CanvasRenderingContext2d;
 
 use super::star::Star;
-use crate::sprites::sprite::CanvasDimension;
-
-const STARS_COUNT: u32 = 400;
+use crate::{sprites::sprite::CanvasDimension, utils::config::Config};
 
 pub struct Starfield {
     stars: Vec<Star>,
@@ -12,9 +10,11 @@ pub struct Starfield {
 
 impl Starfield {
     pub fn new(canvas: CanvasDimension) -> Starfield {
+        let config = Config::new();
+
         let mut stars = Vec::<Star>::new();
 
-        for _counter in 0..STARS_COUNT {
+        for _counter in 0..config.overlays.starfield.stars_count {
             stars.push(Star::new(canvas));
         }
 

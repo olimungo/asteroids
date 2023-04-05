@@ -1,0 +1,25 @@
+{
+    "name": "asteroids-integration",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "npm run build:step1; npm run build:step2",
+        "build:step1": "npm run build:rust; npm run build:rustweb; npm run build:typescript",
+        "build:step2": "npm run create:dist; npm run copy:dist; npm run copy:integration",
+        "build:typescript": "npm --prefix ../typescript run build",
+        "build:rustweb": "export NODE_OPTIONS=--openssl-legacy-provider; npm --prefix ../rust/www run build",
+        "build:rust": "cd ../rust; wasm-pack build",
+        "create:dist": "mkdirp dist/rust; mkdir dist/typescript",
+        "copy:dist": "ncp ../rust/www/dist dist/rust; ncp ../typescript/dist dist/typescript",
+        "copy:integration": "ncp src dist; ncp assets dist/assets"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "copyfiles": "^2.4.1",
+        "mkdirp": "^2.1.6",
+        "ncp": "^2.0.0"
+    }
+}

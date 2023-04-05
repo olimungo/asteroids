@@ -20,11 +20,25 @@ export default class Ufo extends Sprite {
     private headingInterval = new Interval();
     private shootInterval = new Interval();
 
-    constructor(
-        p5: P5,
-        position: P5.Vector,
-        shootIntervalFrequency: number = 0
-    ) {
+    constructor(p5: P5, shootIntervalFrequency: number = 0) {
+        const randomSide = p5.floor(p5.random(4));
+        const position = new P5.Vector(p5.width / 2, p5.height / 2);
+
+        switch (randomSide) {
+            case 1:
+                position.x += p5.width / 2;
+                break;
+            case 2:
+                position.x -= p5.width / 2;
+                break;
+            case 3:
+                position.y += p5.height / 2;
+                break;
+            case 4:
+                position.y -= p5.height / 2;
+                break;
+        }
+
         super(
             p5,
             position,

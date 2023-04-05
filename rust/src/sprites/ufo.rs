@@ -1,18 +1,11 @@
 use web_sys::CanvasRenderingContext2d;
 
-use crate::utils::{general::random, interval::Interval, vector::Vector};
+use crate::utils::{config::Config, general::random, interval::Interval, vector::Vector};
 
 use super::{
     laser::Laser,
     sprite::{CanvasDimension, Spritable, Sprite, SpriteData},
 };
-
-const UFO_WIDTH: f64 = 60.0;
-const UFO_HEIHT: f64 = 25.0;
-const UFO_VELOCITY: f64 = 2.0;
-const CHANGE_HEADING_FREQUENCY: u32 = 6000;
-const VARIABILITY_IN_HEADING: u32 = 3000;
-const VARIABILITY_IN_SHOOTING: u32 = 1000;
 
 pub struct Ufo {
     pub sprite: Sprite,
@@ -22,12 +15,16 @@ pub struct Ufo {
     vertices: Vec<Vector>,
     heading_interval: Interval,
     shoot_interval: Interval,
+    config: Config,
 }
 
 impl Spritable for Ufo {
     fn update(&mut self) {
         if self.heading_interval.is_ellapsed() {
-            self.sprite.data.velocity = Vector::random(-UFO_VELOCITY, UFO_VELOCITY);
+            self.sprite.data.velocity = Vector::random(
+                -self.config.sprites.ufo.ufo_velocity,
+                self.config.sprites.ufo.ufo_velocity,
+            );
         }
 
         if self.shoot_interval.is_ellapsed() {
@@ -57,8 +54,8 @@ impl Spritable for Ufo {
         canvas.save();
 
         let _result = canvas.translate(
-            sprite_data.position.x - UFO_WIDTH / 2.0,
-            sprite_data.position.y - UFO_HEIHT / 2.0,
+            sprite_data.position.x - self.config.sprites.ufo.ufo_width / 2.0,
+            sprite_data.position.y - self.config.sprites.ufo.ufo_height / 2.0,
         );
 
         canvas.begin_path();
@@ -84,37 +81,55 @@ impl Spritable for Ufo {
 }
 
 impl Ufo {
-    pub fn new(sprite_data: SpriteData, shoot_frequency: u32, canvas: CanvasDimension) -> Ufo {
-        let mut shoot_interval = Interval::new();
+    pub fn new(shoot_frequency: u32, canvas: CanvasDimension) -> Ufo {
+        let config = Config::new();
+
+        let random_corner = random(1, 5);
+        let mut position = Vector::new(canvas.width / 2.0, canvas.height / 2.0);
+
+        match random_corner {
+            1 => position.x += canvas.width / 2.0,
+            2 => position.x -= canvas.width / 2.0,
+            3 => position.y += canvas.height / 2.0,
+            _ => position.y -= canvas.height / 2.0,
+        }
+
         let mut heading_interval = Interval::new();
+        let mut shoot_interval = Interval::new();
 
         let random_interval = random(
-            CHANGE_HEADING_FREQUENCY - VARIABILITY_IN_HEADING,
-            CHANGE_HEADING_FREQUENCY + VARIABILITY_IN_HEADING,
+            config.sprites.ufo.change_heading_frequency - config.sprites.ufo.variability_in_heading,
+            config.sprites.ufo.change_heading_frequency + config.sprites.ufo.variability_in_heading,
         );
 
         heading_interval.set(random_interval);
 
         if shoot_frequency > 0 {
             let random_interval = random(
-                shoot_frequency - VARIABILITY_IN_SHOOTING,
-                shoot_frequency + VARIABILITY_IN_SHOOTING,
+                shoot_frequency - config.sprites.ufo.variability_in_shooting,
+                shoot_frequency + config.sprites.ufo.variability_in_shooting,
             );
 
             shoot_interval.set(random_interval);
         }
 
-        let mut new_sprite_data = sprite_data;
-        new_sprite_data.diameter = (UFO_WIDTH + UFO_HEIHT) / 2.0;
+        let sprite_data = SpriteData {
+            position,
+            velocity: Vector::random(-2.0, 2.0),
+            diameter: (config.sprites.ufo.ufo_width + config.sprites.ufo.ufo_height) / 2.0,
+            rotation: 0.0,
+            rotation_step: 0.0,
+        };
 
         Ufo {
-            sprite: Sprite::new(new_sprite_data, canvas),
+            sprite: Sprite::new(sprite_data, canvas),
             shoot_frequency,
             lasers: Vec::new(),
             ship_position: Vector::new(0.0, 0.0),
-            vertices: Ufo::generate_vertices(),
+            vertices: Ufo::generate_vertices(&config),
             shoot_interval,
             heading_interval,
+            config,
         }
     }
 
@@ -166,24 +181,24 @@ impl Ufo {
         self.shoot_interval.unpause();
     }
 
-    fn generate_vertices() -> Vec<Vector> {
+    fn generate_vertices(config: &Config) -> Vec<Vector> {
         let mut vertices = Vec::new();
 
-        let height1 = UFO_HEIHT / 4.0;
-        let height2 = (UFO_HEIHT / 8.0) * 5.0;
-        let width1 = UFO_WIDTH / 3.0;
-        let width2 = UFO_WIDTH * 0.66;
-        let width3 = (UFO_WIDTH / 10.0) * 6.0;
-        let width4 = (UFO_WIDTH / 10.0) * 4.0;
+        let height1 = config.sprites.ufo.ufo_height / 4.0;
+        let height2 = (config.sprites.ufo.ufo_height / 8.0) * 5.0;
+        let width1 = config.sprites.ufo.ufo_width / 3.0;
+        let width2 = config.sprites.ufo.ufo_width * 0.66;
+        let width3 = (config.sprites.ufo.ufo_width / 10.0) * 6.0;
+        let width4 = (config.sprites.ufo.ufo_width / 10.0) * 4.0;
 
         vertices.push(Vector::new(7.0, height2));
-        vertices.push(Vector::new(width1, UFO_HEIHT - 1.0));
-        vertices.push(Vector::new(width2, UFO_HEIHT - 1.0));
-        vertices.push(Vector::new(UFO_WIDTH - 7.0, height2));
+        vertices.push(Vector::new(width1, config.sprites.ufo.ufo_height - 1.0));
+        vertices.push(Vector::new(width2, config.sprites.ufo.ufo_height - 1.0));
+        vertices.push(Vector::new(config.sprites.ufo.ufo_width - 7.0, height2));
         vertices.push(Vector::new(7.0, height2));
         vertices.push(Vector::new(width1, height1));
         vertices.push(Vector::new(width2, height1));
-        vertices.push(Vector::new(UFO_WIDTH - 7.0, height2));
+        vertices.push(Vector::new(config.sprites.ufo.ufo_width - 7.0, height2));
         vertices.push(Vector::new(width2, height1));
         vertices.push(Vector::new(width3, 1.0));
         vertices.push(Vector::new(width4, 1.0));

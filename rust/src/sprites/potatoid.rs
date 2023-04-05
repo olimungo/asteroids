@@ -3,19 +3,15 @@ use std::f64::consts::PI;
 use rand::Rng;
 use web_sys::CanvasRenderingContext2d;
 
-use crate::utils::vector::Vector;
+use crate::utils::{config::Config, vector::Vector};
 
 use super::sprite::{CanvasDimension, Spritable, Sprite, SpriteData};
-
-const DIAMETER_MAX: f64 = 100.0;
-const POTATOID_MINIMAL_DIAMETER_BREAKUP: f64 = 60.0;
-const VERTEX_RADIUS_MIN: f64 = 0.35;
-const VERTEX_RADIUS_MAX: f64 = 0.5;
 
 pub struct Potatoid {
     sides: u32,
     pub sprite: Sprite,
     vertices: Vec<Vector>,
+    config: Config,
 }
 
 impl Spritable for Potatoid {
@@ -53,10 +49,13 @@ impl Spritable for Potatoid {
 
 impl Potatoid {
     pub fn new(sprite_data: SpriteData, sides: u32, canvas: CanvasDimension) -> Potatoid {
+        let config = Config::new();
+
         let mut potatoid = Potatoid {
             sides,
             sprite: Sprite::new(sprite_data, canvas),
             vertices: Vec::new(),
+            config,
         };
 
         potatoid.generate_vertices();
@@ -67,8 +66,10 @@ impl Potatoid {
     fn generate_vertices(&mut self) {
         for side in 0..self.sides {
             let diameter = self.sprite.data.diameter;
-            let radius = rand::thread_rng()
-                .gen_range(diameter * VERTEX_RADIUS_MIN..diameter * VERTEX_RADIUS_MAX);
+            let radius = rand::thread_rng().gen_range(
+                diameter * self.config.sprites.potatoid.vertex_radius_min
+                    ..diameter * self.config.sprites.potatoid.vertex_radius_max,
+            );
             let angle = 2.0 * PI / self.sides as f64 * side as f64;
             let x = radius * angle.cos();
             let y = radius * angle.sin();
@@ -81,9 +82,15 @@ impl Potatoid {
         let mut new_asteroids = Vec::new();
         let diameter = self.sprite.data.diameter;
 
-        if diameter > POTATOID_MINIMAL_DIAMETER_BREAKUP {
+        if diameter
+            > self
+                .config
+                .sprites
+                .potatoid
+                .potatoid_minimal_diameter_breakup
+        {
             let count_new_potatoids = match diameter {
-                x if x > DIAMETER_MAX => 3,
+                x if x > self.config.sprites.potatoid.diameter_max => 3,
                 _ => 2,
             };
 

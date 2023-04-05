@@ -1,11 +1,11 @@
 use web_sys::CanvasRenderingContext2d;
 
+use crate::utils::config::Config;
+
 use super::{
     particle::Particle,
     sprite::{CanvasDimension, Spritable, SpriteData},
 };
-
-const COUNT_PARTICULES: u8 = 8;
 
 pub struct Explosion {
     particles: Vec<Particle>,
@@ -14,9 +14,11 @@ pub struct Explosion {
 
 impl Explosion {
     pub fn new(sprite_data: SpriteData, canvas: CanvasDimension) -> Explosion {
+        let config = Config::new();
+
         let mut particles = Vec::new();
 
-        for _count in 0..COUNT_PARTICULES {
+        for _count in 0..config.sprites.explosion.count_particules {
             particles.push(Particle::new(sprite_data, canvas));
         }
 

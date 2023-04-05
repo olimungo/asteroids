@@ -1,14 +1,15 @@
 use web_sys::CanvasRenderingContext2d;
 
-use crate::{game_states::GameState, sprites::sprite::CanvasDimension, utils::interval::Interval};
+use crate::{
+    game_states::GameState, sprites::sprite::CanvasDimension, utils::config::Config,
+    utils::interval::Interval,
+};
 
 use super::{
     game_over::GameOver, game_paused::GamePaused, help::Help, homescreen::Homescreen, hub::Hub,
     level::Level, lifes::Lifes, new_life::NewLife, next_level::NextLevel, next_life::NextLife,
     score::Score, starfield::Starfield, top_score::TopScore,
 };
-
-const DISPLAY_NEW_LIFE_TIMEOUT: u32 = 7000;
 
 pub struct OverlayData {
     pub game_state: GameState,
@@ -41,10 +42,13 @@ pub struct OverlayManager {
     show_starfield: bool,
     show_new_life: bool,
     canvas: CanvasDimension,
+    config: Config,
 }
 
 impl OverlayManager {
     pub fn new(canvas: CanvasDimension) -> OverlayManager {
+        let config = Config::new();
+
         OverlayManager {
             hub: Hub::new(canvas),
             homescreen: Homescreen::new(canvas),
@@ -66,6 +70,7 @@ impl OverlayManager {
             show_starfield: false,
             show_new_life: false,
             canvas,
+            config,
         }
     }
     pub fn update(&mut self, game_state: GameState) {
@@ -162,7 +167,8 @@ impl OverlayManager {
 
     pub fn dispaly_new_life(&mut self) {
         self.show_new_life = true;
-        self.new_life_interval.set(DISPLAY_NEW_LIFE_TIMEOUT);
+        self.new_life_interval
+            .set(self.config.overlays.manager.display_new_life_timeout);
     }
 
     pub fn set_life_count(&mut self, count: u32) {

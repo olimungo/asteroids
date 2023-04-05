@@ -1,6 +1,6 @@
 {
     "name": "asteroids",
-    "version": "0.9.0",
+    "version": "1.0.0",
     "description": "create an app to consume rust-generated wasm packages",
     "main": "index.js",
     "bin": {

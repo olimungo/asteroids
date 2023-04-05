@@ -45,7 +45,7 @@ impl Homescreen {
             let _result = canvas.fill_text("INSERT 1 COIN", self.center_x, self.center_y + 50.0);
         }
 
-        canvas.set_font("100 25px 'Exo 2'");
+        canvas.set_font("300 25px 'Exo 2'");
         let _result =
             canvas.fill_text("PRESS \"H\" FOR HELP", self.center_x, self.center_y + 250.0);
 

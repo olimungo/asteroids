@@ -11,7 +11,7 @@ use crate::{
         sprite::{CanvasDimension, Spritable, SpriteData},
         ufo::Ufo,
     },
-    utils::{config::Config, general::random, interval::Interval, vector::Vector},
+    utils::{config::Config, interval::Interval, vector::Vector},
 };
 
 pub struct SpriteManager {
@@ -200,7 +200,8 @@ impl SpriteManager {
             );
 
             let diameter = rand::thread_rng().gen_range(
-                self.config.sprites.manager.diameter_min..self.config.sprites.manager.diameter_max,
+                self.config.sprites.manager.asteroid_diameter_min
+                    ..self.config.sprites.manager.asteroid_diameter_max,
             );
 
             let rotation = 0.0;
@@ -213,7 +214,8 @@ impl SpriteManager {
             };
 
             let sides = rand::thread_rng().gen_range(
-                self.config.sprites.manager.sides_min..self.config.sprites.manager.sides_max,
+                self.config.sprites.manager.asteroid_sides_min
+                    ..self.config.sprites.manager.asteroid_sides_max,
             );
 
             let sprite_data = SpriteData {
@@ -230,28 +232,7 @@ impl SpriteManager {
     }
 
     pub fn create_ufo(&mut self, ufo_shoot_frequency: u32) {
-        self.ufo_shoot_frequency = ufo_shoot_frequency;
-
-        let random_corner = random(1, 5);
-        let mut position = Vector::random_limit(1.2, 0.8);
-
-        match random_corner {
-            1 => position.x += self.canvas.width,
-            2 => position.x -= self.canvas.width,
-            3 => position.y += self.canvas.height,
-            _ => position.y -= self.canvas.height,
-        }
-
-        let sprite_data = SpriteData {
-            position,
-            velocity: Vector::random(-2.0, 2.0),
-            diameter: 0.0,
-            rotation: 0.0,
-            rotation_step: 0.0,
-        };
-
-        let ufo = Ufo::new(sprite_data, ufo_shoot_frequency, self.canvas);
-        self.ufos.push(ufo);
+        self.ufos.push(Ufo::new(ufo_shoot_frequency, self.canvas));
     }
 
     pub fn get_asteroids_count(&self) -> usize {

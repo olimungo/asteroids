@@ -204,7 +204,8 @@ public class GameManager {
                 saveStrings("data/top-score.txt", topScore);
 
                 // Return to homescreen after some time...
-                this.gameOverInterval = new Interval(GAME_OVER_STATE_TIMEOUT);
+                this.gameOverInterval = new Interval();
+                this.gameOverInterval.set(GAME_OVER_STATE_TIMEOUT);
             } else {
                 this.gameState = GameState.NEXT_LIFE;
             }

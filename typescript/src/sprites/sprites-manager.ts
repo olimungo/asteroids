@@ -10,8 +10,8 @@ const DIAMETER_MIN = 40;
 const DIAMETER_MAX = 120;
 const SIDES_MIN = 8;
 const SIDES_MAX = 20;
-const ASTEROIDS_VELOCITY_MIN_VALUE = 1.0;
-const ASTEROIDS_VELOCITY_LIMIT = 0.2;
+const ASTEROIDS_VELOCITY_LIMIT = 1.0;
+const ASTEROIDS_VELOCITY_MIN_VALUE = 0.2;
 
 export default class SpritesManager {
     private p5: P5;
@@ -201,26 +201,7 @@ export default class SpritesManager {
     }
 
     createUfo(ufoShootFrequency: number) {
-        const randomSide = this.p5.floor(this.p5.random(4));
-        const vector = P5.Vector.random2D();
-
-        switch (randomSide) {
-            case 1:
-                vector.x += this.p5.width;
-                break;
-            case 2:
-                vector.x -= this.p5.width;
-                break;
-            case 3:
-                vector.y += this.p5.height;
-                break;
-            case 4:
-                vector.y -= this.p5.height;
-                break;
-        }
-
-        const ufo = new Ufo(this.p5, vector, ufoShootFrequency);
-        this.ufos.push(ufo);
+        this.ufos.push(new Ufo(this.p5, ufoShootFrequency));
     }
 
     getAsteroidsCount(): number {

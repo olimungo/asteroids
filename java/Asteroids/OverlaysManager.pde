@@ -144,7 +144,8 @@ public class OverlaysManager {
 
     void displayNewLife() {
         this.showNewLife = true;
-        this.newLifeInterval = new Interval(DISPLAY_NEW_LIFE_TIMEOUT);
+        this.newLifeInterval = new Interval();
+        this.newLifeInterval.set(DISPLAY_NEW_LIFE_TIMEOUT);
     }
 
     private void setScale(float ratio) {

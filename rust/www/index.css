@@ -53,6 +53,10 @@ footer {
     box-shadow: 1px 1px 5px black;
 }
 
+.footer {
+    font-family: sans-serif;
+}
+
 canvas {
     border: solid 0.5rem #333;
     border-radius: 3rem;

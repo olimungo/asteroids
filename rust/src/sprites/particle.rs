@@ -2,28 +2,25 @@ use std::f64::consts::PI;
 
 use web_sys::CanvasRenderingContext2d;
 
-use crate::utils::{general::random, vector::Vector};
+use crate::utils::{config::Config, general::random, vector::Vector};
 
 use super::sprite::{CanvasDimension, Spritable, Sprite, SpriteData};
-
-const POLYGON_SIDES: u8 = 5;
-const HEALTH_DECREMENT: u32 = 5;
-const MINIMAL_HEALTH: u32 = 50;
 
 pub struct Particle {
     health: u32,
     pub is_faded: bool,
     pub sprite: Sprite,
+    config: Config,
 }
 
 impl Spritable for Particle {
     fn update(&mut self) {
         self.sprite.update();
 
-        if self.health < MINIMAL_HEALTH {
+        if self.health < self.config.sprites.particle.minimal_health {
             self.is_faded = true;
         } else {
-            self.health -= HEALTH_DECREMENT;
+            self.health -= self.config.sprites.particle.health_decrement;
         }
     }
 
@@ -34,7 +31,7 @@ impl Spritable for Particle {
             self.polygon(
                 self.sprite.data.position,
                 self.sprite.data.diameter,
-                POLYGON_SIDES,
+                self.config.sprites.particle.polygon_sides,
                 canvas.clone(),
             );
 
@@ -49,6 +46,8 @@ impl Spritable for Particle {
 
 impl Particle {
     pub fn new(sprite_data: SpriteData, canvas: CanvasDimension) -> Particle {
+        let config = Config::new();
+
         let mut new_sprite_data = sprite_data;
         new_sprite_data.diameter = random(1, 5) as f64;
         new_sprite_data.velocity = Vector::random(-1.2, 1.2);
@@ -57,6 +56,7 @@ impl Particle {
             health: random(175, 230),
             is_faded: false,
             sprite: Sprite::new(new_sprite_data, canvas),
+            config,
         }
     }
 

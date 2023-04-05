@@ -241,7 +241,8 @@ public class SpritesManager {
 
         this.createAsteroids(countAsteroids);
 
-        this.createUfoInterval = new Interval(ufoCreateFrequency);
+        this.createUfoInterval = new Interval();
+        this.createUfoInterval.set(ufoCreateFrequency);
     }
 
     void stopLevel() {

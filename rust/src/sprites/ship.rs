@@ -2,16 +2,13 @@ use std::f64::consts::PI;
 
 use web_sys::CanvasRenderingContext2d;
 
-use crate::utils::{colors::Colors, interval::Interval, vector::Vector};
+use crate::utils::{colors::Colors, config::Config, interval::Interval, vector::Vector};
 
 use super::{
     laser::Laser,
     potatoid::Potatoid,
     sprite::{CanvasDimension, Spritable, Sprite, SpriteData},
 };
-
-const SHIP_SHELL_SIZE: f64 = 36.0;
-const BOOSTER_INTERVAL: u32 = 150;
 
 pub struct Ship {
     pub sprite: Sprite,
@@ -105,11 +102,13 @@ impl Spritable for Ship {
 
 impl Ship {
     pub fn new(sprite_data: SpriteData, is_plain_ship: bool, canvas: CanvasDimension) -> Ship {
+        let config = Config::new();
+
         let mut booster_flames_interval = Interval::new();
-        booster_flames_interval.set(BOOSTER_INTERVAL);
+        booster_flames_interval.set(config.sprites.ship.booster_interval);
 
         let mut new_sprite_data = sprite_data;
-        new_sprite_data.diameter = SHIP_SHELL_SIZE;
+        new_sprite_data.diameter = config.sprites.ship.ship_shell_size;
 
         Ship {
             sprite: Sprite::new(new_sprite_data, canvas),

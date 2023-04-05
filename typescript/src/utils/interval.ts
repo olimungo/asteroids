@@ -1,6 +1,6 @@
 export default class Interval {
     interval: number;
-    timeReference: number;
+    timeReference: number = 0;
     timePaused: number = 0;
 
     set(interval: number) {
