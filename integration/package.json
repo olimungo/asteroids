@@ -12,7 +12,7 @@
         "build:rust": "cd ../rust; wasm-pack build",
         "create:dist": "mkdirp dist/rust; mkdir dist/typescript",
         "copy:dist": "ncp ../rust/www/dist dist/rust; ncp ../typescript/dist dist/typescript",
-        "copy:integration": "ncp src dist; ncp assets dist/assets"
+        "copy:integration": "ncp src dist"
     },
     "keywords": [],
     "author": "",
