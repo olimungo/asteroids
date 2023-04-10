@@ -11,7 +11,8 @@ There are 3 implementations:
 -   in Java with Processing (https://processing.org)
 -   in Rust, compiled to WebAssembly (draws directly onto the HTML canvas)
 
-The Typescript and the Rust implementation can be tested at: https://olimungo.github.io/asteroids/
+The Typescript and the Rust implementations can be tested at: https://olimungo.github.io/asteroids/
+
 Obviously, the Java implementation must be executed locally on your computer.
 
 ## TypeScript
@@ -41,7 +42,7 @@ npm start
 -   install Processing: https://processing.org/download
 -   Java JDK: https://www.oracle.com/java/technologies/downloads/
 
-On macOS, you can install it with brew:
+On macOS, you can install Processing with brew:
 
 ```sh
 brew install --cask processing
